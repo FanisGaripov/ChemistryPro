@@ -24,13 +24,6 @@ login_manager.init_app(app)
 db.init_app(app)
 c = []
 
-''' идеи:
-1.Добавление таблицы растворимостей VVV
-2.Ряд электроотрицательности элементов 
-3.Электрохимический ряд активности металлов VV
-4.Ряд силы кислот VV
-5.Кислоты и кислотные остатки VV
-'''
 
 def molecular_mass(formula):
     # Словарь с атомными массами элементов
@@ -636,23 +629,32 @@ def minigame():
     nazv = res[1]
     user = flask_login.current_user
     h.append(nazv)
-    if request.method == 'POST':
-        element = request.form['element']
-        print(h)
-        if element == h[-2]:
-            d = 'Верно, следующий'
-            pravilno += 1
-            otvety += 1
-            if pravilno == 10:
-                right_percent = round((pravilno / otvety) * 100, 2)
-                pravilno = 0
-                otvety = 0
-                h = ['']
-                return render_template('winning.html', user=user, right_percent=right_percent)
-        else:
-            d = f'Неправильно, ответ: {h[-2]}'
-            otvety += 1
-    return render_template('minigame.html', user=user, d=d, minigamefunc=minigamefunc, b=b, pravilno=pravilno, otvety=otvety)
+    if user.is_authenticated:
+        if request.method == 'POST':
+            element = request.form['element']
+            print(h)
+            if element == h[-2]:
+                d = 'Верно, следующий'
+                pravilno += 1
+                user.pokupki = pravilno
+                otvety += 1
+                user.summa = otvety
+                db.session.commit()
+                if pravilno == 10:
+                    right_percent = round((pravilno / otvety) * 100, 2)
+                    pravilno = 0
+                    otvety = 0
+                    user.summa = otvety
+                    user.pokupki = pravilno
+                    db.session.commit()
+                    h = ['']
+                    return render_template('winning.html', user=user, right_percent=right_percent)
+            else:
+                d = f'Неправильно, ответ: {h[-2]}'
+                otvety += 1
+        return render_template('minigame.html', user=user, d=d, minigamefunc=minigamefunc, b=b, pravilno=pravilno, otvety=otvety)
+    else:
+        return redirect(url_for('login'))
 
 
 def get_substance_html(substance_name):
@@ -813,6 +815,7 @@ def profile():
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
 def edit_profile():
+    # изменить профиль
     user = flask_login.current_user
     if user.is_authenticated:
         if request.method == 'POST':
@@ -852,6 +855,7 @@ with app.app_context():
 @app.route('/logout')
 @login_required
 def logout():
+    # выход из аккаунта
     flask_login.logout_user()
     return redirect(url_for('login'))
 
