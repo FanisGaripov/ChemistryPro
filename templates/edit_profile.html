@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Редактирование профиля{% endblock %}
+
+{% block content %}
+<body>
+    <div class="limiter">
+        <div class="container-profile">
+            <div class="wrap-profile p-t-50 p-b-90">
+                <h1 class="profile-title">Редактирование профиля</h1>
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="username">Логин</label><br>
+                        <input type="text" name="username" value="{{ user.username }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Фамилия</label><br>
+                        <input type="text" name="surname" value="{{ user.surname }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Имя</label><br>
+                        <input type="text" name="name" value="{{ user.name }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label><br>
+                        <input type="email" name="email" value="{{ user.email }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="avatar">Загрузить аватар</label><br>
+                        <input type="file" name="avatar" class="file-upload">
+                    </div>
+                    <div>
+                        <input type="submit" value="Сохранить изменения" class="submit-btn">
+                    </div>
+                </form>
+                <br>
+                <a class="nav-link logout-link" href="/logout">Выйти</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        body {
+            background-color: #f2f2f2;
+        }
+        .limiter {
+            width: 100%;
+            margin: 0 auto;
+        }
+        .container-profile {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .wrap-profile {
+            background: #ffffff; /* Белый фон для формы */
+            border: 1px solid #ccc; /* Рамка вокруг профиля */
+            border-radius: 10px; /* Округление углов рамки */
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Тень для эффекта глубины */
+            padding: 40px;
+            width: 400px;
+        }
+        .profile-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px; /* Отступ между полями ввода */
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="file"] {
+            width: 100%; /* Занять всю ширину */
+            padding: 10px; /* Внутренние отступы */
+            border: 1px solid #ccc; /* Цвет рамки */
+            border-radius: 5px; /* Округление углов */
+            box-sizing: border-box; /* Учет отступов и рамок в ширину */
+            transition: border-color 0.3s; /* Плавный переход для рамки */
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            border-color: #007bff; /* Цвет рамки при фокусе */
+            outline: none; /* Убираем стандартный контур */
+        }
+        .file-upload {
+            padding: 10px; /* Внутренние отступы */
+            border: 1px solid #ccc; /* Цвет рамки */
+            border-radius: 5px; /* Округление углов */
+            transition: border-color 0.3s; /* Плавный переход для рамки */
+        }
+        .file-upload:hover {
+            border-color: #007bff; /* Цвет рамки при наведении */
+        }
+        .submit-btn {
+            background-color: #007bff; /* Цвет фона кнопки */
+            color: white; /* Цвет текста */
+            padding: 10px 15px; /* Внутренние отступы */
+            border: none; /* Убираем рамку */
+            border-radius: 5px; /* Округление углов */
+            cursor: pointer; /* Курсор при наведении */
+            font-size: 16px; /* Размер шрифта */
+            transition: background-color 0.3s; /* Плавный переход для фона */
+            width: 100%; /* Занять всю ширину */
+        }
+        .submit-btn:hover {
+            background-color: #0056b3; /* Цвет фона при наведении */
+        }
+        .logout-link {
+            display: block;
+            text-align: center;
+            color: #007bff;
+            font-weight: bold;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+        .logout-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</body>
+{% endblock %}

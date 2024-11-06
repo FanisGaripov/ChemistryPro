@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Молярная масса{% endblock %}
+
+{% block content %}
+<body>
+    <div style="display: flex; justify-content: center; align-items: center; height: 75vh;">
+        <form method="post" style="text-align: center; font-size: 1.5em;">
+            <H2>Молярная масса вещества</H2>
+            <p>Введите любую реакцию или элемент ПСХЭ</p>
+            <input type="text" id="element" name="element" placeholder="Например: H2O" style="width: 350px; height: 40px; font-size: 1em;">
+            <input type="submit" value="Узнать" style="height: 40px; font-size: 1em;">
+            {% if dlyproverki != 0 %}
+            <p>{{ resultat }}</p>
+            {% endif %}
+            {% if otdelno != '' %}
+            {% for item in otdelno %}
+            <p>{{ item }}</p>
+            {% endfor %}
+            {% endif %}
+        </form>
+    </div>
+</body>
+{% endblock %}

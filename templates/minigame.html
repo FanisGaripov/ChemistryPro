@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Миниигра{% endblock %}
+
+{% block content %}
+<body background="static/Game_back.webp">
+    <div class="container mt-5">
+        <h1 class="text-center" id="zagolovok">Миниигра</h1>
+        <div class="card mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                <p class="card-text text-center">Введите название элемента:</p>
+                <h3 class="text-center">{{ b }}</h3>
+                <form method="post" class="text-center">
+                    <div class="form-group">
+                        <input type="text" id="element" name="element" class="form-control" placeholder="Название элемента">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Проверить</button>
+                </form>
+                {% if d == 'Верно, следующий' %}
+                <p class="mt-3 text-success">{{ d }}</p>
+                {% else %}
+                <p class="mt-3 text-danger">{{ d }}</p>
+                {% endif %}
+                <p class="text-success">Количество правильных ответов: {{ pravilno }}</p>
+                <p>Количество ответов всего: {{ otvety }}</p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h2, .card-text {
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            border-radius: 20px;
+        }
+        #zagolovok {
+        color: white;
+        }
+    </style>
+</body>
+{% endblock %}

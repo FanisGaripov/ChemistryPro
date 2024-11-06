@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Миниигра Победа{% endblock %}
+
+{% block content %}
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Миниигра</h2>
+        <div class="card mx-auto" style="max-width: 500px;">
+            <div class="card-body">
+                {% if right_percent >= 50 %}
+                <h3 class="text-center text-success">Вы выиграли!</h3>
+                {% else %}
+                <h3 class="text-center text-danger">Вы проиграли!</h3>
+                {% endif %}
+                <p class="text-center">Процент правильных ответов: <strong>{{ right_percent }}%</strong></p>
+                <div class="text-center mt-4">
+                    <a href="/minigame" class="btn btn-success">Начать новую игру</a>
+                    <a href="/" class="btn btn-secondary">Вернуться на главную</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h2, h3 {
+            font-family: 'Arial', sans-serif;
+        }
+        .card {
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .btn {
+            border-radius: 20px;
+            margin: 5px;
+        }
+    </style>
+</body>
+{% endblock %}
