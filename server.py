@@ -158,7 +158,7 @@ def molecular_mass(formula):
         element_details.append((element, atomic_masses[element], count, total_mass))  # Добавляем элемент, его массу, количество и общую массу
         mass += total_mass
 
-    return round(mass), element_details  # Возвращаем общую массу и детали элементов
+    return round(mass, 2), element_details  # Возвращаем общую массу и детали элементов
 
 
 def electronic_configuration(element):
@@ -189,6 +189,7 @@ def electronic_configuration(element):
     '''subshells = ['1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d', '5p', '6s', '4f', '5d', '6p', '7s', '5f',
                  '6d', '7p']
     electrons = [2, 2, 6, 2, 6, 2, 10, 6, 2, 10, 6, 2, 14, 10, 6, 2, 14, 10, 6]'''
+    # закомментированный вариант химически правильный, однако на уровне школьной химии мы используем второй вариант.
     subshells = ['1s', '2s', '2p', '3s', '3p', '3d', '4s', '4p', '4d', '4f', '5s', '5p', '5d', '5f', '6s', '6p', '6d',
                  '7s', '7p']
     electrons = [2, 2, 6, 2, 6, 10, 2, 6, 10, 14, 2, 6, 10, 14, 2, 6, 10, 2, 6]
@@ -225,8 +226,8 @@ def uravnivanie(formula):
 
     balanced_reaction = balance_stoichiometry(reactants, products)
 
-    reactants_str = ' + '.join([f"{v}{k}" for k, v in balanced_reaction[0].items()])
-    products_str = ' + '.join([f"{v}{k}" for k, v in balanced_reaction[1].items()])
+    reactants_str = ' + '.join([f"{v}{k}" if v != 1 else f"{k}" for k, v in balanced_reaction[0].items()])
+    products_str = ' + '.join([f"{v}{k}" if v != 1 else f"{k}" for k, v in balanced_reaction[1].items()])
 
     otvet = f"{reactants_str} = {products_str}"
 
@@ -270,10 +271,9 @@ def molyar_massa():
             dlyproverki, element_details = molecular_mass(chemical_formula)
             resultat = f"Молярная масса {chemical_formula}: {dlyproverki} г/моль"
             for element, mass, count, total_mass in element_details:
-                otdelno.append(f"{count} x {element} ({round(mass)} г/моль): {round(total_mass)} г/моль")
+                otdelno.append(f"{count} x {element} ({round(mass, 2)} г/моль): {round(total_mass, 2)} г/моль, что составляет {round((round(total_mass, 2) / dlyproverki) * 100, 2)}%")
         except Exception as e:
-            print(f"Ошибка: {e}")
-            return redirect('/')
+            otdelno.append(f"{e}: такого вещества или соединения не существует")
     return render_template('molyarnaya_massa.html', resultat=resultat, dlyproverki=dlyproverki, user=user, otdelno=otdelno)
 
 
@@ -400,8 +400,11 @@ def load_chat_history():
 # Сохранение сообщения в файл
 def save_message(username, message):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    polzovatel = User.query.filter_by(username=username).first()
+    avatarka = polzovatel.avatar
     chat_entry = {
         'timestamp': timestamp,
+        'avatar': avatarka,
         'username': username,
         'message': message
     }
@@ -458,6 +461,16 @@ def chat_messages():
         return redirect(url_for('login'))
 
 
+@app.route('/chat/saving')
+def chat_saving():
+    # Загрузка истории чата
+    if chat_history_file != '[]':
+        file_path = os.path.join('chat_history.json')
+        return send_file(file_path, as_attachment=True)
+    else:
+        return 'Чат пуст'
+
+
 @app.route('/tablica', methods=['GET', 'POST'])
 def tablica():
     # таблица менделеева
@@ -477,6 +490,12 @@ def tablica_kislotnosti():
     # таблица кислот ( ошибка в названии функции ) :))
     user = flask_login.current_user
     return render_template('tablica_kislotnosti.html', user=user)
+
+
+'''@app.route('/uchebnik', methods=['GET', 'POST'])
+def uchebnik():
+    user = flask_login.current_user
+    return render_template('uchebnik.html', user=user)'''
 
 
 def minigamefunc():
@@ -753,8 +772,17 @@ def orghim():
     return render_template('orghim.html', svg_file=None, isomer_files=None, user=user)
 
 
+@app.errorhandler(404)
+def page_not_found(e):
+    user = flask_login.current_user
+    bugcode = 6
+    return render_template('bug.html', user=user, bugcode=bugcode), 404
+
+
+bugcode = 0
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    bugcode = 0
     # вход пользователя в аккаунт. берутся данные из базы данных
     user = flask_login.current_user
     if request.method == 'POST':
@@ -764,9 +792,17 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             return redirect('/')
+        elif not User.query.filter_by(username=username).first():
+            bugcode = 1
+            return render_template('bug.html', bugcode=bugcode, user=user)
         else:
-            return render_template('bug.html', user=user)
-    return render_template('login.html', user=user)
+            bugcode = 2
+            user = ""
+            return render_template('bug.html', bugcode=bugcode, user=user)
+    if user.is_authenticated:
+        return redirect(url_for('profile'))
+    else:
+        return render_template('login.html', user=user)
 
 
 @login_manager.user_loader
@@ -784,22 +820,36 @@ def load_user_from_request(request):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    bugcode = 0
     # регистрация, идет работа с бд
     user = flask_login.current_user
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+        confirm_password = request.form['confirm_password']
         name = request.form['name']
         surname = request.form['surname']
         email = request.form['email']
         if not User.query.filter_by(username=username).first():
-            user = User(username=username, name=name, surname=surname, email=email)
-            user.set_password(password)
-            db.session.add(user)
-            db.session.commit()
-            return redirect(url_for('login'))
+            if password == confirm_password:
+                user = User(username=username, name=name, surname=surname, email=email)
+                user.set_password(password)
+                try:
+                    db.session.add(user)
+                    db.session.commit()
+                    return redirect(url_for('login'))
+                except:
+                    bugcode = 4
+                    return render_template('bug.html', bugcode=bugcode, user=user)
+            else:
+                bugcode = 5
+                return render_template('bug.html', bugcode=bugcode, user=user)
+        elif User.query.filter_by(username=username).first():
+            bugcode = 3
+            return render_template('bug.html', bugcode=bugcode, user=user)
         else:
-            flash('Пользователь с таким именем уже существует.')
+            bugcode = 4
+            return render_template('bug.html', bugcode=bugcode, user=user)
     return render_template('register.html', user=user)
 
 
@@ -811,6 +861,55 @@ def profile():
         return render_template('profile.html', user=user)
     else:
         return redirect(url_for('login'))
+
+
+@app.route('/delete_account/<username>', methods=['GET', 'POST'])
+def delete_profile(username):
+    # удаление профилей пользователей
+    user = flask_login.current_user
+    bugcode = 0
+    polzovatel = User.query.filter_by(username=username).first()
+    if user.is_authenticated:
+        if user.username == polzovatel.username or user.username == 'admin123':
+            try:
+                filename = polzovatel.avatar
+                db.session.delete(polzovatel)
+                db.session.commit()
+                if filename != 'default_avatar.png':
+                    avatar_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    if os.path.exists(avatar_path):
+                        os.remove(avatar_path)
+            except:
+                bugcode = 8
+                return render_template('bug.html', user=user, bugcode=bugcode)
+            if user.username == 'admin123':
+                return redirect(url_for('all_profiles'))
+            else:
+                return redirect(url_for('login'))
+    else:
+        return redirect(url_for('login'))
+
+
+@app.route('/profile/<username>', methods=["POST", "GET"])
+def other_profiles(username):
+    #профили других людей
+    polzovatel = User.query.filter_by(username=username).first()
+    user = flask_login.current_user
+    if polzovatel and polzovatel != user:
+        return render_template('otherprofile.html', user=user, polzovatel=polzovatel)
+    elif polzovatel == user:
+        return render_template('profile.html', user=user)
+    else:
+        bugcode = 7
+        return render_template("bug.html", user=user, bugcode=bugcode)
+
+
+@app.route('/all_profiles/', methods=['GET', 'POST'])
+def all_profiles():
+    # функция, которая выводит список всех пользователей сайта
+    user = flask_login.current_user
+    polzovatel = User.query.all()
+    return render_template('all_profiles.html', user=user, polzovatel=polzovatel)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -840,7 +939,6 @@ def edit_profile():
                     user.avatar = filename  # Сохраняем имя файла в БД
 
             db.session.commit()
-            flash('Ваш профиль обновлён успешно!', 'success')
             return redirect(url_for('profile'))
 
         return render_template('edit_profile.html', user=user)
