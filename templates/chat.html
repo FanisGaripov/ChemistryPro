@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - чат{% endblock %}
+
+{% block content %}
+<body>
+    <div id="chat-container">
+        <h2>Общий чат</h2>
+        <div id="messages" id="messages">
+            {% for line in chat %}
+                <div class="message">
+                    {% if line.avatar %}
+        <img class="profile-avatar" src="{{ url_for('static', filename='upload/' + line.avatar) }}" alt="Аватар" width="25" height="25">
+    {% else %}
+        <img class="profile-avatar" src="{{ url_for('static', filename='upload/default_avatar.png') }}" alt="Аватар" width="25" height="25">
+    {% endif %}
+                    <a href="/profile/{{ line.username }}"><font color="black">{{ line.username }}</font></a> <em>{{ line.timestamp }}</em>: {{ line.message }}
+                    {% if line.username == user.username or user.username == 'admin123' %}
+                        <form method="POST" style="display:inline;">
+                            <button type="submit" name="delete" value="{{ loop.index0 }}" onclick="return confirm('Вы уверены, что хотите удалить это сообщение?');" style="background:none; border:none; color:red; cursor:pointer;">Удалить</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+        <form method="POST">
+            <input id="message_input" name="message" type="text" placeholder="Введите ваше сообщение..." required>
+            <button id="send_button" type="submit">Отправить</button>
+        </form>
+        <a href="/chat/saving" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Скачать историю чата</a>
+        {% if user.username == 'admin123' %}
+        <form method="POST" style="display:inline;">
+            <button type="submit" name="delete_all_messages" onclick="return confirm('Вы уверены, что хотите удалить все сообщения?');" style="background: red; border:none; cursor:pointer;">Удалить</button>
+        </form>
+        {% endif %}
+    </div>
+    <h2>Правила чата</h2>
+    <p>1. Не оскорблять друг друга.</p>
+    <p>2. Не спамить(т.е отправлять много сообщений за короткий промежуток времени).</p>
+    <p>3. Запрещены фишинговые ссылки в чате</p>
+    <p>4. В чате есть администратор, который может удалять неугодные сообщения, поэтому будьте осторожны :)</p>
+
+    <script>
+    // Переменная для отслеживания состояния прокрутки
+    let isUserScrolling = false;
+
+    // Функция для обновления чата
+    function updateChat() {
+    fetch('/get_messages')
+        .then(response => response.json())
+        .then(data => {
+            const messagesContainer = document.getElementById('messages');
+            messagesContainer.innerHTML = ''; // Очищаем текущее содержимое
+
+            data.forEach((line, index) => {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message';
+
+                // Создаем HTML для каждого сообщения
+                messageDiv.innerHTML = `
+                    <img class="profile-avatar" src="${line.avatar ? '/static/upload/' + line.avatar : '/static/upload/default_avatar.png'}" alt="Аватар" width="25" height="25">
+                    <a href="/profile/${line.username}"><font color="black">${line.username}</font></a> <em>${line.timestamp}</em>: ${line.message}
+                `;
+
+                // Проверка на право удаления сообщения
+                if (line.username === '{{ user.username }}' || '{{ user.username }}' === 'admin123') {
+                    messageDiv.innerHTML += `
+                        <form method="POST" style="display:inline;">
+                            <button type="submit" name="delete" value="${index}" onclick="return confirm('Вы уверены, что хотите удалить это сообщение?');" style="background:none; border:none; color:red; cursor:pointer;">Удалить</button>
+                        </form>`;
+                }
+
+                messagesContainer.appendChild(messageDiv); // Добавляем новое сообщение в контейнер
+            });
+
+            // Прокручиваем вниз только если пользователь не прокручивает вверх
+            if (!isUserScrolling) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight; // Прокручиваем вниз
+            }
+        });
+}
+
+    // Обработчик события для определения, прокручивает ли пользователь вверх
+    const messagesContainer = document.getElementById('messages');
+    messagesContainer.addEventListener('scroll', () => {
+        const isAtBottom = messagesContainer.scrollHeight - messagesContainer.clientHeight <= messagesContainer.scrollTop + 1;
+        isUserScrolling = !isAtBottom; // Если не внизу, устанавливаем флаг
+    });
+
+    // Запускаем обновление чата каждую секунду
+    setInterval(updateChat, 1000);
+
+    // Прокрутка области сообщений вниз при загрузке страницы
+    window.onload = function() {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    };
+</script>
+</body>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #ffffff;
+    }
+    .fixed-bottom {
+    position: relative;
+    width: 100%;
+    }
+
+    #chat-container {
+        margin: 50px auto;
+        padding: 20px;
+        background: white;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    /* Для ПК */
+    @media (min-width: 768px) {
+    #chat-container {
+        width: 1000px; /* Ширина для ПК */
+    }
+    }
+
+    /* Для смартфонов */
+    @media (max-width: 767px) {
+    #chat-container {
+        width: 400px; /* Ширина для мобильных устройств */
+    }
+    }
+
+    #messages {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+    }
+
+    .message {
+        margin: 5px 0;
+    }
+
+    input[type="text"] {
+        width: 80%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        padding: 10px;
+        border-radius: 5px;
+        border: none;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+{% endblock %}

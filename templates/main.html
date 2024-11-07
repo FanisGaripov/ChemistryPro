@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Уравнивание хим.реакций{% endblock %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>ChemistryPRO - Главная страница</title>
+    <style>
+        body {
+            background-color: #ffffff;
+            font-family: Arial, sans-serif;
+        }
+        .hero {
+            background-color: #55555e;
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .features {
+            margin: 50px 0;
+        }
+        footer {
+            background-color: #55555e;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .btn.btn-light {
+        color: black; /* Установите цвет текста кнопки черным */
+        }
+        A {
+        color: white; /* Цвет ссылок */
+        }
+        A:visited {
+        color: white; /* Цвет посещенных ссылок */
+        }
+        A:active {
+        color: gray; /* Цвет активных ссылок */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Заголовок -->
+    <header class="hero">
+        <div class="container">
+            <img src="/static/image.webp" alt="" class="logo-image" width="64" height="64">
+            <h1>ChemistryPRO</h1>
+            <p>Ваш ресурс для изучения химии и химических реакций</p>
+            <a href="/instruction" class="btn btn-light" id="shrift">Узнать больше</a>
+        </div>
+    </header>
+
+    <!-- Основной контент -->
+    <div class="container features">
+        <h2 class="text-center">Наши функции</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Цепочки превращений</h5>
+                        <p class="card-text">Создайте цепочки превращений химических реакций с помощью нашего онлайн-инструмента.</p>
+                        <a href="/get_reaction_chain" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Уравнения реакций</h5>
+                        <p class="card-text">Уравнивайте химические реакции разной сложности с помощью нашего онлайн-инструмента.</p>
+                        <a href="/uravnivanie" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Дописывание хим.реакций</h5>
+                        <p class="card-text">Функция дописывания продуктов реакции, работает при помощи api (Бета).</p>
+                        <a href="/complete_reaction" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Молярные массы</h5>
+                        <p class="card-text">Попробуйте наш новый калькулятор молярных масс веществ и хим.реакций.</p>
+                        <a href="/molyarnaya_massa" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Электронная конфигурация</h5>
+                        <p class="card-text">Справочник электронных конфигураций хим.элементов.</p>
+                        <a href="/electronic_configuration" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Структура органических в-в</h5>
+                        <p class="card-text">Узнаем структуру органических в-в при помощи названия(бета).</p>
+                        <a href="/orghim" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container features">
+        <h2 class="text-center">Таблицы</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Таблица Менделеева</h5>
+                        <p class="card-text">Помощь в работе с инструментами сайта.</p>
+                        <a href="/tablica" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Таблица растворимостей</h5>
+                        <p class="card-text">Помощь при составлении уравнений разной сложности.</p>
+                        <a href="/tablica_rastvorimosti" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Таблица кислот</h5>
+                        <p class="card-text">В таблице указаны наиболее известные кислоты и их остатки.</p>
+                        <a href="/tablica_kislotnosti" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    
+    <div class="container features">
+        <h2 class="text-center">Развлечения</h2>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Мини-игра</h5>
+                        <p class="card-text">Запоминайте химические элементы таблицы Менделеева с помощью игры</p>
+                        <a href="/minigame" class="btn btn-primary">Играть</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Общий чат</h5>
+                        <p class="card-text">Общайтесь с другими пользователями сайта: шутите, развлекайтесь, решайте проблемы, общайтесь на химические темы (и не только :) )</p>
+                        <a href="/chat" class="btn btn-primary">Общаться</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Контактная информация -->
+    <div class="container">
+        <h2 class="text-center">Свяжитесь с нами</h2>
+        <p class="text-center">Если у вас есть вопросы или предложения, не стесняйтесь обращаться!</p>
+        <p class="text-center"><strong>Email:</strong> garipovfanis1@yandex.ru</p>
+        <p class="text-center"><strong>Телефон:</strong> +7 (917) 396-94-99</p>
+    </div>
+</body>
+</html>
+{% endblock %}

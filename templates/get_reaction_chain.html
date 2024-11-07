@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Цепочки превращений{% endblock %}
+
+{% block content %}
+<head>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Цепочки превращений хим.реакций</h2>
+            <h5 class="text-center">Вводить следует каждое вещество через знак "="</h5>
+            <form method="post">
+                <div class="form-group">
+                    <input type="text" id="chemical_formula" name="chemical_formula" class="form-control" placeholder="Например: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Решить</button>
+                {% if reaction == '' %}
+                    <h5 class="text-center mt-3">Введите реакцию (неорганическую)</h5>
+                {% elif reaction != '' %}
+                    <p class="text-center mt-3">{{ reaction }}:</p>
+                    {% for i in react2 %}
+                        <p class="text-center">{{ i }}</p>
+                    {% endfor %}
+                {% endif %}
+                <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemer.ru/services/reactions/chains" target="_blank"><font color="blue">chemer.ru</font></a></h5>
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}
