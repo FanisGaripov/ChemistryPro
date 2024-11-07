@@ -180,19 +180,22 @@ def electronic_configuration(element):
     }
 
     atomic_number = elements_data.get(element)
+    atomic_number1 = elements_data.get(element)
+    atom = atomic_number
     if element == '':
-        return "Введите элемент"
+        return "Введите элемент", ""
     if atomic_number is None:
-        return "Элемент не найден"
+        return "Элемент не найден", ""
 
     configurations = []
-    '''subshells = ['1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d', '5p', '6s', '4f', '5d', '6p', '7s', '5f',
+    configurations1 = []
+    subshells = ['1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d', '5p', '6s', '4f', '5d', '6p', '7s', '5f',
                  '6d', '7p']
-    electrons = [2, 2, 6, 2, 6, 2, 10, 6, 2, 10, 6, 2, 14, 10, 6, 2, 14, 10, 6]'''
-    # закомментированный вариант химически правильный, однако на уровне школьной химии мы используем второй вариант.
-    subshells = ['1s', '2s', '2p', '3s', '3p', '3d', '4s', '4p', '4d', '4f', '5s', '5p', '5d', '5f', '6s', '6p', '6d',
-                 '7s', '7p']
-    electrons = [2, 2, 6, 2, 6, 10, 2, 6, 10, 14, 2, 6, 10, 14, 2, 6, 10, 2, 6]
+    electrons = [2, 2, 6, 2, 6, 2, 10, 6, 2, 10, 6, 2, 14, 10, 6, 2, 14, 10, 6]
+
+    subshells1 = ['1s', '2s', '2p', '3s', '3p', '3d', '4s', '4p', '4d', '4f', '5s', '5p', '5d', '5f', '6s', '6p', '6d',
+                  '7s', '7p']
+    electrons1 = [2, 2, 6, 2, 6, 10, 2, 6, 10, 14, 2, 6, 10, 14, 2, 6, 10, 2, 6]
 
     for i in range(len(subshells)):
         if atomic_number > 0:
@@ -202,7 +205,100 @@ def electronic_configuration(element):
             else:
                 configurations.append(f"{subshells[i]}^{atomic_number}")
                 break
-    return ' '.join(configurations)
+
+    for i in range(len(subshells1)):
+        if atomic_number1 > 0:
+            if atomic_number1 >= electrons1[i]:
+                configurations1.append(f"{subshells1[i]}^{electrons1[i]}")
+                atomic_number1 -= electrons1[i]
+            else:
+                configurations1.append(f"{subshells1[i]}^{atomic_number1}")
+                break
+
+    configuration_string = ' '.join(configurations)
+
+    configuration_string2 = ' '.join(configurations1)
+
+    # Генерация текстового графического представления
+    graphic_representation = generate_graphical_representation(configurations)
+
+    return configuration_string, configuration_string2, graphic_representation, atom
+
+
+def generate_graphical_representation(configurations):
+    # графическое представление электронной конфигурации
+    representation = []
+    grouped_representation = {}
+
+    for config in configurations:
+        subshell, count = config.split('^')
+        count = int(count)
+
+        if subshell[0] not in grouped_representation:
+            grouped_representation[subshell[0]] = []
+
+        cells = []
+
+        if subshell.endswith('s'):
+            for _ in range(1):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                if count > 0:
+                    cells[0] += '[↓]'
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+        elif subshell.endswith('p'):
+            # 3 p-орбитали
+            for i in range(3):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+            for i in range(3):
+                if count > 0:
+                    cells[i] += '[↓]'
+                    count -= 1
+
+        elif subshell.endswith('d'):
+            # 5 d-орбиталей
+            for i in range(5):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+            for i in range(5):
+                if count > 0:
+                    cells[i] += '[↓]'
+                    count -= 1
+
+        elif subshell.endswith('f'):
+            # 7 f-орбиталей
+            for i in range(7):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+            for i in range(7):
+                if count > 0:
+                    cells[i] += '[↓]'
+                    count -= 1
+
+        grouped_representation[subshell[0]].append(f"{subshell}: " + ' '.join(cells))
+
+    # Сборка финального представления
+    for level in sorted(grouped_representation.keys()):
+        representation.extend(grouped_representation[level])
+
+    return "\n".join(representation)
 
 
 @app.route('/electronic_configuration', methods=['GET', 'POST'])
@@ -211,10 +307,16 @@ def electronic_configuration_page():
     element = ''
     user = flask_login.current_user
     configuration = ''
+    configuration1 = ''
+    graphic_representation = ''
+    atomic = ''
     if request.method == 'POST':
         element = request.form.get("element", False)
-        configuration = electronic_configuration(element)
-    return render_template('electronic_configuration.html', configuration=configuration, user=user, element=element)
+        try:
+            configuration, configuration1, graphic_representation, atomic = electronic_configuration(element)
+        except Exception as e:
+            configuration1, configuration, graphic_representation, atomic = '', '', '', ''
+    return render_template('electronic_configuration.html', configuration=configuration, configuration1=configuration1, graphic_representation=graphic_representation, atomic=atomic, user=user, element=element)
 
 
 def uravnivanie(formula):
