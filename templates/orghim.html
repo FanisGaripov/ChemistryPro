@@ -33,7 +33,7 @@
     <div class="container">
         <div class="card p-4">
             <h3 class="text-center">Просмотр структуры вещества</h3>
-            <p class="text-center">Введите название вещества</p>
+            <h5 class="text-center">Введите название вещества</h5>
             <form method="post">
                 <div class="form-group">
                     <input type="text" name="substance_name" class="form-control" placeholder="Например: Бутан" required>
@@ -43,26 +43,31 @@
 
             {% if svg_file %}
                 <h4 class="text-center" style="margin: 10px 0;">Структура вещества: {{ substance_name }}</h4>
-                <div style="display: flex; justify-content: center; overflow: auto; max-width: 100%; max-height: 500px;">
+                {% if klass %}
+                <h5 class="text-center" style="margin: 10px 0;">Класс: {{ klass }}</h5>
+                {% endif %}
+                <pre>
                     <object type="image/svg+xml" data="{{ url_for('static', filename=svg_file) }}" style="width: 100%; height: 100%;">
                         Ваш браузер не поддерживает SVG
                     </object>
-                </div>
+                </pre>
             {% endif %}
+            <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemer.ru/services/organic/structural" target="_blank"><font color="blue">chemer.ru</font></a></h5>
         </div>
-
+        {% if isomer_files %}
         <div class="card p-4 mt-4">
             <div style="display: flex; flex-direction: column; align-items: center; margin-top: 20px; overflow: auto; max-height: 400px; width: 100%;">
-                {% if isomers_file %}
                     <h4 class="text-center" style="margin: 10px 0;">Изомеры вещества: {{ substance_name }}</h4>
-                    <div style="display: flex; justify-content: center; overflow: auto; max-width: 100%; max-height: 400px;">
-                        <object type="image/svg+xml" data="{{ url_for('static', filename=isomers_file) }}" style="width: auto; height: 100%;">
+                    <pre style="overflow-y: auto; overflow: visible">
+                        {% for isomer_file in isomer_files %}
+                        <object type="image/svg+xml" data="{{ url_for('static', filename=isomer_file) }}" style="width: auto; height: 100%;">
                             Ваш браузер не поддерживает SVG
                         </object>
-                    </div>
-                {% endif %}
+                        {% endfor %}
+                    </pre>
             </div>
         </div>
+        {% endif %}
     </div>
 </body>
 {% endblock %}
