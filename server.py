@@ -786,6 +786,8 @@ def get_substance_html(substance_name):
     session = requests.Session()
     session.headers.update(headers)
     response = session.get(url)
+    global klass
+    klass = ''
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -796,6 +798,7 @@ def get_substance_html(substance_name):
             cols = row.find_all('td')
             if cols:
                 name = cols[0].text.strip()
+                klass = cols[1].text.strip()
                 link = cols[0].find('a')['href']
                 if substance_name.lower() in name.lower():
                     substance_url = f"https://chemer.ru/services/organic/{link}"
@@ -820,19 +823,19 @@ def extract_svg_and_symbols(html_code):
     spacing = 220  # Расстояние между изомерами
     max_per_row = 20  # Максимум изомеров в строке
 
+    # Извлечение секции с id='tab1'
     tab1_section = soup.find('section', id='tab1')
+    print(tab1_section)  # Отладочный вывод
 
-    # Найдем все таблицы в секции tab1
-    tables = tab1_section.find_all('table')
-
-    for table in tables:
-        svg_elements2 = table.find_all('svg')
+    if tab1_section:
+        # Получаем все SVG элементы внутри секции
+        svg_elements2 = tab1_section.find_all('svg')
 
         for index, svg in enumerate(svg_elements2):
             row = index // max_per_row  # Определяем номер строки
             col = index % max_per_row  # Определяем номер колонки
-            x = col * spacing  # Устанавливаем x координату
-            y = row * 220  # Устанавливаем y координату для новой строки
+            x = col - 1  # Устанавливаем x координату
+            y = row  # Устанавливаем y координату для новой строки
             svg_str = str(svg).replace('<svg', f'<svg x="{x}" y="{y}"')  # Устанавливаем координаты
             isomer_svgs.append(svg_str)
 
@@ -844,6 +847,7 @@ def extract_svg_and_symbols(html_code):
 
 @app.route('/orghim', methods=['GET', 'POST'])
 def orghim():
+    global klass
     isomer_files = []
     user = flask_login.current_user
     if request.method == 'POST':
@@ -863,13 +867,15 @@ def orghim():
             if isomers_svg.strip():
                 isomer_files = []
                 for index, svg in enumerate(isomers_svg.split('</svg>')):
-                    if svg.strip():
-                        file_name = f'static/isomer_{index}.svg'
-                        with open(file_name, 'w', encoding='utf-8') as f:
-                            f.write(f"<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>{svg}</svg>")
-                        isomer_files.append(file_name)
+                    if index <= 9:
+                        if svg.strip():
+                            file_name = f'static/isomer_{index}.svg'
+                            with open(file_name, 'w', encoding='utf-8') as f:
+                                f.write(f"<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>Х{symbols_svg}{svg}</svg></svg>")
+                            filename_without_static = f'isomer_{index}.svg'
+                            isomer_files.append(filename_without_static)
 
-            return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user)
+            return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass)
 
     return render_template('orghim.html', svg_file=None, isomer_files=None, user=user)
 
