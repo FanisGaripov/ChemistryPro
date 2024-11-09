@@ -1,7 +1,7 @@
 Eng:
 Introduction
 ChemistryPro is a web application designed for studying Chemistry at the school level of grades 8-11. It offers users various functions for interacting with chemical element data.
-
+The site is deployed on render.com: https://chemistypro.onrender.com/
 A little bit about the architecture of this site: The site is based on the Python programming language. Python has a large number of libraries, which is an advantage of this programming language. Flask is the main library on which this site is based.
 
 pip install flask
@@ -14,9 +14,12 @@ ChemistryPro/
 ├── templates/             # HTML Templates
 about.html # About me
 │ ├─── base.html # Basic Template
+│ ├─── all_profiles.html # List of all users of the site
 │ ├─── bug.html # In case of errors
+│ ├─── chat.html # Chat
 │ ├─── complete_reaction.html # Adding reactions
 │ ├─── documentation.html # Documentation
+│   ├── edit_profile.html # Profile Editing
 │ ├─── electronic_configuration.html # Electronic configuration
 │ ├─── get_reaction_chain.html # Chains of transformations
 │ ├─── index.html # Equalizing reactions
@@ -26,7 +29,8 @@ about.html # About me
 of the site minigame.html # MiniGame
 │ ├─── molyarnaya_massa.html # Molar masses
 │ ├─── orghim.html # The structure of the org. in-in
-│   ├── profile.html # Profiles
+│   ├── otherprofile.html # of the user profile (for
+the user who is viewing other profiles).html # Profiles
 │ ├─── register.html # Registration
 │ ├─── tablica.html # The Periodic Table
 │ ├─── tablica_kislotnosti.html # Acidity table
@@ -43,110 +47,21 @@ Functions
 1. Adding chemical reactions
 This function allows, in the presence of known reaction reagents, to obtain a reaction product. It works by sending a request to the server chemequations.com . The requests library (python) is used.
 
- pip install requests
-def get_chemical_equation_solution(reaction):
-    if request.method == 'POST':
-        reaction = request.form.get("chemical_formula", False)
-    # Encoding the reaction for the URL
-        encoded_reaction = quote(reaction)
-
-    # We form the URL taking into account the chemical reaction
-        url = f"https://chemequations.com/ru/?s={encoded_reaction}"
-
-    # Sending a GET request
-        response = requests.get(url)...
 2. Equalization of chemical reactions
 This function allows you to equalize any chemical reaction. The chempy library(python) is used.
-
-pip install chempy
 It works using the built-in method of the chempy library, namely balance_stoichiometry.
-def uravnivanie(formula):
-    ...# balance of equations
-balanced_reaction = balance_stoichiometry(reactants, products)
-reactants_str = '+'.join([f"{v}{k}" for k, v in balanced_reaction[0].items()])
-products_str = '+'.join([f"{v}{k}" for k, v in balanced_reaction[1].items()])
-otvet = f"{reactants_str} = {products_str}"...
+
 3. Electronic configuration
 This function allows you to find out the electronic configuration of any substance without looking at the periodic table. It does not use any other libraries except flask (python, the main library on which the entire project is based). The simplest function to implement.
-
-def electronic_configuration(element):
-
-    ...for i in range(len(subshells)):
-        if atomic_number > 0:
-            if atomic_number >= electrons[i]:
-                configurations.append(f"{subshells[i]}^{electrons[i]}")
-                atomic_number -= electrons[i]
-            else:
-                configurations.append(f"{subshells[i]}^{atomic_number}")
-                break
-    return ' '.join(configurations)...
-            
+          
 4. Molar mass of substances
-The function allows you to find out the molar reaction of any substance or reaction. The data on the mass of the element is taken from the periodic table, then this mass is multiplied by the coefficient of the element. You can get the entire mass as a whole, as well as the mass of each element individually.
-
-        try:
-            dlyproverki, element_details = molecular_mass(chemical_formula)
-            resultat = f"Molar mass {chemical_formula}: {dlyproverki} g/mol"
-            for element, mass, count, total_mass in element_details:
-                otdelno.append(f"{count} x {element} ({round(mass)} g/mol): {round(total_mass)} g")
+The function allows you to find out the molar reaction of any substance or reaction. The data on the mass of the element is taken from the periodic table, then this mass is multiplied by the coefficient of the element. It is possible to obtain the entire mass as a whole, as well as the mass of each element individually.
             
 5. Chains of transformations
-The function allows you to find out the whole chain of transformations of a substance, namely what reactions must occur to obtain a particular substance. It works by sending a request to the server chemer.ru . The implementation will require the requests library(python). We send a request to the server, and it should return the html of all reactions to us. It is extremely important to enter substances in the field. Since the data from the field is entered in the url of the site, it is important that this data is formatted. The main requirement when entering: enter all reactions through the "=" sign. For example: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3.
-
-def get_reaction_chain(reaction):
-    # chain of transformations
-if request.method == 'POST':
-reaction = request.form.get("chemical_formula", False)
-url = f"https://chemer.ru/services/reactions/chains /{reaction}"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        }
-        session = requests.Session()
-        session.headers.update(headers)
-        response = session.get(url)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            content_sections = soup.find_all('section', class_='content') # We are looking for all sections with the 'content' class...
+The function allows you to find out the whole chain of transformations of a substance, namely, which reactions must occur in order to obtain a particular substance. It works by sending a request to the server chemer.ru . The implementation will require the requests library(python). We send a request to the server, and it should return the html of all reactions to us. It is extremely important to enter substances in the field. Since the data from the field is entered in the url of the site, it is important that this data is formatted. The main requirement when entering: enter all reactions through the "=" sign. For example: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3.
             
 6. The structure of organic reactions
 The function allows you to find an organic substance, namely its graphical representation. For example: when you enter 2,2-dimethylbutane, pictures in .svg format should be displayed. The first such picture will be the substance itself, and the second larger picture will be all the isomers of the substance (or those that represent the resource to which we send the request). All this is implemented using the requests library (python), i.e. we also send a request to the site and it returns a response to us. Despite such a seemingly simple implementation, the code of this part was the most difficult to write. Here is a part of it:
-
-
-def get_substance_html(substance_name):
-    url = "https://chemer.ru/services/organic/structural"
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-    }
-    session = requests.Session()
-    session.headers.update(headers)
-    response = session.get(url)
-
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        table = soup.find('table')
-        rows = table.find_all('tr')...
-
-def extract_svg_and_symbols(html_code):
-    soup = BeautifulSoup(html_code, 'html.parser')
-    svg_elements = soup.find_all('svg')
-    symbols = soup.find_all('symbol')
-
-    if not svg_elements:
-        return None, None, None
-
-    first_svg_content = str(svg_elements[0])
-    if 'width' not in first_svg_content or 'height' not in first_svg_content:
-        first_svg_content = first_svg_content.replace()...
-
-@app.route('/orghim', methods=['GET', 'POST'])
-def orghim():
-    user = flask_login.current_user
-    if request.method == 'POST':
-        substance_name = request.form['substance_name']
-        html_code = get_substance_html(substance_name)
-
-        if html_code:
-            first_svg, isomers_svg, symbols_svg = extract_svg_and_symbols(html_code)...
             
 Tables
 1. The Periodic Table
@@ -158,23 +73,11 @@ The page returns a solubility table.
 3.Table of acids and acid residues
 The page returns acids and their residues, and there is also a table of acid strengths: from the weakest to the strongest.
 
-The code for all these pages is similar, I'll show you only one:
-
-
-@app.route('/tablica', methods=['GET', 'POST'])
-def tablica():
-# periodic table
-    user = flask_login.current_user
-    return render_template('tablica.html', user=user)
-            
-Also, of course, you need to create an html file with a page before writing it into your code.
-
 General chat
 The general chat is intended for communication between users of the site. Here you can search for new friends, find a solution to your problem, and just share your findings. A prerequisite for using the chat: authorization on the site.
 
 A mini-game
 The mini-game is designed to train memory on chemical elements. The game starts showing random elements from the periodic table, and the player must guess what it is called.
-
 How to play:
 Enter the name of the item in Russian.
 If the answer is correct, the following element will be displayed.
@@ -190,7 +93,7 @@ garipovfanis1@yandex.ru
 Rus:
 Введение
 ChemistryPro — это веб-приложение, разработанное для изучения Химии школьного уровня 8-11 классов. Оно предлагает пользователям различные функции для взаимодействия с данными о химических элементах.
-
+Сайт задеплоен на render.com: https://chemistypro.onrender.com/
 Немного об архитектуре этого сайта: Сайт основан на языке программирования Python. Python обладает большим количеством библиотек, что является преимуществом этого языка программирования. Flask - это основная библиотека на которой базируется этот сайт.
 
 pip install flask
