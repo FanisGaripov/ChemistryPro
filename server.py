@@ -148,17 +148,56 @@ def molecular_mass(formula):
         'Og': 294,
     }
 
+    def parse_formula(formula):
+        stack = []
+        current = {}
+        i = 0
+        while i < len(formula):
+            if formula[i] == '(' or formula[i] == '[':
+                stack.append(current)
+                current = {}
+                i += 1
+            elif formula[i] == ')' or formula[i] == ']':
+                i += 1
+                num = ''
+                while i < len(formula) and formula[i].isdigit():
+                    num += formula[i]
+                    i += 1
+                multiplier = int(num) if num else 1
+                for element, count in current.items():
+                    current[element] = count * multiplier
+                if stack:
+                    parent = stack.pop()
+                    for element, count in current.items():
+                        if element in parent:
+                            parent[element] += count
+                        else:
+                            parent[element] = count
+                    current = parent
+            else:
+                match = re.match(r'([A-Z][a-z]?)(\d*)', formula[i:])
+                if match:
+                    element, count = match.groups()
+                    count = int(count) if count else 1
+                    if element in current:
+                        current[element] += count
+                    else:
+                        current[element] = count
+                    i += len(match.group(0))
+                else:
+                    i += 1
+        return current
+
+    element_counts = parse_formula(formula)
     mass = 0.0
-    elements = re.findall(r'([A-Z][a-z]?)(\d*)', formula)
-    element_details = []  # Список для хранения деталей элементов
-    for element, count in elements:
-        count = int(count) if count else 1  # Установите 1, если count отсутствует
+    element_details = []
+    for element, count in element_counts.items():
         element_mass = atomic_masses[element]
         total_mass = element_mass * count
-        element_details.append((element, atomic_masses[element], count, total_mass))  # Добавляем элемент, его массу, количество и общую массу
+        element_details.append((element, atomic_masses[element], count, total_mass))
         mass += total_mass
 
-    return round(mass, 2), element_details  # Возвращаем общую массу и детали элементов
+    return round(mass, 2), element_details
 
 
 def electronic_configuration(element):
@@ -437,12 +476,20 @@ def get_reaction_chain(reaction):
             content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'
 
             results = []  # Список для хранения первых ответов из каждой секции
-
-            for content_section in content_sections:
-                reactions = content_section.find_all('p', class_='resizable-block')  # Ищем все 'p' внутри каждой секции
-                if reactions:
-                    first_reaction = reactions[0].get_text().strip()  # Берем первый ответ из секции
-                    results.append(first_reaction)  # Добавляем его в результаты
+            if content_sections:
+                for content_section in content_sections:
+                    reactions = content_section.find_all('p', class_='resizable-block')  # Ищем все 'p' внутри каждой секции
+                    if reactions:
+                        first_reaction = reactions[0].get_text().strip()  # Берем первый ответ из секции
+                        results.append(first_reaction)  # Добавляем его в результаты
+                    else:
+                        # Если нет реакций с классом 'resizable-block', ищем все 'p' и берем первый из них
+                        all_paragraphs = content_section.find_all('p')
+                        if all_paragraphs:
+                            first_paragraph = all_paragraphs[0].get_text().strip()  # Берем текст первого 'p'
+                            results.append(first_paragraph)
+                        else:
+                            results.append("Нет данных")  # Если нет ни одного 'p', добавляем сообщение
 
             return results  # Возвращаем список первых ответов из всех секций
 
@@ -811,6 +858,7 @@ def extract_svg_and_symbols(html_code):
     soup = BeautifulSoup(html_code, 'html.parser')
     svg_elements = soup.find_all('svg')
     symbols = soup.find_all('symbol')
+    names = ''
 
     if not svg_elements:
         return None, None, None
@@ -825,11 +873,11 @@ def extract_svg_and_symbols(html_code):
 
     # Извлечение секции с id='tab1'
     tab1_section = soup.find('section', id='tab1')
-    print(tab1_section)  # Отладочный вывод
 
     if tab1_section:
         # Получаем все SVG элементы внутри секции
         svg_elements2 = tab1_section.find_all('svg')
+        names = tab1_section.find_all('a')
 
         for index, svg in enumerate(svg_elements2):
             row = index // max_per_row  # Определяем номер строки
@@ -842,12 +890,13 @@ def extract_svg_and_symbols(html_code):
     isomer_svgs_content = ''.join(isomer_svgs)
     symbol_content = ''.join(str(symbol) for symbol in symbols)
 
-    return first_svg_content, isomer_svgs_content, symbol_content
+    return first_svg_content, isomer_svgs_content, symbol_content, names
 
 
 @app.route('/orghim', methods=['GET', 'POST'])
 def orghim():
     global klass
+    combined = ''
     isomer_files = []
     user = flask_login.current_user
     if request.method == 'POST':
@@ -855,7 +904,7 @@ def orghim():
         html_code = get_substance_html(substance_name)
 
         if html_code:
-            first_svg, isomers_svg, symbols_svg = extract_svg_and_symbols(html_code)
+            first_svg, isomers_svg, symbols_svg, names = extract_svg_and_symbols(html_code)
 
             # Сохраняем первую SVG-картинку и символы в файл
             if first_svg:
@@ -866,6 +915,7 @@ def orghim():
             # Сохраняем изомеры в отдельные файлы
             if isomers_svg.strip():
                 isomer_files = []
+                nazvaniya = []
                 for index, svg in enumerate(isomers_svg.split('</svg>')):
                     if index <= 9:
                         if svg.strip():
@@ -875,9 +925,16 @@ def orghim():
                             filename_without_static = f'isomer_{index}.svg'
                             isomer_files.append(filename_without_static)
 
-            return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass)
+                for i, nazv in enumerate(names):
+                    if i <= 9:
+                        soup = BeautifulSoup(str(nazv), 'html.parser')
+                        nazv = soup.a.text
+                        nazvaniya.append(nazv.capitalize())
+                combined = list(zip(nazvaniya, isomer_files))
 
-    return render_template('orghim.html', svg_file=None, isomer_files=None, user=user)
+            return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass, combined=combined)
+
+    return render_template('orghim.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user)
 
 
 @app.errorhandler(404)
