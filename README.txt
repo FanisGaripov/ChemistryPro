@@ -203,9 +203,12 @@ ChemistryPro/
 ├── templates/             # Шаблоны HTML
 │   ├── about.html                      # Обо мне
 │   ├── base.html                       # Базовый шаблон
+│   ├── all_profiles.html               # Список всех пользователей сайта
 │   ├── bug.html                        # В случае ошибок
+│   ├── chat.html                       # Чат
 │   ├── complete_reaction.html          # Дописывание реакций
 │   ├── documentation.html              # Документация
+│   ├── edit_profile.html               # Редактирование профиля
 │   ├── electronic_configuration.html   # Электронная конфигурация
 │   ├── get_reaction_chain.html         # Цепочки превращений
 │   ├── index.html                      # Уравнивание реакций
@@ -215,6 +218,7 @@ ChemistryPro/
 │   ├── minigame.html                   # МиниИгра
 │   ├── molyarnaya_massa.html           # Молярные массы
 │   ├── orghim.html                     # Структура орг. в-в
+│   ├── otherprofile.html               # Профиля пользователей (для пользователя, который просматривает другие профили)
 │   ├── profile.html                    # Профили
 │   ├── register.html                   # Регистрация
 │   ├── tablica.html                    # Таблица Менделеева
@@ -232,110 +236,21 @@ https://github.com/FanisGaripov/ChemistyPro
 1. Дописывание химических реакций
 Это функция позволяет, при наличии известных реагентов реакции, получить продукт реакции. Работает при помощи отправки запроса на сервер chemequations.com . Используется библиотека requests(python).
 
- pip install requests
-def get_chemical_equation_solution(reaction):
-    if request.method == 'POST':
-        reaction = request.form.get("chemical_formula", False)
-    # Кодируем реакцию для URL
-        encoded_reaction = quote(reaction)
-
-    # Формируем URL с учетом химической реакции
-        url = f"https://chemequations.com/ru/?s={encoded_reaction}"
-
-    # Отправляем GET-запрос
-        response = requests.get(url)...
 2. Уравнивание химических реакций
 Эта функция позволяет уравнять любую химическую реакцию. Используется библиотека chempy(python).
-
-pip install chempy
 Работает при помощи встроенного метода библиотеки chempy, а именно balance_stoichiometry.
-def uravnivanie(formula):
-    ...# баланс уравнений
-    balanced_reaction = balance_stoichiometry(reactants, products)
-    reactants_str = ' + '.join([f"{v}{k}" for k, v in balanced_reaction[0].items()])
-    products_str = ' + '.join([f"{v}{k}" for k, v in balanced_reaction[1].items()])
-    otvet = f"{reactants_str} = {products_str}"...
+
 3. Электронная конфигурация
 Эта функция позволяет узнать электронную конфигурацию любого вещества без заглядывания в таблицу Менделеева. Не использует других библиотек, кроме flask(python, основная библиотека, на которой держится весь проект). Самая простая функция в реализации.
-
-def electronic_configuration(element):
-
-    ...for i in range(len(subshells)):
-        if atomic_number > 0:
-            if atomic_number >= electrons[i]:
-                configurations.append(f"{subshells[i]}^{electrons[i]}")
-                atomic_number -= electrons[i]
-            else:
-                configurations.append(f"{subshells[i]}^{atomic_number}")
-                break
-    return ' '.join(configurations)...
-            
+          
 4. Молярная масса веществ
 Функция позволяет узнать молярную реакцию любого вещества или реакции. Данные о массе элемента берутся из таблицы Менделеева, далее эта масса умножается на коэффициент элемента. Можно получить всю массу целиком, а также массу каждого элемента по отдельности.
-
-        try:
-            dlyproverki, element_details = molecular_mass(chemical_formula)
-            resultat = f"Молярная масса {chemical_formula}: {dlyproverki} г/моль"
-            for element, mass, count, total_mass in element_details:
-                otdelno.append(f"{count} x {element} ({round(mass)} г/моль): {round(total_mass)} г")
             
 5. Цепочки превращений
 Функция позволяет узнать целую цепочку превращений вещества, а именно какие реакции должны произойти, чтобы получить то или иное вещество. Работает при помощи отправки запроса на сервер chemer.ru . Для реализации потребуется библиотека requests(python). Мы отправляем запрос на сервер, а тот должен нам вернуть html всех реакций. Крайне важен ввод веществ в поле. Т.к данные из поля вводятся в url сайта, то важно чтобы эти данные были отформатированы. Главное требование при вводе: все реакции вводить через знак "=". Например: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3.
-
-def get_reaction_chain(reaction):
-    # цепочка превращений
-    if request.method == 'POST':
-        reaction = request.form.get("chemical_formula", False)
-        url = f"https://chemer.ru/services/reactions/chains/{reaction}"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        }
-        session = requests.Session()
-        session.headers.update(headers)
-        response = session.get(url)
-        if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'...
             
 6. Структура органических реакций
 Функция позволяет найти органическое вещество, а именно его графическое представление. Например: при вводе 2,2-диметилбутан, должны вывестись картинки в формате .svg. Первой такой картинкой будет само вещество, а вторая картинка побольше - все изомеры вещества(или те, что представляет ресурс, на который мы отправляем запрос). Все это реализовано при помощи библиотеки requests(python), т.е мы также отправляем запрос на сайт и он возвращает нам ответ. Несмотря на такую, казалось бы простую реализацию, код этой часть был самым трудным в написании. Вот его часть:
-
-
-def get_substance_html(substance_name):
-    url = "https://chemer.ru/services/organic/structural"
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-    }
-    session = requests.Session()
-    session.headers.update(headers)
-    response = session.get(url)
-
-    if response.status_code == 200:
-        soup = BeautifulSoup(response.text, 'html.parser')
-        table = soup.find('table')
-        rows = table.find_all('tr')...
-
-def extract_svg_and_symbols(html_code):
-    soup = BeautifulSoup(html_code, 'html.parser')
-    svg_elements = soup.find_all('svg')
-    symbols = soup.find_all('symbol')
-
-    if not svg_elements:
-        return None, None, None
-
-    first_svg_content = str(svg_elements[0])
-    if 'width' not in first_svg_content or 'height' not in first_svg_content:
-        first_svg_content = first_svg_content.replace()...
-
-@app.route('/orghim', methods=['GET', 'POST'])
-def orghim():
-    user = flask_login.current_user
-    if request.method == 'POST':
-        substance_name = request.form['substance_name']
-        html_code = get_substance_html(substance_name)
-
-        if html_code:
-            first_svg, isomers_svg, symbols_svg = extract_svg_and_symbols(html_code)...
             
 Таблицы
 1.Таблица Менделеева
@@ -347,23 +262,11 @@ def orghim():
 3.Таблица кислот и кислотных остатков
 Страница возвращает кислоты и их остатки, также есть таблица сил кислот: от самой слабой, до самой сильной.
 
-Код для всех этих страниц схож, покажу только один:
-
-
-@app.route('/tablica', methods=['GET', 'POST'])
-def tablica():
-    # таблица менделеева
-    user = flask_login.current_user
-    return render_template('tablica.html', user=user)
-            
-Также, конечно, нужно создать html файл со страницей, прежде чем вписывать это себе в код.
-
 Общий чат
 Общий чат предназначен для общения пользователей сайта. Здесь Вы можете искать новых друзей, найти решение своей проблемы, а также просто поделиться своими находками. Обязательное условие пользования чатом: авторизация на сайте.
 
 Мини-игра
 Мини-игра предназначена для тренировки памяти по химическим элементам. Игра начинает показывать случайные элементы из таблицы Менделеева, а игрок должен угадать как он называется.
-
 Как играть:
 Введите название элемента на русском языке.
 Если ответ верный, будет показан следующий элемент.
