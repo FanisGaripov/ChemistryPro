@@ -659,10 +659,10 @@ def tablica_kislotnosti():
     return render_template('tablica_kislotnosti.html', user=user)
 
 
-'''@app.route('/uchebnik', methods=['GET', 'POST'])
+@app.route('/uchebnik', methods=['GET', 'POST'])
 def uchebnik():
     user = flask_login.current_user
-    return render_template('uchebnik.html', user=user)'''
+    return render_template('uchebnik.html', user=user)
 
 
 def minigamefunc():
@@ -832,6 +832,11 @@ def minigame():
                     otvety = 0
                     user.summa = otvety
                     user.pokupki = pravilno
+                    if right_percent >= 50:
+                        user.wins += 1
+                        user.allgames += 1
+                    else:
+                        user.allgames += 1
                     db.session.commit()
                     h = ['']
                     return render_template('winning.html', user=user, right_percent=right_percent)
@@ -853,6 +858,7 @@ def get_substance_html(substance_name):
     response = session.get(url)
     global klass
     klass = ''
+    namez = []
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
@@ -865,11 +871,13 @@ def get_substance_html(substance_name):
                 name = cols[0].text.strip()
                 klass = cols[1].text.strip()
                 link = cols[0].find('a')['href']
-                if substance_name.lower() in name.lower():
+                if substance_name.lower() in name.lower() and substance_name.lower() == name.lower():
                     substance_url = f"https://chemer.ru/services/organic/{link}"
                     substance_response = session.get(substance_url)
                     return substance_response.text
-    return None
+                elif substance_name.lower() in name.lower():
+                    namez.append(name)
+    return None, namez
 
 
 def extract_svg_and_symbols(html_code):
@@ -916,10 +924,12 @@ def orghim():
     global klass
     combined = ''
     isomer_files = []
+    variants = ''
     user = flask_login.current_user
+    substance_name = ''
     if request.method == 'POST':
         substance_name = request.form['substance_name']
-        html_code = get_substance_html(substance_name)
+        html_code, variants = get_substance_html(substance_name)
 
         if html_code:
             first_svg, isomers_svg, symbols_svg, names = extract_svg_and_symbols(html_code)
@@ -952,7 +962,7 @@ def orghim():
 
             return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass, combined=combined)
 
-    return render_template('orghim.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user)
+    return render_template('orghim.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user, variants=variants, substance_name=substance_name)
 
 
 @app.errorhandler(404)
@@ -1105,11 +1115,13 @@ def edit_profile():
             name = request.form['name']
             surname = request.form['surname']
             email = request.form['email']
+            status = request.form['status']
 
             user.username = username
             user.surname = surname
             user.name = name
             user.email = email
+            user.status = status
             if not os.path.exists(app.config['UPLOAD_FOLDER']):
                 os.makedirs(app.config['UPLOAD_FOLDER'])
 
