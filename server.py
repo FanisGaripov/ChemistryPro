@@ -12,8 +12,6 @@ from bs4 import BeautifulSoup
 from urllib.parse import quote
 import random
 from datetime import datetime
-from flask_migrate import Migrate
-from mod import db, User
 # импортируем все библиотеки
 
 app = Flask(__name__)
@@ -24,7 +22,6 @@ app.secret_key = 'supersecretkey'
 login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
-migrate = Migrate(app, db)
 c = []
 
 
