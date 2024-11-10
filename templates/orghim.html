@@ -34,6 +34,7 @@
         <div class="card p-4">
             <h3 class="text-center">Просмотр структуры вещества</h3>
             <h5 class="text-center">Введите название вещества</h5>
+            <h5 class="text-center"><a href="/uchebnik" target="_blank"><font color="blue"> Справочник по органической химии</a></h5>
             <form method="post">
                 <div class="form-group">
                     <input type="text" name="substance_name" class="form-control" placeholder="Например: Бутан" required>
@@ -51,6 +52,12 @@
                         Ваш браузер не поддерживает SVG
                     </object>
                 </pre>
+            {% elif variants %}
+                <h4 class="text-center" style="margin: 10px 0;">Вы ввели: {{ substance_name }}</h4>
+                    <h5>Возможно вы имели ввиду:</h5>
+                    {% for variant in variants %}
+                    <p>{{ variant }}</p>
+                    {% endfor %}
             {% endif %}
             <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemer.ru/services/organic/structural" target="_blank"><font color="blue">chemer.ru</font></a></h5>
         </div>
