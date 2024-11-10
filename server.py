@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, session, url_for, jsonify, send_file
+from flask import Flask, render_template, request, redirect, flash, session, url_for, jsonify, send_file, send_from_directory
 import re
 from mod import db, User
 from chempy import balance_stoichiometry
@@ -618,6 +618,24 @@ def chat_saving():
         return send_file(file_path, as_attachment=True)
     else:
         return 'Чат пуст'
+
+
+@app.route('/download-db')
+def download_db():
+    user = flask_login.current_user
+    if user.is_authenticated:
+        if user.username == 'admin123':
+            try:
+                return send_from_directory(
+                    directory='instance',  # Папка, где хранится база данных
+                    path='products.db',  # Имя файла базы данных
+                    as_attachment=True  # Это указывает, что файл должен быть скачан
+                )
+            except Exception as e:
+                return str(e), 404
+    else:
+        bugcode = 6
+        return render_template('bug.html', bugcode=bugcode, user=user)
 
 
 @app.route('/tablica', methods=['GET', 'POST'])
