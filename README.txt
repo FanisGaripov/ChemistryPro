@@ -76,8 +76,8 @@ The page returns acids and their residues, and there is also a table of acid str
 General chat
 The general chat is intended for communication between users of the site. Here you can search for new friends, find a solution to your problem, and just share your findings. A prerequisite for using the chat: authorization on the site.
 
-A mini-game
-The mini-game is designed to train memory on chemical elements. The game starts showing random elements from the periodic table, and the player must guess what it is called.
+A minigame
+The minigame is designed to train memory on chemical elements. The game starts showing random elements from the periodic table, and the player must guess what it is called.
 How to play:
 Enter the name of the item in Russian.
 If the answer is correct, the following element will be displayed.
