@@ -15,6 +15,9 @@ class User(UserMixin, db.Model):
     avatar = db.Column(db.String(150), default='default_avatar.png')
     pokupki = db.Column(db.Integer, nullable=True, default=0)
     summa = db.Column(db.Integer, nullable=True, default=0)
+    wins = db.Column(db.Integer, default=0)
+    allgames = db.Column(db.Integer, default=0)
+    status = db.Column(db.String(100), nullable=False)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
