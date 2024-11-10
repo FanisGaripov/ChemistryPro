@@ -3,6 +3,12 @@
 {% block title %}Инструкция{% endblock %}
 
 {% block content %}
+<style>
+    .fixed-bottom {
+    position: relative;
+    width: 100%;
+    }
+</style>
 <div class="container mt-5">
     <h1 class="text-center mb-4">Инструкция по применению сайта</h1>
     <p class="lead text-center">Сайт предназначен для использования в учебных целях для учеников 8-11 классов.</p>
@@ -24,6 +30,13 @@
     <p>
         <a href="https://chemer.ru/services/reactions/chains/" target="_blank" class="text-primary">chemer.ru</a>
     </p>
+
+    <h4 class="mt-5">Список всех пользователей:</h4>
+    <br>
+    <p>
+        <a href="/all_profiles" target="_blank" class="text-primary">Перейти</a>
+    </p>
+
     <h4 class="mt-5">Подробная документация к сайту:</h4>
     <p>
         <a href="/documentation" class="text-primary">Документация</a>

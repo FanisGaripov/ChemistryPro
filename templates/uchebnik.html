@@ -1,19 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<div id="3dviewer" style="width: 100%; height: 400px;"></div>
-<script src="https://3Dmol.org/build/3Dmol.js"></script>
-<script>
-    var viewer = $3Dmol.createViewer("3dviewer", {backgroundColor: "white"});
-    viewer.addModel("C1=CC=CC=C1", "smiles");
-    viewer.setStyle({}, {stick: {radius: 0.2}});
-    viewer.setBackgroundColor("green");
-    viewer.zoomTo();
-    viewer.render();
-</script>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Миниигра{% endblock %}
+
+{% block content %}
+<style>
+    @media (min-width: 768px) {
+    #info {
+        width: 1000px; /* Ширина для ПК */
+    }
+    }
+
+    /* Для смартфонов */
+    @media (max-width: 767px) {
+    #info {
+        width: 400px; /* Ширина для мобильных устройств */
+    }
+    }
+</style>
+<h2>Справочный материал по органической химии</h2>
+<iframe id="info" src="https://docs.google.com/document/d/e/2PACX-1vS1U3ivOp8fdSKwvB0iDqv-TEY8-epCOOCHLTHYDY_JdmSadgk6NOhuuIt5FzlIwg/pub?embedded=true" width="1100px" height="1000px"></iframe>
+{% endblock %}

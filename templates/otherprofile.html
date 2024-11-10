@@ -22,8 +22,15 @@
                     <p><strong>Фамилия:</strong> {{ polzovatel.surname }}</p>
                     <p><strong>Имя:</strong> {{ polzovatel.name }}</p>
                     <p><strong>Email:</strong> {{ polzovatel.email }}</p>
-                    <!---<p><strong>Количество покупок:</strong> {{ user.pokupki }}</p>
-                    <p><strong>Покупки на сумму:</strong> {{ user.summa }} руб.</p>-->
+                    {% if polzovatel.allgames != 0 %}
+                    <p><strong>Процент побед в миниигре:</strong> {{ (polzovatel.wins / polzovatel.allgames) * 100 }}% </p>
+                    {% else %}
+                    <p><strong>Процент побед в миниигре:</strong> 0.0% </p>
+                    {% endif %}
+                    <p><strong>Всего сыграно игр:</strong> {{ polzovatel.allgames }}</p>
+                    {% if polzovatel.status != '' or polzovatel.status != 'None'%}
+                    <p><strong>Статус:</strong> {{ polzovatel.status }}</p>
+                    {% endif %}
                 </div>
                 <br>
                 {% if user.username == polzovatel.username or user.username == 'admin123' %}

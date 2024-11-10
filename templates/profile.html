@@ -22,6 +22,15 @@
                     <p><strong>Фамилия:</strong> {{ user.surname }}</p>
                     <p><strong>Имя:</strong> {{ user.name }}</p>
                     <p><strong>Email:</strong> {{ user.email }}</p>
+                    {% if user.allgames != 0 %}
+                    <p><strong>Процент побед в миниигре:</strong> {{ (user.wins / user.allgames) * 100 }}% </p>
+                    {% else %}
+                    <p><strong>Процент побед в миниигре:</strong> 0.0% </p>
+                    {% endif %}
+                    <p><strong>Всего сыграно игр:</strong> {{ user.allgames }}</p>
+                    {% if user.status or user.status != '' %}
+                    <p><strong>Статус(виден всем):</strong> {{ user.status }}</p>
+                    {% endif %}
                     <!---<p><strong>Количество покупок:</strong> {{ user.pokupki }}</p>
                     <p><strong>Покупки на сумму:</strong> {{ user.summa }} руб.</p>-->
                 </div>
