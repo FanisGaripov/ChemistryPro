@@ -4,3 +4,4 @@ flask_sqlalchemy
 chempy
 gunicorn
 werkzeug
+Flask-Migrate
