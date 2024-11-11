@@ -874,7 +874,7 @@ def get_substance_html(substance_name):
                 if substance_name.lower() in name.lower() and substance_name.lower() == name.lower():
                     substance_url = f"https://chemer.ru/services/organic/{link}"
                     substance_response = session.get(substance_url)
-                    return substance_response.text
+                    return substance_response.text, None
                 elif substance_name.lower() in name.lower():
                     namez.append(name)
     return None, namez
