@@ -456,6 +456,14 @@ def complete_reaction_page():
     if request.method == 'POST':
         reaction = request.form.get("chemical_formula", False)
         react1 = get_chemical_equation_solution(reaction)
+        if '(g)' in react1:
+            react1 = react1.replace('(g)', '')
+        if '(s)' in react1:
+            react1 = react1.replace('(s)', '')
+        if '(aq)' in react1:
+            react1 = react1.replace('(aq)', '')
+        if '(l)' in react1:
+            react1 = react1.replace('(l)', '')
 
     return render_template('complete_reaction.html', get_chemical_equation_solution=get_chemical_equation_solution, react1=react1, user=user, reaction=reaction)
 
@@ -598,10 +606,10 @@ def chat_messages():
                 save_message(user.username, s)  # Сохраняем сообщение в файл
             elif 'delete' in request.form:  # Удаление сообщения
                 index = int(request.form['delete'])
-                if user.username == 'admin123' or chat[index]['username'] == user.username:
+                if user.admin == 1 or chat[index]['username'] == user.username:
                     delete_message(index)  # Удаляем сообщение
             elif 'delete_all_messages' in request.form:
-                if user.username == 'admin123':
+                if user.admin == 1:
                     delete_all_messages()
             chat = load_chat_history()  # Обновляем чат после сохранения/удаления
             return redirect(url_for('chat_messages'))  # Перенаправляем на ту же страницу
@@ -624,7 +632,7 @@ def chat_saving():
 def download_db():
     user = flask_login.current_user
     if user.is_authenticated:
-        if user.username == 'admin123':
+        if user.admin == 1:
             try:
                 return send_from_directory(
                     directory='instance',  # Папка, где хранится база данных
@@ -875,8 +883,12 @@ def get_substance_html(substance_name):
                     substance_url = f"https://chemer.ru/services/organic/{link}"
                     substance_response = session.get(substance_url)
                     return substance_response.text, None
-                elif substance_name.lower() in name.lower():
+                elif substance_name.lower() in name.lower() and name.lower()[2:] != substance_name.lower():
                     namez.append(name)
+                elif substance_name.lower() in name.lower() and name.lower()[:2] == 'н-' and name.lower()[2:] == substance_name.lower():
+                    substance_url = f"https://chemer.ru/services/organic/{link}"
+                    substance_response = session.get(substance_url)
+                    return substance_response.text, None
     return None, namez
 
 
@@ -1063,7 +1075,7 @@ def delete_profile(username):
     bugcode = 0
     polzovatel = User.query.filter_by(username=username).first()
     if user.is_authenticated:
-        if user.username == polzovatel.username or user.username == 'admin123':
+        if user.username == polzovatel.username or user.admin == 1:
             try:
                 filename = polzovatel.avatar
                 db.session.delete(polzovatel)
@@ -1075,7 +1087,7 @@ def delete_profile(username):
             except:
                 bugcode = 8
                 return render_template('bug.html', user=user, bugcode=bugcode)
-            if user.username == 'admin123':
+            if user.admin == 1:
                 return redirect(url_for('all_profiles'))
             else:
                 return redirect(url_for('login'))
@@ -1087,14 +1099,29 @@ def delete_profile(username):
 def other_profiles(username):
     #профили других людей
     polzovatel = User.query.filter_by(username=username).first()
+    admin = polzovatel.admin
     user = flask_login.current_user
     if polzovatel and polzovatel != user:
-        return render_template('otherprofile.html', user=user, polzovatel=polzovatel)
+        return render_template('otherprofile.html', user=user, polzovatel=polzovatel, admin=admin)
     elif polzovatel == user:
         return render_template('profile.html', user=user)
     else:
         bugcode = 7
         return render_template("bug.html", user=user, bugcode=bugcode)
+
+
+@app.route('/profile/<username>/make_admin', methods=['GET', 'POST'])
+def make_admin(username):
+    polzovatel = User.query.filter_by(username=username).first()
+    user = flask_login.current_user
+    admin = polzovatel.admin
+    if user.admin == 1:
+        polzovatel.admin = 1
+        db.session.commit()
+        return render_template('otherprofile.html', user=user, polzovatel=polzovatel, admin=admin)
+    else:
+        bugcode = 6
+        return render_template('bug.html', user=user, bugcode=bugcode)
 
 
 @app.route('/all_profiles/', methods=['GET', 'POST'])
