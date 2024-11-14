@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, session, url_for, jsonify, send_file, send_from_directory
 import re
-from mod import db, User
+from mod import db, User, UserGameState
 from chempy import balance_stoichiometry
 import os
 import flask_login
@@ -807,51 +807,73 @@ def minigamefunc():
     return b, nazv
 
 
-h = ['']
-pravilno = 0
-otvety = 0
 @app.route('/minigame', methods=['GET', 'POST'])
 def minigame():
-    '''функция, которая возвращает страницу мини-игры
-    Коротко о мини-игре:
-    Это Игра для запоминания элементов таблицы Менделеева.
-    Выводится элемент, а игрок должен написать, то как он называется на РУССКОМ языке'''
+    '''функция, которая возвращает страницу мини-игры'''
     d = ""
-    global h, pravilno, otvety
-    res = minigamefunc()
-    b = res[0]
-    nazv = res[1]
     user = flask_login.current_user
-    h.append(nazv)
+
+    # Получаем или создаём состояние игры для пользователя
     if user.is_authenticated:
-        if request.method == 'POST':
-            element = request.form['element']
-            print(h)
-            if element == h[-2]:
-                d = 'Верно, следующий'
-                pravilno += 1
-                user.pokupki = pravilno
-                otvety += 1
-                user.summa = otvety
-                db.session.commit()
-                if pravilno == 10:
-                    right_percent = round((pravilno / otvety) * 100, 2)
-                    pravilno = 0
-                    otvety = 0
-                    user.summa = otvety
-                    user.pokupki = pravilno
-                    if right_percent >= 50:
-                        user.wins += 1
-                        user.allgames += 1
-                    else:
-                        user.allgames += 1
+        game_state = UserGameState.query.filter_by(user_id=user.username).first()
+
+        if not game_state:
+            game_state = UserGameState(user_id=user.username, answer_list='')  # Инициализируем список
+            db.session.add(game_state)
+            db.session.commit()
+
+        res = minigamefunc()
+        b = res[0]
+        nazv = res[1]
+
+        # Добавляем название элемента в answer_list
+        game_state.answer_list = str(game_state.answer_list)
+        game_state.answer_list += (f' {nazv}')
+
+        # Сохраняем изменения после добавления
+        db.session.commit()
+
+        # Повторное извлечение состояния игры
+        game_state = UserGameState.query.filter_by(user_id=user.username).first()
+
+        if user.is_authenticated and user.username == game_state.user_id:
+            if request.method == 'POST':
+                element = request.form['element']
+
+                if element == game_state.answer_list.split()[-2]:
+                    d = 'Верно, следующий'
+                    user.pokupki += 1
+                    user.summa += 1
+                    game_state.correct_answers = user.pokupki
+                    game_state.total_answers = user.summa
                     db.session.commit()
-                    h = ['']
-                    return render_template('winning.html', user=user, right_percent=right_percent)
-            else:
-                d = f'Неправильно, ответ: {h[-2]}'
-                otvety += 1
-        return render_template('minigame.html', user=user, d=d, minigamefunc=minigamefunc, b=b, pravilno=pravilno, otvety=otvety)
+
+                    if game_state.total_answers >= 10 and user.pokupki >= 10:
+                        right_percent = round((game_state.correct_answers / game_state.total_answers) * 100, 2)
+                        user.summa = 0
+                        user.pokupki = 0
+                        game_state.correct_answers = user.pokupki
+                        game_state.total_answers = user.summa
+
+                        if right_percent >= 50:
+                            user.wins += 1
+                            user.allgames += 1
+                        else:
+                            user.allgames += 1
+
+                        # Обнуляем answer_list
+                        game_state.answer_list = ''  # Здесь мы обнуляем answer_list
+                        db.session.commit()  # Сохраняем изменения
+                        return render_template('winning.html', user=user, right_percent=right_percent)
+                else:
+                    d = f'Неправильно, ответ: {game_state.answer_list.split()[-2]}'
+                    game_state.total_answers += 1
+                    user.summa += 1
+                    db.session.commit()
+
+            return render_template('minigame.html', user=user, d=d, minigamefunc=minigamefunc, b=b,
+                                   pravilno=game_state.correct_answers, otvety=game_state.total_answers)
+
     else:
         return redirect(url_for('login'))
 
