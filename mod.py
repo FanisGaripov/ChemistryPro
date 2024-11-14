@@ -18,9 +18,18 @@ class User(UserMixin, db.Model):
     wins = db.Column(db.Integer, default=0)
     allgames = db.Column(db.Integer, default=0)
     status = db.Column(db.String(100), nullable=False)
+    admin = db.Column(db.Integer, default=0)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+
+class UserGameState(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.String(100), unique=True, nullable=False)
+    correct_answers = db.Column(db.Integer, nullable=True, default=0)
+    total_answers = db.Column(db.Integer, nullable=True, default=0)
+    answer_list = db.Column(db.String(10000))
