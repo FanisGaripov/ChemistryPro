@@ -26,6 +26,9 @@
 {% elif bugcode == 8 %}
 <p>Произошла ошибка при удалении профиля, либо такого пользователя никогда не существовало. Код ошибки: 8</p>
 <a class="nav-link" href="/all_profiles"><font color="gray">Список всех профилей</font></a>
+{% elif bugcode == 9 %}
+<p>Произошла ошибка миниигры. Либо Вы не авторизованы, либо Ваша сессия уже сброшена. Код ошибка: 9</p>
+<a class="nav-link" href="/minigame"><font color="gray">Вернуться в миниигру.</font></a>
 {% endif %}
 <a class="nav-link" href="/"><font color="gray">На главную</a>
 {% endblock %}
