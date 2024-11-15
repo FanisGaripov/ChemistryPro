@@ -258,7 +258,7 @@ def electronic_configuration(element):
 
     configuration_string2 = ' '.join(configurations1)
 
-    # Генерация текстового графического представления
+    # Графическое представление(текстовое, используются [↑] и [↓], открывающая и закрывающая скобка - это одна клетка)
     graphic_representation = generate_graphical_representation(configurations)
 
     return configuration_string, configuration_string2, graphic_representation, atom
@@ -419,6 +419,8 @@ def molyar_massa():
 
 
 def get_chemical_equation_solution(reaction):
+    '''метод обработчик дописывания хим.реакций. коротко о нем: принимает из основной функции реакцию, вставляет
+    ее в ссылку и возвращает ответ, который парсит(выкидывает все лишнее) только до нужных строчек'''
     if request.method == 'POST':
         reaction = request.form.get("chemical_formula", False)
     # Кодируем реакцию для URL
@@ -575,6 +577,7 @@ def save_message(username, message):
         json.dump(chat_history, f, indent=4)
 
 
+# Удаление всех сообщений разом(доступно только администраторам)
 def delete_all_messages():
     chat_history = load_chat_history()
     chat_history.clear()
@@ -597,6 +600,7 @@ chat = load_chat_history()  # Загружаем историю чата при 
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat_messages():
+    # чат
     global chat
     user = flask_login.current_user
     if user.is_authenticated:
@@ -630,6 +634,7 @@ def chat_saving():
 
 @app.route('/download-db')
 def download_db():
+    # загрузка базы данных пользователя. вынужден использовать, т.к не могу встроить миграцию на хостинг
     user = flask_login.current_user
     if user.is_authenticated:
         if user.admin == 1:
@@ -669,6 +674,7 @@ def tablica_kislotnosti():
 
 @app.route('/uchebnik', methods=['GET', 'POST'])
 def uchebnik():
+    # я не знаю почему учебник, но это просто страница со справочным материалом по органике
     user = flask_login.current_user
     return render_template('uchebnik.html', user=user)
 
@@ -809,7 +815,7 @@ def minigamefunc():
 
 @app.route('/minigame', methods=['GET', 'POST'])
 def minigame():
-    '''функция, которая возвращает страницу мини-игры'''
+    # функция, которая возвращает страницу мини-игры
     d = ""
     user = flask_login.current_user
 
@@ -840,7 +846,7 @@ def minigame():
             if request.method == 'POST':
                 element = request.form['element']
 
-                if element == game_state.answer_list.split()[-2]:
+                if element.capitalize() == game_state.answer_list.split()[-2]:
                     d = 'Верно, следующий'
                     user.pokupki += 1
                     user.summa += 1
@@ -878,7 +884,25 @@ def minigame():
         return redirect(url_for('login'))
 
 
+@app.route('/reset_minigame', methods=['GET', 'POST'])
+def reset_minigame():
+    # сброс статистики миниигры. добавляется +1 к игре и сбрасывается вся статистика
+    user = flask_login.current_user
+    game_state = UserGameState.query.filter_by(user_id=user.username).first()
+    if user.username == game_state.user_id:
+        user.allgames += 1
+        game_state.answer_list = ''
+        game_state.total_answers = 0
+        game_state.correct_answers = 0
+        db.session.commit()
+        return redirect(url_for('minigame'))
+    else:
+        bugcode = 9
+        return render_template('bug.html', user=user, bugcode=bugcode)
+
+
 def get_substance_html(substance_name):
+    # получение имени орг вещества из таблицы на сайте при помощи парсинга этой страницы
     url = "https://chemer.ru/services/organic/structural"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -915,6 +939,7 @@ def get_substance_html(substance_name):
 
 
 def extract_svg_and_symbols(html_code):
+    # занимается сохранением свг-картинок на сервер
     soup = BeautifulSoup(html_code, 'html.parser')
     svg_elements = soup.find_all('svg')
     symbols = soup.find_all('symbol')
@@ -955,6 +980,10 @@ def extract_svg_and_symbols(html_code):
 
 @app.route('/orghim', methods=['GET', 'POST'])
 def orghim():
+    # основная страница для работы с методами(предыдущими двумя). Все вместе это ф-ция орг.химии
+    # ее суть в выведении названий веществ и картинок изомеров и самого вещества
+    # изомеров только 10, т.к 70 изомеров декана, например, может сильно нагрузить устройство пользователя и сервер,
+    # который может обрабатывать несколько таких запросов, что приведет к замедлению его работы(он и так бесплатный)
     global klass
     combined = ''
     isomer_files = []
@@ -1001,6 +1030,7 @@ def orghim():
 
 @app.errorhandler(404)
 def page_not_found(e):
+    # просто обработчик ошибок, нужен, чтобы говорить пользователю, что такой страницы нет
     user = flask_login.current_user
     bugcode = 6
     return render_template('bug.html', user=user, bugcode=bugcode), 404
@@ -1134,6 +1164,7 @@ def other_profiles(username):
 
 @app.route('/profile/<username>/make_admin', methods=['GET', 'POST'])
 def make_admin(username):
+    # возможность одного админа присвоить админку другому. удалению возможно только вручную через бд
     polzovatel = User.query.filter_by(username=username).first()
     user = flask_login.current_user
     admin = polzovatel.admin
@@ -1166,24 +1197,26 @@ def edit_profile():
             email = request.form['email']
             status = request.form['status']
 
-            user.username = username
-            user.surname = surname
-            user.name = name
-            user.email = email
-            user.status = status
-            if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                os.makedirs(app.config['UPLOAD_FOLDER'])
+            checking = User.query.filter_by(username=username).first()
+            if checking == False:
+                user.username = username
+                user.surname = surname
+                user.name = name
+                user.email = email
+                user.status = status
+                if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                    os.makedirs(app.config['UPLOAD_FOLDER'])
 
-            # Обработка загрузки аватара
-            if 'avatar' in request.files:
-                file = request.files['avatar']
-                if file:
-                    filename = secure_filename(file.filename)
-                    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                    user.avatar = filename  # Сохраняем имя файла в БД
+                # Обработка загрузки аватара
+                if 'avatar' in request.files:
+                    file = request.files['avatar']
+                    if file:
+                        filename = secure_filename(file.filename)
+                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                        user.avatar = filename  # Сохраняем имя файла в БД
 
-            db.session.commit()
-            return redirect(url_for('profile'))
+                db.session.commit()
+                return redirect(url_for('profile'))
 
         return render_template('edit_profile.html', user=user)
     else:
