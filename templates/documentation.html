@@ -43,13 +43,15 @@
         <section id="введение">
             <h2>Введение</h2>
             <p>ChemistryPro — это веб-приложение, разработанное для изучения Химии школьного уровня 8-11 классов. Оно предлагает пользователям различные функции для взаимодействия с данными о химических элементах.</p>
-            <p>Немного об архитектуре этого сайта: Сайт базирован на языке программирования Python. Python обладает большим количеством библиотек, что является преимуществом этого языка программирования. Flask - это основная библиотека на которой базируется этот сайт. <pre><code>pip install flask</code></pre>Фреймворк Flask является универсальным решением для многих сайтов, а также он легок в изучении.
+            <p>Немного об архитектуре этого сайта: Сайт базирован на языке программирования Python. Python обладает большим количеством библиотек, что является преимуществом этого языка программирования. Flask - это основная библиотека на которой базируется этот сайт. <pre><code>pip install flask</code></pre><p>Фреймворк Flask является универсальным решением для многих сайтов, а также он легок в изучении.
             Html-файлы проекта хранятся в папке templates, а изображения в папке static. Структура проекта:</p>
             <pre><code>
 ChemistryPro/
 ├── static/                # Статические файлы, такие как CSS и изображения
 │   ├── /upload                         # Аватары
 │   └── fon.jpg...                      # Остальные фото
+│── instance/              # База данных
+│   └── products.db                     # Файл базы данных
 ├── templates/             # Шаблоны HTML
 │   ├── about.html                      # Обо мне
 │   ├── base.html                       # Базовый шаблон
@@ -88,8 +90,10 @@ ChemistryPro/
         </section>
         <section id="дописывание">
             <h3>1. Дописывание химических реакций</h3>
-            <p>Это функция позволяет, при наличии известных реагентов реакции, получить продукт реакции. Работает при помощи отправки запроса на сервер chemequations.com . Используется библиотека requests(python).<pre><code> pip install requests</code></pre></p>
+            <p>Это функция позволяет, при наличии известных реагентов реакции, получить продукт реакции. Работает при помощи отправки запроса на сервер chemequations.com . Используется библиотека requests(python).<pre><code>pip install requests</code></pre></p>
             <pre><code>def get_chemical_equation_solution(reaction):
+    '''метод обработчик дописывания хим.реакций. коротко о нем: принимает из основной функции реакцию, вставляет
+    ее в ссылку и возвращает ответ, который парсит(выкидывает все лишнее) только до нужных строчек'''
     if request.method == 'POST':
         reaction = request.form.get("chemical_formula", False)
     # Кодируем реакцию для URL
@@ -99,25 +103,120 @@ ChemistryPro/
         url = f"https://chemequations.com/ru/?s={encoded_reaction}"
 
     # Отправляем GET-запрос
-        response = requests.get(url)...</code></pre>
+        response = requests.get(url)
+
+    # Проверка успешности запроса
+        if response.status_code == 200:
+            # Парсим HTML-ответ
+            soup = BeautifulSoup(response.text, 'html.parser')
+
+            # Находим элемент с классом "equation main-equation well"
+            result = soup.find('h1', class_='equation main-equation well')
+
+            if result:
+                return result.get_text(strip=True)
+                # Возвращаем текст ответа
+            else:
+                return 'Решение не найдено.'
+        else:
+            return f"Ошибка при запросе: {response.status_code}"
+
+
+@app.route('/complete_reaction', methods=['GET', 'POST'])
+def complete_reaction_page():
+    # страница, отвечающая за вывод завершенных реакций предыдущим методом
+    react1 = ''
+    user = flask_login.current_user
+    reaction = ''
+    if request.method == 'POST':
+        reaction = request.form.get("chemical_formula", False)
+        react1 = get_chemical_equation_solution(reaction)
+        if '(g)' in react1:
+            react1 = react1.replace('(g)', '')
+        if '(s)' in react1:
+            react1 = react1.replace('(s)', '')
+        if '(aq)' in react1:
+            react1 = react1.replace('(aq)', '')
+        if '(l)' in react1:
+            react1 = react1.replace('(l)', '')
+
+    return render_template('complete_reaction.html', get_chemical_equation_solution=get_chemical_equation_solution, react1=react1, user=user, reaction=reaction)</code></pre>
         </section>
         <section id="уравнивание">
             <h3>2. Уравнивание химических реакций</h3>
             <p>Эта функция позволяет уравнять любую химическую реакцию. Используется библиотека chempy(python).<pre><code>pip install chempy</code></pre>Работает при помощи встроенного метода библиотеки chempy, а именно balance_stoichiometry.</p>
             <pre><code>def uravnivanie(formula):
-    ...# баланс уравнений
+    # баланс уравнений
+    reactants_input, products_input = formula.split('=')
+    reactants = {x.split()[0].strip(): int(x.split()[1]) if len(x.split()) > 1 else 1 for x in
+                 reactants_input.split('+')}
+    products = {x.split()[0].strip(): int(x.split()[1]) if len(x.split()) > 1 else 1 for x in products_input.split('+')}
+
     balanced_reaction = balance_stoichiometry(reactants, products)
-    reactants_str = ' + '.join([f"{v}{k}" for k, v in balanced_reaction[0].items()])
-    products_str = ' + '.join([f"{v}{k}" for k, v in balanced_reaction[1].items()])
-    otvet = f"{reactants_str} = {products_str}"...
+
+    reactants_str = ' + '.join([f"{v}{k}" if v != 1 else f"{k}" for k, v in balanced_reaction[0].items()])
+    products_str = ' + '.join([f"{v}{k}" if v != 1 else f"{k}" for k, v in balanced_reaction[1].items()])
+
+    otvet = f"{reactants_str} = {products_str}"
+
+    return otvet
+
+
+@app.route('/uravnivanie', methods=['GET', 'POST'])
+def osnova():
+    # функция которая возвращает уравнивание хим.реакций( index.html )
+    user = flask_login.current_user
+    resultat2 = ''
+    if request.method == 'POST':
+        chemical_formula = request.form['chemical_formula']
+        try:
+            resultat2 = f'{chemical_formula}: {uravnivanie(chemical_formula)}'
+            print(resultat2)
+        except:
+            redirect('/')
+    return render_template('index.html', resultat2=resultat2, user=user)
 </code></pre>
         </section>
         <section id="конфигурация">
             <h3>3. Электронная конфигурация</h3>
-            <p>Эта функция позволяет узнать электронную конфигурацию любого вещества без заглядывания в таблицу Менделеева. Не использует других библиотек, кроме flask(python, основная библиотека, на которой держится весь проект). Самая простая функция в реализации.</p>
+            <p>Эта функция позволяет узнать электронную конфигурацию любого вещества без заглядывания в таблицу Менделеева. Не использует других библиотек, кроме flask(python, основная библиотека, на которой держится весь проект). Состоит из трех функций:</p>
             <pre><code>def electronic_configuration(element):
+    elements_data = {
+        'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
+        'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18, 'K': 19,
+        'Ca': 20, 'Sc': 21, 'Ti': 22, 'V': 23, 'Cr': 24, 'Mn': 25, 'Fe': 26, 'Co': 27, 'Ni': 28,
+        'Cu': 29, 'Zn': 30, 'Ga': 31, 'Ge': 32, 'As': 33, 'Se': 34, 'Br': 35, 'Kr': 36, 'Rb': 37,
+        'Sr': 38, 'Y': 39, 'Zr': 40, 'Nb': 41, 'Mo': 42, 'Tc': 43, 'Ru': 44, 'Rh': 45, 'Pd': 46,
+        'Ag': 47, 'Cd': 48, 'In': 49, 'Sn': 50, 'Sb': 51, 'Te': 52, 'I': 53, 'Xe': 54, 'Cs': 55,
+        'Ba': 56, 'La': 57, 'Ce': 58, 'Pr': 59, 'Nd': 60, 'Pm': 61, 'Sm': 62, 'Eu': 63, 'Gd': 64,
+        'Tb': 65, 'Dy': 66, 'Ho': 67, 'Er': 68, 'Tm': 69, 'Yb': 70, 'Lu': 71, 'Hf': 72, 'Ta': 73,
+        'W': 74, 'Re': 75, 'Os': 76, 'Ir': 77, 'Pt': 78, 'Au': 79, 'Hg': 80, 'Tl': 81, 'Pb': 82,
+        'Bi': 83, 'Po': 84, 'At': 85, 'Rn': 86, 'Fr': 87, 'Ra': 88, 'Ac': 89, 'Th': 90, 'Pa': 91,
+        'U': 92, 'Np': 93, 'Pu': 94, 'Am': 95, 'Cm': 96, 'Bk': 97, 'Cf': 98, 'Es': 99, 'Fm': 100,
+        'Md': 101, 'No': 102, 'Lr': 103, 'Rf': 104, 'Db': 105, 'Sg': 106, 'Bh': 107, 'Hs': 108,
+        'Mt': 109, 'Ds': 110, 'Rg': 111, 'Cn': 112, 'Nh': 113, 'Fl': 114, 'Mc': 115, 'Lv': 116,
+        'Ts': 117, 'Og': 118
+    }
 
-    ...for i in range(len(subshells)):
+    atomic_number = elements_data.get(element)
+    atomic_number1 = elements_data.get(element)
+    atom = atomic_number
+    if element == '':
+        return "Введите элемент", ""
+    if atomic_number is None:
+        return "Элемент не найден", ""
+
+    configurations = []
+    configurations1 = []
+    subshells = ['1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d', '5p', '6s', '4f', '5d', '6p', '7s', '5f',
+                 '6d', '7p']
+    electrons = [2, 2, 6, 2, 6, 2, 10, 6, 2, 10, 6, 2, 14, 10, 6, 2, 14, 10, 6]
+
+    subshells1 = ['1s', '2s', '2p', '3s', '3p', '3d', '4s', '4p', '4d', '4f', '5s', '5p', '5d', '5f', '6s', '6p', '6d',
+                  '7s', '7p']
+    electrons1 = [2, 2, 6, 2, 6, 10, 2, 6, 10, 14, 2, 6, 10, 14, 2, 6, 10, 2, 6]
+
+    for i in range(len(subshells)):
         if atomic_number > 0:
             if atomic_number >= electrons[i]:
                 configurations.append(f"{subshells[i]}^{electrons[i]}")
@@ -125,17 +224,316 @@ ChemistryPro/
             else:
                 configurations.append(f"{subshells[i]}^{atomic_number}")
                 break
-    return ' '.join(configurations)...
+
+    for i in range(len(subshells1)):
+        if atomic_number1 > 0:
+            if atomic_number1 >= electrons1[i]:
+                configurations1.append(f"{subshells1[i]}^{electrons1[i]}")
+                atomic_number1 -= electrons1[i]
+            else:
+                configurations1.append(f"{subshells1[i]}^{atomic_number1}")
+                break
+
+    configuration_string = ' '.join(configurations)
+
+    configuration_string2 = ' '.join(configurations1)
+
+    # Графическое представление(текстовое, используются [↑] и [↓], открывающая и закрывающая скобка - это одна клетка)
+    graphic_representation = generate_graphical_representation(configurations)
+
+    return configuration_string, configuration_string2, graphic_representation, atom
+
+
+def generate_graphical_representation(configurations):
+    # графическое представление электронной конфигурации
+    representation = []
+    grouped_representation = {}
+
+    for config in configurations:
+        subshell, count = config.split('^')
+        count = int(count)
+
+        if subshell[0] not in grouped_representation:
+            grouped_representation[subshell[0]] = []
+
+        cells = []
+
+        if subshell.endswith('s'):
+            for _ in range(1):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                if count > 0:
+                    cells[0] += '[↓]'
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+        elif subshell.endswith('p'):
+            # 3 p-орбитали
+            for i in range(3):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+            for i in range(3):
+                if count > 0:
+                    cells[i] += '[↓]'
+                    count -= 1
+
+        elif subshell.endswith('d'):
+            # 5 d-орбиталей
+            for i in range(5):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+            for i in range(5):
+                if count > 0:
+                    cells[i] += '[↓]'
+                    count -= 1
+
+        elif subshell.endswith('f'):
+            # 7 f-орбиталей
+            for i in range(7):
+                if count > 0:
+                    cells.append('[↑]')
+                    count -= 1
+                else:
+                    cells.append('[ ]')  # Пустая ячейка
+
+            for i in range(7):
+                if count > 0:
+                    cells[i] += '[↓]'
+                    count -= 1
+
+        grouped_representation[subshell[0]].append(f"{subshell}: " + ' '.join(cells))
+
+    # Сборка финального представления
+    for level in sorted(grouped_representation.keys()):
+        representation.extend(grouped_representation[level])
+
+    return "\n".join(representation)
+
+
+@app.route('/electronic_configuration', methods=['GET', 'POST'])
+def electronic_configuration_page():
+    # функция, которая отображает страницу электронной конфигурации, предыдущая функция отвечает за обработку ответа
+    element = ''
+    user = flask_login.current_user
+    configuration = ''
+    configuration1 = ''
+    graphic_representation = ''
+    atomic = ''
+    if request.method == 'POST':
+        element = request.form.get("element", False)
+        try:
+            configuration, configuration1, graphic_representation, atomic = electronic_configuration(element)
+        except Exception as e:
+            configuration1, configuration, graphic_representation, atomic = '', '', '', ''
+    return render_template('electronic_configuration.html', configuration=configuration, configuration1=configuration1, graphic_representation=graphic_representation, atomic=atomic, user=user, element=element)
             </code></pre>
         </section>
         <section id="масса">
             <h3>4. Молярная масса веществ</h3>
             <p>Функция позволяет узнать молярную реакцию любого вещества или реакции. Данные о массе элемента берутся из таблицы Менделеева, далее эта масса умножается на коэффициент элемента. Можно получить всю массу целиком, а также массу каждого элемента по отдельности.</p>
-            <pre><code>        try:
+            <pre><code>def molecular_mass(formula):
+    # Словарь с атомными массами элементов
+    atomic_masses = {
+        'H': 1.008,
+        'He': 4.0026,
+        'Li': 6.94,
+        'Be': 9.0122,
+        'B': 10.81,
+        'C': 12.011,
+        'N': 14.007,
+        'O': 15.999,
+        'F': 18.998,
+        'Ne': 20.180,
+        'Na': 22.99,
+        'Mg': 24.305,
+        'Al': 26.982,
+        'Si': 28.085,
+        'P': 30.974,
+        'S': 32.06,
+        'Cl': 35.45,
+        'Ar': 39.948,
+        'K': 39.098,
+        'Ca': 40.078,
+        'Sc': 44.956,
+        'Ti': 47.867,
+        'V': 50.941,
+        'Cr': 51.996,
+        'Mn': 54.938,
+        'Fe': 55.845,
+        'Co': 58.933,
+        'Ni': 58.693,
+        'Cu': 63.546,
+        'Zn': 65.38,
+        'Ga': 69.723,
+        'Ge': 72.630,
+        'As': 74.922,
+        'Se': 78.971,
+        'Br': 79.904,
+        'Kr': 83.798,
+        'Rb': 85.468,
+        'Sr': 87.62,
+        'Y': 88.906,
+        'Zr': 91.224,
+        'Nb': 92.906,
+        'Mo': 95.95,
+        'Tc': 98,
+        'Ru': 101.07,
+        'Rh': 102.905,
+        'Pd': 106.42,
+        'Ag': 107.868,
+        'Cd': 112.414,
+        'In': 114.818,
+        'Sn': 118.710,
+        'Sb': 121.760,
+        'Te': 127.60,
+        'I': 126.904,
+        'Xe': 131.293,
+        'Cs': 132.905,
+        'Ba': 137.327,
+        'La': 138.905,
+        'Ce': 140.116,
+        'Pr': 140.907,
+        'Nd': 144.242,
+        'Pm': 145,
+        'Sm': 150.36,
+        'Eu': 151.964,
+        'Gd': 157.25,
+        'Tb': 158.925,
+        'Dy': 162.500,
+        'Ho': 164.930,
+        'Er': 167.259,
+        'Tm': 168.934,
+        'Yb': 173.04,
+        'Lu': 174.966,
+        'Hf': 178.49,
+        'Ta': 180.947,
+        'W': 183.84,
+        'Re': 186.207,
+        'Os': 190.23,
+        'Ir': 192.217,
+        'Pt': 195.084,
+        'Au': 196.967,
+        'Hg': 200.592,
+        'Tl': 204.38,
+        'Pb': 207.2,
+        'Bi': 208.980,
+        'Po': 209,
+        'At': 210,
+        'Rn': 222,
+        'Fr': 223,
+        'Ra': 226,
+        'Ac': 227,
+        'Th': 232.038,
+        'Pa': 231.035,
+        'U': 238.028,
+        'Np': 237,
+        'Pu': 244,
+        'Am': 243,
+        'Cm': 247,
+        'Bk': 247,
+        'Cf': 251,
+        'Es': 252,
+        'Fm': 257,
+        'Md': 258,
+        'No': 259,
+        'Lr': 262,
+        'Rf': 267,
+        'Db': 270,
+        'Sg': 271,
+        'Bh': 270,
+        'Hs': 277,
+        'Mt': 276,
+        'Ds': 281,
+        'Rg': 282,
+        'Cn': 285,
+        'Nh': 286,
+        'Fl': 289,
+        'Mc': 290,
+        'Lv': 293,
+        'Ts': 294,
+        'Og': 294,
+    }
+
+    def parse_formula(formula):
+        stack = []
+        current = {}
+        i = 0
+        while i < len(formula):
+            if formula[i] == '(' or formula[i] == '[':
+                stack.append(current)
+                current = {}
+                i += 1
+            elif formula[i] == ')' or formula[i] == ']':
+                i += 1
+                num = ''
+                while i < len(formula) and formula[i].isdigit():
+                    num += formula[i]
+                    i += 1
+                multiplier = int(num) if num else 1
+                for element, count in current.items():
+                    current[element] = count * multiplier
+                if stack:
+                    parent = stack.pop()
+                    for element, count in current.items():
+                        if element in parent:
+                            parent[element] += count
+                        else:
+                            parent[element] = count
+                    current = parent
+            else:
+                match = re.match(r'([A-Z][a-z]?)(\d*)', formula[i:])
+                if match:
+                    element, count = match.groups()
+                    count = int(count) if count else 1
+                    if element in current:
+                        current[element] += count
+                    else:
+                        current[element] = count
+                    i += len(match.group(0))
+                else:
+                    i += 1
+        return current
+
+    element_counts = parse_formula(formula)
+    mass = 0.0
+    element_details = []
+    for element, count in element_counts.items():
+        element_mass = atomic_masses[element]
+        total_mass = element_mass * count
+        element_details.append((element, atomic_masses[element], count, total_mass))
+        mass += total_mass
+
+    return round(mass, 2), element_details
+
+@app.route('/molyarnaya_massa', methods=['GET', 'POST'])
+def molyar_massa():
+    # метод для вычисления молярной массы и отображения ее на сайте
+    user = flask_login.current_user
+    global resultat, dlyproverki, c
+    resultat = ''
+    otdelno = []
+    formatspisok = ''
+    dlyproverki = 0
+    if request.method == 'POST':
+        chemical_formula = request.form['element']
+        try:
             dlyproverki, element_details = molecular_mass(chemical_formula)
             resultat = f"Молярная масса {chemical_formula}: {dlyproverki} г/моль"
             for element, mass, count, total_mass in element_details:
-                otdelno.append(f"{count} x {element} ({round(mass)} г/моль): {round(total_mass)} г")
+                otdelno.append(f"{count} x {element} ({round(mass, 2)} г/моль): {round(total_mass, 2)} г/моль, что составляет {round((round(total_mass, 2) / dlyproverki) * 100, 2)}%")
+        except Exception as e:
+            otdelno.append(f"{e}: такого вещества или соединения не существует")
+    return render_template('molyarnaya_massa.html', resultat=resultat, dlyproverki=dlyproverki, user=user, otdelno=otdelno)
             </code></pre>
         </section>
         <section id="цепочка">
@@ -154,14 +552,46 @@ ChemistryPro/
         response = session.get(url)
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
-            content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'...
+            content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'
+
+            results = []  # Список для хранения первых ответов из каждой секции
+            if content_sections:
+                for content_section in content_sections:
+                    reactions = content_section.find_all('p', class_='resizable-block')  # Ищем все 'p' внутри каждой секции
+                    if reactions:
+                        first_reaction = reactions[0].get_text().strip()  # Берем первый ответ из секции
+                        results.append(first_reaction)  # Добавляем его в результаты
+                    else:
+                        # Если нет реакций с классом 'resizable-block', ищем все 'p' и берем первый из них
+                        all_paragraphs = content_section.find_all('p')
+                        if all_paragraphs:
+                            first_paragraph = all_paragraphs[0].get_text().strip()  # Берем текст первого 'p'
+                            results.append(first_paragraph)
+                        else:
+                            results.append("Нет данных")  # Если нет ни одного 'p', добавляем сообщение
+
+            return results  # Возвращаем список первых ответов из всех секций
+
+
+@app.route('/get_reaction_chain', methods=['GET', 'POST'])
+def get_reaction_chain_page():
+    # страница, которая выводит цепочку превращений, т.е прошлую функцию
+    user = flask_login.current_user
+    react2 = ''
+    reaction = ''
+    if request.method == 'POST':
+        reaction = request.form.get("chemical_formula", False)
+        react2 = get_reaction_chain(reaction)
+
+    return render_template('get_reaction_chain.html', get_reaction_chain=get_reaction_chain, user=user, reaction=reaction, react2=react2)
             </code></pre>
         </section>
             <section id="структура">
             <h3>6. Структура органических реакций</h3>
-            <p>Функция позволяет найти органическое вещество, а именно его графическое представление. Например: при вводе 2,2-диметилбутан, должны вывестись картинки в формате .svg. Первой такой картинкой будет само вещество, а вторая картинка побольше - все изомеры вещества(или те, что представляет ресурс, на который мы отправляем запрос). Все это реализовано при помощи библиотеки requests(python), т.е мы также отправляем запрос на сайт и он возвращает нам ответ. Несмотря на такую, казалось бы простую реализацию, код этой часть был самым трудным в написании. Вот его часть:</p>
+            <p>Функция позволяет найти органическое вещество, а именно его графическое представление. Например: при вводе 2,2-диметилбутан, должны вывестись картинки в формате .svg. Первой такой картинкой будет само вещество, а остальные - все изомеры вещества(или те, что представляет ресурс, на который мы отправляем запрос). Все это реализовано при помощи библиотеки requests(python), т.е мы также отправляем запрос на сайт и он возвращает нам ответ. Несмотря на такую, казалось бы простую идею, код этой части был самым трудным в написании(были убраны <> из всех svg, т.к сайт их не отображает):</p>
             <pre><code>
 def get_substance_html(substance_name):
+    # получение имени орг вещества из таблицы на сайте при помощи парсинга этой страницы
     url = "https://chemer.ru/services/organic/structural"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -169,33 +599,122 @@ def get_substance_html(substance_name):
     session = requests.Session()
     session.headers.update(headers)
     response = session.get(url)
+    global klass
+    klass = ''
+    namez = []
 
     if response.status_code == 200:
         soup = BeautifulSoup(response.text, 'html.parser')
         table = soup.find('table')
-        rows = table.find_all('tr')...
+        rows = table.find_all('tr')
+
+        for row in rows:
+            cols = row.find_all('td')
+            if cols:
+                name = cols[0].text.strip()
+                klass = cols[1].text.strip()
+                link = cols[0].find('a')['href']
+                if substance_name.lower() in name.lower() and substance_name.lower() == name.lower():
+                    substance_url = f"https://chemer.ru/services/organic/{link}"
+                    substance_response = session.get(substance_url)
+                    return substance_response.text, None
+                elif substance_name.lower() in name.lower() and name.lower()[2:] != substance_name.lower():
+                    namez.append(name)
+                elif substance_name.lower() in name.lower() and name.lower()[:2] == 'н-' and name.lower()[2:] == substance_name.lower():
+                    substance_url = f"https://chemer.ru/services/organic/{link}"
+                    substance_response = session.get(substance_url)
+                    return substance_response.text, None
+    return None, namez
+
 
 def extract_svg_and_symbols(html_code):
+    # занимается сохранением свг-картинок на сервер
     soup = BeautifulSoup(html_code, 'html.parser')
     svg_elements = soup.find_all('svg')
     symbols = soup.find_all('symbol')
+    names = ''
 
     if not svg_elements:
         return None, None, None
 
     first_svg_content = str(svg_elements[0])
     if 'width' not in first_svg_content or 'height' not in first_svg_content:
-        first_svg_content = first_svg_content.replace()...
+        first_svg_content = first_svg_content.replace('svg', 'svg width="200" height="200"')
+
+    isomer_svgs = []
+    spacing = 220  # Расстояние между изомерами
+    max_per_row = 20  # Максимум изомеров в строке
+
+    # Извлечение секции с id='tab1'
+    tab1_section = soup.find('section', id='tab1')
+
+    if tab1_section:
+        # Получаем все SVG элементы внутри секции
+        svg_elements2 = tab1_section.find_all('svg')
+        names = tab1_section.find_all('a')
+
+        for index, svg in enumerate(svg_elements2):
+            row = index // max_per_row  # Определяем номер строки
+            col = index % max_per_row  # Определяем номер колонки
+            x = col - 1  # Устанавливаем x координату
+            y = row  # Устанавливаем y координату для новой строки
+            svg_str = str(svg).replace('svg', f'svg x="{x}" y="{y}"')  # Устанавливаем координаты
+            isomer_svgs.append(svg_str)
+
+    isomer_svgs_content = ''.join(isomer_svgs)
+    symbol_content = ''.join(str(symbol) for symbol in symbols)
+
+    return first_svg_content, isomer_svgs_content, symbol_content, names
+
 
 @app.route('/orghim', methods=['GET', 'POST'])
 def orghim():
+    # основная страница для работы с методами(предыдущими двумя). Все вместе это ф-ция орг.химии
+    # ее суть в выведении названий веществ и картинок изомеров и самого вещества
+    # изомеров только 10, т.к 70 изомеров декана, например, может сильно нагрузить устройство пользователя и сервер,
+    # который может обрабатывать несколько таких запросов, что приведет к замедлению его работы(он и так бесплатный)
+    global klass
+    combined = ''
+    isomer_files = []
+    variants = ''
     user = flask_login.current_user
+    substance_name = ''
     if request.method == 'POST':
         substance_name = request.form['substance_name']
-        html_code = get_substance_html(substance_name)
+        html_code, variants = get_substance_html(substance_name)
 
         if html_code:
-            first_svg, isomers_svg, symbols_svg = extract_svg_and_symbols(html_code)...
+            first_svg, isomers_svg, symbols_svg, names = extract_svg_and_symbols(html_code)
+
+            # Сохраняем первую SVG-картинку и символы в файл
+            if first_svg:
+                with open('static/output.svg', 'w', encoding='utf-8') as f:
+                    f.write(
+                        f"svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>{symbols_svg}{first_svg}/svg")
+
+            # Сохраняем изомеры в отдельные файлы
+            if isomers_svg.strip():
+                isomer_files = []
+                nazvaniya = []
+                for index, svg in enumerate(isomers_svg.split('/svg')):
+                    if index <= 9:
+                        if svg.strip():
+                            file_name = f'static/isomer_{index}.svg'
+                            with open(file_name, 'w', encoding='utf-8') as f:
+                                f.write(f"svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'>Х{symbols_svg}{svg}/svg/svg")
+                            filename_without_static = f'isomer_{index}.svg'
+                            isomer_files.append(filename_without_static)
+
+                for i, nazv in enumerate(names):
+                    if i <= 9:
+                        soup = BeautifulSoup(str(nazv), 'html.parser')
+                        nazv = soup.a.text
+                        nazvaniya.append(nazv.capitalize())
+                combined = list(zip(nazvaniya, isomer_files))
+
+            return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass, combined=combined)
+
+    return render_template('orghim.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user, variants=variants, substance_name=substance_name)
             </code></pre>
         </section>
 
