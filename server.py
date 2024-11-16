@@ -1149,14 +1149,16 @@ def delete_profile(username):
 
 @app.route('/profile/<username>', methods=["POST", "GET"])
 def other_profiles(username):
-    #профили других людей
+    # профили других людей
     polzovatel = User.query.filter_by(username=username).first()
-    admin = polzovatel.admin
     user = flask_login.current_user
-    if polzovatel and polzovatel != user:
-        return render_template('otherprofile.html', user=user, polzovatel=polzovatel, admin=admin)
-    elif polzovatel == user:
-        return render_template('profile.html', user=user)
+
+    if polzovatel:
+        admin = polzovatel.admin
+        if polzovatel != user:
+            return render_template('otherprofile.html', user=user, polzovatel=polzovatel, admin=admin)
+        else:
+            return render_template('profile.html', user=user)
     else:
         bugcode = 7
         return render_template("bug.html", user=user, bugcode=bugcode)
