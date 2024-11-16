@@ -894,6 +894,8 @@ def reset_minigame():
         game_state.answer_list = ''
         game_state.total_answers = 0
         game_state.correct_answers = 0
+        user.summa = 0
+        user.pokupki = 0
         db.session.commit()
         return redirect(url_for('minigame'))
     else:
