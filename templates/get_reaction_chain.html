@@ -24,9 +24,6 @@
         .btn-primary:hover {
             background-color: #0056b3; /* Цвет кнопки при наведении */
         }
-        #sidebar A {
-        color: white; /* Цвет ссылок в боковой панели */
-        }
     </style>
 </head>
 <body>
@@ -42,9 +39,13 @@
                 {% if reaction == '' %}
                     <h5 class="text-center mt-3">Введите реакцию (неорганическую)</h5>
                 {% elif reaction != '' %}
-                    <p class="text-center mt-3">{{ reaction }}:</p>
+                    <h4 class="text-center mt-3">{{ reaction }}:</h4>
                     {% for i in react2 %}
+                        {% if 'Как из' in i %}
+                        <h5 class="text-center">{{ i }}</h5>
+                        {% else %}
                         <p class="text-center">{{ i }}</p>
+                        {% endif %}
                     {% endfor %}
                 {% endif %}
                 <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemer.ru/services/reactions/chains" target="_blank"><font color="blue">chemer.ru</font></a></h5>

@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #007bff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+    </style>
+<body>
+<div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Калькулятор растворимости</h2>
+            <p class="text-center">Введите данные:</p>
+            <form method="post">
+                <div class="form-group">
+                    <label for="mass_solution">Масса раствора (г):</label>
+        <input type="text" id="mass_solution" name="mass_solution">
+        <br>
+        <label for="mass_solute">Масса растворенного вещества (г):</label>
+        <input type="text" id="mass_solute" name="mass_solute">
+        <br>
+        <label for="mass_fraction">Массовая доля (в %):</label>
+        <input type="text" id="mass_fraction" name="mass_fraction">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Рассчитать</button>
+                {% if mass_solution is not none %}
+                <h2>Результаты:</h2>
+                <ul>
+                    {% if mass_solute is not none %}
+                    <li>Масса растворенного вещества: {{ mass_solute }} г</li>
+                    {% endif %}
+                    {% if mass_solution is not none %}
+                    <li>Масса раствора: {{ mass_solution }} г</li>
+                    {% endif %}
+                    {% if mass_fraction is not none %}
+                    <li>Массовая доля: {{ mass_fraction }} %</li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}

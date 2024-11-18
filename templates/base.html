@@ -102,7 +102,7 @@
 <body style="background-size: cover" bgcolor="#ffffff">
 
 <!-- навигация -->
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light custom-navbar">
     <div class="container">
         <img src="/static/lab.svg" alt="" class="logo-image" width="32" height="32">
         <a class="navbar-brand" href="/">ChemistryPRO</a>
@@ -128,6 +128,15 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleDropdown2()">
+                        Калькуляторы
+                    </a>
+                    <div class="nav-link dropdown-menu" aria-labelledby="navbarDropdown2" id="dropdownMenu2" style="display: none;">
+                        <a class="nav-link" href="/molyarnaya_massa"><i class="fas fa-calculator"></i> Молярная масса</a>
+                        <a class="nav-link" href="/rastvory"><i class="fa fa-flask" aria-hidden="true"></i> Калькулятор Растворимостей</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleDropdown()">
                         Функции
                     </a>
@@ -135,7 +144,6 @@
                         <a class="nav-link" href="/complete_reaction"><i class="fa fa-magic"></i> Дописывание хим.реакций</a>
                         <a class="nav-link" href="/uravnivanie"><i class="fas fa-flask"></i> Уравнивание хим.реакций</a>
                         <a class="nav-link" href="/electronic_configuration"><i class="fas fa-plus-circle"></i> Электронная конфигурация</a>
-                        <a class="nav-link" href="/molyarnaya_massa"><i class="fas fa-calculator"></i> Молярная масса</a>
                         <a class="nav-link" href="/get_reaction_chain"><i class="fa fa-terminal"></i> Цепочки превращений</a>
                         <a class="nav-link" href="/orghim"><i class="fa fa-list-ol"></i> Структура органических веществ</a>
                         <a class="nav-link" href="/chat"><i class="fa fa-comment"></i> Общий чат</a>
@@ -190,6 +198,9 @@
                     <a class="nav-link" href="/molyarnaya_massa"><i class="fas fa-calculator"></i> Молярная масса</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/rastvory"><i class="fa fa-flask" aria-hidden="true"></i> Калькулятор Растворимостей</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/get_reaction_chain"><i class="fa fa-terminal"></i> Цепочки превращений</a>
                 </li>
                 <li class="nav-item">
@@ -225,7 +236,7 @@
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
                 <a class="nav-link">Внимание! При использовании любых материалов сайта ChemistryPRO - укажите ссылку на сайт или соцсети автора сайта!</a>
-                <a class="nav-link" href="/aboutme">© Гарипов Ф.Г, 2024.</a>
+                <a class="nav-link" href="/aboutme">© 2024 ChemistryPRO. Все права защищены.</a>
             </li>
         </ul>
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
@@ -320,6 +331,10 @@ document.addEventListener('click', function(event) {
 
     function toggleDropdown1() {
         const dropdown = document.getElementById('dropdownMenu1');
+        dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
+    }
+    function toggleDropdown2() {
+        const dropdown = document.getElementById('dropdownMenu2');
         dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
     }
 </script>
