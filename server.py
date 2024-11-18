@@ -481,27 +481,44 @@ def get_reaction_chain(reaction):
         session = requests.Session()
         session.headers.update(headers)
         response = session.get(url)
+
         if response.status_code == 200:
             soup = BeautifulSoup(response.text, 'html.parser')
-            content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'
+            inset_divs = soup.find_all('div', class_='inset')  # Ищем все группы
+            reaction_groups = {}  # Словарь для групп реакций
 
-            results = []  # Список для хранения первых ответов из каждой секции
+            # Сначала собираем группы из h2
+            for inset_div in inset_divs:
+                product_header = inset_div.find('h2')
+                if product_header:
+                    product_text = product_header.get_text().strip()
+                    reaction_groups[product_text] = []  # Создаем пустой список для реакций этой группы
+
+            # Теперь собираем реакции и добавляем их в соответствующие группы
+            content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'
             if content_sections:
                 for content_section in content_sections:
                     reactions = content_section.find_all('p', class_='resizable-block')  # Ищем все 'p' внутри каждой секции
                     if reactions:
-                        first_reaction = reactions[0].get_text().strip()  # Берем первый ответ из секции
-                        results.append(first_reaction)  # Добавляем его в результаты
-                    else:
-                        # Если нет реакций с классом 'resizable-block', ищем все 'p' и берем первый из них
-                        all_paragraphs = content_section.find_all('p')
-                        if all_paragraphs:
-                            first_paragraph = all_paragraphs[0].get_text().strip()  # Берем текст первого 'p'
-                            results.append(first_paragraph)
-                        else:
-                            results.append("Нет данных")  # Если нет ни одного 'p', добавляем сообщение
+                        # Находим соответствующую группу для текущей секции
+                        group_header = content_section.find_previous('div', class_='inset').find('h2')
+                        if group_header:
+                            group_name = group_header.get_text().strip()
+                            for reaction in reactions:
+                                reaction_text = reaction.get_text().strip()  # Извлекаем текст реакции
+                                if group_name in reaction_groups:
+                                    reaction_groups[group_name].append(reaction_text)  # Добавляем реакцию в соответствующую группу
 
-            return results  # Возвращаем список первых ответов из всех секций
+            # Формируем окончательный результат
+            final_results = []
+            for group, reactions in reaction_groups.items():
+                final_results.append(f"Как из {group}:")
+                final_results.extend(reactions)  # Добавляем все реакции для данной группы
+
+            return final_results  # Возвращаем сгруппированные реакции
+        else:
+            return [f"Ошибка при запросе: {response.status_code}"]  # Обработка ошибки запроса
+    return []
 
 
 @app.route('/get_reaction_chain', methods=['GET', 'POST'])
@@ -538,6 +555,34 @@ def instruction():
 def documentation():
     user = flask_login.current_user
     return render_template('documentation.html', user=user)
+
+
+@app.route('/rastvory', methods=['GET', 'POST'])
+def rastvory():
+    # калькулятор растворимостей
+    user = flask_login.current_user
+    if request.method == 'POST':
+        # Получаем данные из формы
+        mass_solution = request.form.get('mass_solution', type=float)  # Масса раствора (г)
+        mass_solute = request.form.get('mass_solute', type=float)      # Масса растворенного вещества (г)
+        mass_fraction = request.form.get('mass_fraction', type=float)  # Массовая доля (в %)
+
+        # Выполняем расчеты
+        if mass_solution and mass_solute is not None:
+            # Если известны масса раствора и масса вещества, рассчитываем массовую долю
+            mass_fraction = (mass_solute / mass_solution) * 100
+
+        elif mass_solution and mass_fraction is not None:
+            # Если известны масса раствора и массовая доля, рассчитываем массу растворенного вещества
+            mass_solute = (mass_fraction / 100) * mass_solution
+
+        elif mass_solute and mass_fraction is not None:
+            # Если известны масса вещества и массовая доля, рассчитываем массу раствора
+            mass_solution = mass_solute / (mass_fraction / 100)
+
+        return render_template('rastvory.html', mass_solution=mass_solution, mass_solute=mass_solute, mass_fraction=mass_fraction, user=user)
+
+    return render_template('rastvory.html', user=user)
 
 
 chat_history_file = 'chat_history.json'
