@@ -681,16 +681,15 @@ def chat_saving():
 def download_db():
     # загрузка базы данных пользователя. вынужден использовать, т.к не могу встроить миграцию на хостинг
     user = flask_login.current_user
-    if user.is_authenticated:
-        if user.admin == 1:
-            try:
-                return send_from_directory(
-                    directory='instance',  # Папка, где хранится база данных
-                    path='products.db',  # Имя файла базы данных
-                    as_attachment=True  # Это указывает, что файл должен быть скачан
-                )
-            except Exception as e:
-                return str(e), 404
+    if user.is_authenticated and user.admin == 1:
+        try:
+            return send_from_directory(
+                directory='instance',  # Папка, где хранится база данных
+                path='products.db',  # Имя файла базы данных
+                as_attachment=True  # Это указывает, что файл должен быть скачан
+            )
+        except Exception as e:
+            return str(e), 404
     else:
         bugcode = 6
         return render_template('bug.html', bugcode=bugcode, user=user)
