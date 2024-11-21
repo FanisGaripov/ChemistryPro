@@ -551,6 +551,11 @@ def instruction():
     return render_template('instruction.html', user=user)
 
 
+@app.route('/offline.html')
+def offline():
+    return render_template('offline.html')
+
+
 @app.route('/documentation')
 def documentation():
     user = flask_login.current_user
