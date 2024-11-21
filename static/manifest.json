@@ -24,15 +24,18 @@
     }
   ],
   "splash_pages": [
-        {
-            "src": "/static/splash/splash-portrait.png",
-            "sizes": "1080x1920",
-            "type": "image/png"
-        },
-        {
-            "src": "/static/splash/splash-landscape.png",
-            "sizes": "1920x1080",
-            "type": "image/png"
-        }
-  ]
+    {
+      "src": "/static/splash/splash-portrait.png",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/splash/splash-landscape.png",
+      "sizes": "1920x1080",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "description": "Ваш ресурс для изучения химии и химических реакций"
 }
