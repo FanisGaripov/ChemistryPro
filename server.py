@@ -551,11 +551,6 @@ def instruction():
     return render_template('instruction.html', user=user)
 
 
-@app.route('/offline.html')
-def offline():
-    return render_template('offline.html')
-
-
 @app.route('/documentation')
 def documentation():
     user = flask_login.current_user
@@ -707,6 +702,16 @@ def tablica():
     return render_template('tablica.html', user=user)
 
 
+@app.route('/sw.js')
+def sw():
+    return app.send_static_file('sw.js')
+
+
+@app.route('/offline.html')
+def offline():
+    return app.send_static_file('offline.html')
+
+
 @app.route('/tablica_rastvorimosti', methods=['GET', 'POST'])
 def tablica_rastvorimosti():
     # таблица растворимости
@@ -719,6 +724,15 @@ def tablica_kislotnosti():
     # таблица кислот ( ошибка в названии функции ) :))
     user = flask_login.current_user
     return render_template('tablica_kislotnosti.html', user=user)
+
+
+@app.route('/sw.js')
+def service_worker():
+    return send_from_directory(app.static_folder, 'sw.js')
+
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory(app.static_folder, 'manifest.json')
 
 
 @app.route('/uchebnik', methods=['GET', 'POST'])
