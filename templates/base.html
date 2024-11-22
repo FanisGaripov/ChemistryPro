@@ -7,9 +7,8 @@
     <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    <link rel="icon" href="favicon.png" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
-    <link rel="manifest" href="static/manifest.json">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
 
     <style>
         .fixed-bottom {
@@ -339,6 +338,6 @@ document.addEventListener('click', function(event) {
         dropdown.style.display = (dropdown.style.display === 'none' || dropdown.style.display === '') ? 'block' : 'none';
     }
 </script>
-<script src="static/app.js"></script>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
 </html>
