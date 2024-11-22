@@ -67,37 +67,23 @@ if (workbox.navigationPreload.isSupported()) {
 }
 
 self.addEventListener('fetch', (event) => {
-    // Обрабатываем только навигационные запросы (например, переходы по страницам)
-    if (event.request.mode === 'navigate') {
-        event.respondWith((async () => {
-            // Ждем завершения запроса на предзагрузку
-            const preloadResponse = await event.preloadResponse;
-
-            // Если есть ответ от предзагрузки, возвращаем его
-            if (preloadResponse) {
-                console.log('[Service Worker] Using preload response for:', event.request.url);
-                return preloadResponse;
-            }
-
-            // Если предзагрузки нет, пробуем получить из сети
-            try {
-                const networkResponse = await fetch(event.request);
-                console.log('[Service Worker] Fetched from network:', event.request.url);
-                return networkResponse;
-            } catch (error) {
-                console.error('[Service Worker] Network request failed:', event.request.url, error);
-
-                // Если нет ответа из сети, пробуем получить из кэша
-                const cache = await caches.open(CACHE);
-                const cachedResponse = await cache.match(event.request);
-                if (cachedResponse) {
-                    console.log('[Service Worker] Serving cached response for:', event.request.url);
-                    return cachedResponse;
-                } else {
-                    console.error('[Service Worker] No cached response found');
-                    // Здесь можно вернуть страницу с ошибкой или сообщение о недоступности
-                }
-            }
-        })());
+  event.respondWith((async () => {
+    try {
+      const networkResponse = await fetch(event.request);
+      // Если запрос успешен, кэшируем ответ
+      const cache = await caches.open(CACHE);
+      cache.put(event.request, networkResponse.clone());
+      return networkResponse;
+    } catch (error) {
+      console.error('[Service Worker] Network request failed:', event.request.url, error);
+      // Попробуйте вернуть кэшированный ответ
+      const cachedResponse = await caches.match(event.request);
+      if (cachedResponse) {
+        return cachedResponse;
+      } else {
+        // Возвращаем страницу с ошибкой или главную страницу
+        return caches.match('/'); // Или можете указать другую страницу
+      }
     }
+  })());
 });
