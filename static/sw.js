@@ -37,6 +37,10 @@ const staticFilesToCache = [
   '/tablica',
   '/tablica_kislotnosti',
   '/tablica_rastvorimosti',
+  '/uravnivanie',
+  '/rastvory',
+  '/uchebnik',
+  '/orghim'
   // Добавьте все файлы из директории static, которые вы хотите кэшировать
 ];
 
