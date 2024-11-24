@@ -5,26 +5,51 @@
 {% block content %}
 <body>
 <div class="row">
-    <h1 class="my-4" align="center">Немного обо мне</h1>
-    <div style="display: flex; justify-content: space-between;">
-        <div style="width: 50%;">
+    <h1 class="my-4" align="center" id="zagolovok">Немного обо мне</h1>
+    <div class="about-me-container">
+        <div class="about-me">
             <p>Меня зовут Гарипов Фанис. Я ученик 10А класса, и это мой проект "ChemistryPRO". Мне 16 лет. Я люблю программировать и поэтому решил создать проект на стыке двух интереснейших предметов: Химии и Информатики. Внизу этой страницы Вы видите ссылки на мои контакты, а именно ВК и Телеграмм-аккаунт. По всем вопросам туда :)</p>
             <p>Спасибо, что обратили внимание на мой сайт!!!</p>
             <p>Мои другие работы:</p>
-            <p><a href="https://github.com/FanisGaripov/PCCONFIGURATOR-DB-"><font color="gray">PCCONFIGURATOR-DB</a></p>
+            <p><a href="https://github.com/FanisGaripov/PCCONFIGURATOR-DB"><font color="gray">PCCONFIGURATOR-DB</a></p>
             <p><a href="https://github.com/FanisGaripov/Snake-game"><font color="gray">Игра Snake-Game на PyGame</a></p>
             <p><a href="https://github.com/FanisGaripov/PCBUILDERSHOP"><font color="gray">PCBUILDERSHOP</a></p>
-        </div> <div style="width: 100%;">
-        <img src="{{ url_for('static', filename='fanisik.jpg') }}" style="max-width: 100%; height: auto; float: right;" />
-    </div>
+        </div>
+        <div class="about-image">
+            <img src="{{ url_for('static', filename='fanisik.jpg') }}" style="max-width: 100%; height: auto;" />
+        </div>
     </div>
 </div>
-</body>
 <style>
-    body {font-family: Andika;}
-    p {
-    font-size: 21px;
+    .about-me-container {
+        display: flex;
+        flex-direction: row; /* По умолчанию располагаем элементы в ряд */
+        justify-content: space-between;
+    }
+    .about-me {
+        font-family: Andika;
+        font-size: 21px;
+        width: 50%; /* Занимаем 50% ширины */
+    }
+    .about-image {
+        width: 100%; /* Занимаем 50% ширины */
+    }
+    #zagolovok {
+        font-family: Andika;
+    }
+
+    @media (max-width: 768px) {
+        .about-me-container {
+            flex-direction: column; /* На маленьких экранах располагаем элементы в колонку */
+            align-items: center; /* Центрируем содержимое */
+        }
+        .about-me,
+        .about-image {
+            width: 100%; /* Занимаем всю ширину */
+            text-align: center; /* Центрируем текст */
+        }
     }
 </style>
+</body>
 
 {% endblock %}

@@ -5,6 +5,7 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .card {
+            border: 2px solid #5d4fff;
             border-radius: 10px; /* Закругление углов карточки */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
         }
@@ -15,7 +16,7 @@
             border-radius: 5px; /* Закругление углов текстового поля */
         }
         .btn-primary {
-            background-color: #007bff; /* Цвет кнопки */
+            background-color: #5d4fff; /* Цвет кнопки */
             border: none; /* Удаление рамки */
         }
         .btn-primary:hover {
@@ -33,13 +34,13 @@
             <form method="post">
                 <div class="form-group">
                     <label for="mass_solution">Масса раствора (г):</label>
-        <input type="text" id="mass_solution" name="mass_solution">
+        <input class="form-control" type="text" id="mass_solution" name="mass_solution">
         <br>
         <label for="mass_solute">Масса растворенного вещества (г):</label>
-        <input type="text" id="mass_solute" name="mass_solute">
+        <input class="form-control" type="text" id="mass_solute" name="mass_solute">
         <br>
         <label for="mass_fraction">Массовая доля (в %):</label>
-        <input type="text" id="mass_fraction" name="mass_fraction">
+        <input class="form-control" type="text" id="mass_fraction" name="mass_fraction">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Рассчитать</button>
                 {% if mass_solution is not none %}
