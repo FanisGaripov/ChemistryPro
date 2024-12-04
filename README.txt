@@ -1,7 +1,7 @@
 Eng:
 Introduction
 ChemistryPro is a web application designed for studying Chemistry at the school level of grades 8-11. It offers users various functions for interacting with chemical element data.
-The site is deployed on render.com: https://chemistypro.onrender.com/
+The site is deployed on render.com: https://chemistrypro.onrender.com/
 A little bit about the architecture of this site: The site is based on the Python programming language. Python has a large number of libraries, which is an advantage of this programming language. Flask is the main library on which this site is based.
 
 pip install flask
@@ -42,7 +42,7 @@ the user who is viewing other profiles).html # Profiles
             
 The source code of the program is open, the program can be found at the link:
 
-https://github.com/FanisGaripov/ChemistyPro
+https://github.com/FanisGaripov/ChemistryPro
 Functions
 1. Adding chemical reactions
 This function allows, in the presence of known reaction reagents, to obtain a reaction product. It works by sending a request to the server chemequations.com . The requests library (python) is used.
@@ -93,7 +93,7 @@ garipovfanis1@yandex.ru
 Rus:
 Введение
 ChemistryPro — это веб-приложение, разработанное для изучения Химии школьного уровня 8-11 классов. Оно предлагает пользователям различные функции для взаимодействия с данными о химических элементах.
-Сайт задеплоен на render.com: https://chemistypro.onrender.com/
+Сайт задеплоен на render.com: https://chemistrypro.onrender.com/
 Немного об архитектуре этого сайта: Сайт основан на языке программирования Python. Python обладает большим количеством библиотек, что является преимуществом этого языка программирования. Flask - это основная библиотека на которой базируется этот сайт.
 
 pip install flask
@@ -134,7 +134,7 @@ ChemistryPro/
             
 Исходный код программы открытый, программу можно найти по ссылке:
 
-https://github.com/FanisGaripov/ChemistyPro
+https://github.com/FanisGaripov/ChemistryPro
 Функции
 1. Дописывание химических реакций
 Это функция позволяет, при наличии известных реагентов реакции, получить продукт реакции. Работает при помощи отправки запроса на сервер chemequations.com . Используется библиотека requests(python).
