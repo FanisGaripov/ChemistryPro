@@ -10,33 +10,30 @@ The Flask framework is a universal solution for many sites, and it is also easy 
 ChemistryPro/
 ├── static/                # Static files such as CSS and images
 │ ├── /upload # Avatars
-│   └── fon.jpg...                      # Other photos
-├── templates/             # HTML Templates
-about.html # About me
+│ └── fon.jpg...                      # Other photos
+├── templates/             # HTML Templates about.html # About me
 │ ├─── base.html # Basic Template
 │ ├─── all_profiles.html # List of all users of the site
 │ ├─── bug.html # In case of errors
 │ ├─── chat.html # Chat
 │ ├─── complete_reaction.html # Adding reactions
 │ ├─── documentation.html # Documentation
-│   ├── edit_profile.html # Profile Editing
+│ ├─── edit_profile.html # Profile Editing
 │ ├─── electronic_configuration.html # Electronic configuration
 │ ├─── get_reaction_chain.html # Chains of transformations
 │ ├─── index.html # Equalizing reactions
 │ ├─── instruction.html # Instructions
 │ ├─── login.html # Login
-│ ├─── main.html # Main page
-of the site minigame.html # MiniGame
+│ ├─── main.html # Main page of the site minigame.html # MiniGame
 │ ├─── molyarnaya_massa.html # Molar masses
 │ ├─── orghim.html # The structure of the org. in-in
-│   ├── otherprofile.html # of the user profile (for
-the user who is viewing other profiles).html # Profiles
+│ ├─── otherprofile.html # of the user profile (for the user who is viewing other profiles).html # Profiles
 │ ├─── register.html # Registration
 │ ├─── tablica.html # The Periodic Table
 │ ├─── tablica_kislotnosti.html # Acidity table
 │ ├─── tablica_rastvorimosti.html # Solubility table
 │ └─── winning.html # Winning a MiniGame
-├── server.py # Main application file
+├─── server.py # Main application file
 ├─── mod.py # All models for the user database are stored here
 └─── requirements.txt # List of dependencies (libraries)
             
