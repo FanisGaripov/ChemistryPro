@@ -707,6 +707,12 @@ def sw():
     return app.send_static_file('sw.js')
 
 
+@app.route('/yandex_682e07bf768831de.html')
+def ya():
+    user = flask_login.current_user
+    return render_template('yandex_682e07bf768831de.html', user=user)
+
+
 @app.route('/offline.html')
 def offline():
     return app.send_static_file('offline.html')
