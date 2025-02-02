@@ -4,3 +4,4 @@ flask_sqlalchemy
 chempy
 gunicorn
 werkzeug
+psycopg2
