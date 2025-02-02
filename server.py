@@ -15,7 +15,7 @@ from datetime import datetime
 # импортируем все библиотеки
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///products.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://fanis:FYpZeNCz9oD2iUsYA0J9R0IcWn4375fH@dpg-cufm3r56l47c73fknaq0-a.oregon-postgres.render.com/products_jh89'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/upload'
 app.secret_key = 'supersecretkey'
@@ -1198,7 +1198,7 @@ def delete_profile(username):
     bugcode = 0
     polzovatel = User.query.filter_by(username=username).first()
     if user.is_authenticated:
-        if user.username == polzovatel.username or user.admin == 1:
+        if user.admin == 1 or user.username == polzovatel.username:
             try:
                 filename = polzovatel.avatar
                 db.session.delete(polzovatel)
@@ -1259,41 +1259,44 @@ def all_profiles():
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
 def edit_profile():
-    # изменить профиль
     user = flask_login.current_user
-    if user.is_authenticated:
-        if request.method == 'POST':
-            username = request.form['username']
-            name = request.form['name']
-            surname = request.form['surname']
-            email = request.form['email']
-            status = request.form['status']
 
-            checking = User.query.filter_by(username=username).first()
-            if checking == False:
-                user.username = username
-                user.surname = surname
-                user.name = name
-                user.email = email
-                user.status = status
-                if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                    os.makedirs(app.config['UPLOAD_FOLDER'])
+    if request.method == 'POST':
+        username = request.form['username']
+        name = request.form['name']
+        surname = request.form['surname']
+        email = request.form['email']
+        status = request.form['status']
+        checking = User.query.filter_by(username=username).first()
 
-                # Обработка загрузки аватара
-                if 'avatar' in request.files:
-                    file = request.files['avatar']
-                    if file:
-                        filename = secure_filename(file.filename)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        user.avatar = filename  # Сохраняем имя файла в БД
+        if checking and checking.id != user.id:
+            bugcode = 4
+            return render_template('bug.html', user=user, bugcode=bugcode)
+        # Обновляем данные пользователя
+        user.username = username
+        user.name = name
+        user.surname = surname
+        user.email = email
+        user.status = status
 
-                db.session.commit()
-                return redirect(url_for('profile'))
+        # Обработка загрузки аватара
+        if 'avatar' in request.files:
+            file = request.files['avatar']
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                user.avatar = filename  # Сохраняем имя файла в БД
 
-        return render_template('edit_profile.html', user=user)
-    else:
-        return redirect(url_for('login'))
+        try:
+            db.session.commit()  # Сохраняем изменения в базе данных
+            return redirect(url_for('profile'))  # Перенаправляем на страницу профиля
+        except Exception as e:
+            db.session.rollback()  # Откатить изменения в случае ошибки
+            return redirect(url_for('edit_profile'))
+
+    return render_template('edit_profile.html', user=user)  # Возвращаем форму редактирования
 
 
 with app.app_context():
