@@ -12,10 +12,12 @@ from bs4 import BeautifulSoup
 from urllib.parse import quote
 import random
 from datetime import datetime
+from dotenv import load_dotenv
 # импортируем все библиотеки
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://fanis:FYpZeNCz9oD2iUsYA0J9R0IcWn4375fH@dpg-cufm3r56l47c73fknaq0-a.oregon-postgres.render.com/products_jh89'
+load_dotenv()
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/upload'
 app.secret_key = 'supersecretkey'
@@ -23,6 +25,55 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
 c = []
+
+
+def download_avatar_from_yandex_disk(filename):
+    token = os.getenv('YANDEX_TOKEN')
+    headers = {
+        'Authorization': f'OAuth {token}'
+    }
+
+    # Получение ссылки для загрузки
+    download_url = f'https://cloud-api.yandex.net/v1/disk/resources/download?path=users_avatars/{filename}'
+    response = requests.get(download_url, headers=headers)
+
+    if response.status_code == 200:
+        download_link = response.json().get('href')
+
+        # Проверяем, получена ли ссылка на загрузку
+        if not download_link:
+            print(f'No download link received for {filename}.')
+            return False
+
+        # Загрузка файла
+        avatar_response = requests.get(download_link)
+
+        if avatar_response.status_code == 200:
+            with open(os.path.join('static/upload', filename), 'wb') as f:
+                f.write(avatar_response.content)
+            return True
+        else:
+            print(f'Failed to download the file. Status code: {avatar_response.status_code}')
+            print(f'Response content: {avatar_response.content}')
+    else:
+        print(f'Failed to get download URL. Status code: {response.status_code}')
+        print(f'Response content: {response.content}')
+
+    return False
+
+def check_and_download_avatars():
+    users = User.query.all()
+    for user in users:
+        if user.avatar:
+            avatar_path = os.path.join('static/upload', user.avatar)
+            if not os.path.exists(avatar_path):
+                print(f'Avatar for user {user.username} not found, downloading from Yandex Disk...')
+                if download_avatar_from_yandex_disk(user.avatar):
+                    print(f'Avatar for user {user.username} downloaded successfully.')
+                else:
+                    print(f'Failed to download avatar for user {user.username}.')
+        else:
+            print(f'User {user.username} has no avatar defined.')
 
 
 def molecular_mass(formula):
@@ -1258,12 +1309,32 @@ def all_profiles():
     return render_template('all_profiles.html', user=user, polzovatel=polzovatel)
 
 
+# Функция загрузки файла на Яндекс.Диск
+def upload_to_yandex_disk(file_path, filename):
+    # Источник доступа к API
+    token = os.getenv('YANDEX_TOKEN')
+    headers = {
+        'Authorization': f'OAuth {token}'
+    }
+    # URL для загрузки файла
+    upload_url = f'https://cloud-api.yandex.net/v1/disk/resources/upload?path=users_avatars/{filename}&overwrite=true'
+    response = requests.get(upload_url, headers=headers)
+
+    if response.status_code == 200:
+        upload_link = response.json().get('href')
+        with open(file_path, 'rb') as f:
+            requests.put(upload_link, data=f)
+        return True
+    return False
+
+
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
     user = flask_login.current_user
 
     if request.method == 'POST':
+        # Получение данных из формы
         username = request.form['username']
         name = request.form['name']
         surname = request.form['surname']
@@ -1274,33 +1345,38 @@ def edit_profile():
         if checking and checking.id != user.id:
             bugcode = 4
             return render_template('bug.html', user=user, bugcode=bugcode)
-        # Обновляем данные пользователя
+
         user.username = username
         user.name = name
         user.surname = surname
         user.email = email
         user.status = status
 
-        # Обработка загрузки аватара
+        # Загрузка аватара
         if 'avatar' in request.files:
             file = request.files['avatar']
             if file and file.filename != '':
                 filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                user.avatar = filename  # Сохраняем имя файла в БД
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)  # Локальное сохранение файла на сервер
+
+                # Загружаем файл на Yandex.Disk
+                if upload_to_yandex_disk(file_path, filename):
+                    user.avatar = filename  # Сохраняем имя файла в БД
 
         try:
-            db.session.commit()  # Сохраняем изменения в базе данных
-            return redirect(url_for('profile'))  # Перенаправляем на страницу профиля
+            db.session.commit()
+            return redirect(url_for('profile'))
         except Exception as e:
-            db.session.rollback()  # Откатить изменения в случае ошибки
+            db.session.rollback()
             return redirect(url_for('edit_profile'))
 
-    return render_template('edit_profile.html', user=user)  # Возвращаем форму редактирования
+    return render_template('edit_profile.html', user=user)
 
 
 with app.app_context():
     db.create_all()
+    check_and_download_avatars()
 
 
 @app.route('/logout')
