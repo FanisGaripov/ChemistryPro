@@ -764,6 +764,12 @@ def ya():
     return render_template('yandex_682e07bf768831de.html', user=user)
 
 
+@app.route('/googled5c4e477b332cb57.html')
+def google():
+    user = flask_login.current_user
+    return render_template('googled5c4e477b332cb57.html', user=user)
+
+
 @app.route('/offline.html')
 def offline():
     return app.send_static_file('offline.html')
