@@ -524,7 +524,40 @@ def complete_reaction_page():
 def get_reaction_chain(reaction):
     # цепочка превращений
     if request.method == 'POST':
-        reaction = request.form.get("chemical_formula", False)
+        if '=' in reaction and '>' not in reaction:
+            reaction = reaction
+        elif '-' in reaction and '>' not in reaction:
+            reactions_list = reaction.split('-')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
+        elif ' ' in reaction:
+            reactions_list = reaction.split(' ')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
+        elif '->' in reaction:
+            reactions_list = reaction.split('->')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
+        elif '=>' in reaction:
+            reactions_list = reaction.split('=>')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
         url = f"https://chemer.ru/services/reactions/chains/{reaction}"
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -534,6 +567,7 @@ def get_reaction_chain(reaction):
         response = session.get(url)
 
         if response.status_code == 200:
+            final_results = []
             soup = BeautifulSoup(response.text, 'html.parser')
             inset_divs = soup.find_all('div', class_='inset')  # Ищем все группы
             reaction_groups = {}  # Словарь для групп реакций
@@ -553,18 +587,31 @@ def get_reaction_chain(reaction):
                     if reactions:
                         # Находим соответствующую группу для текущей секции
                         group_header = content_section.find_previous('div', class_='inset').find('h2')
-                        if group_header:
+                        if group_header and group_header != 'Все неизвестные вещества найдены':
                             group_name = group_header.get_text().strip()
                             for reaction in reactions:
                                 reaction_text = reaction.get_text().strip()  # Извлекаем текст реакции
                                 if group_name in reaction_groups:
                                     reaction_groups[group_name].append(reaction_text)  # Добавляем реакцию в соответствующую группу
+                    else:
+                        group_header = content_section.find_previous('div', class_='inset').find('h2')
+                        group_name = group_header.get_text().strip()
+                        reactions = soup.find_all('a', rel='nofollow')
+                        for reaction in reactions:
+                            if group_name in reaction_groups:
+                                reaction_groups[group_name].append(reaction.text)
 
             # Формируем окончательный результат
-            final_results = []
             for group, reactions in reaction_groups.items():
-                final_results.append(f"Как из {group}:")
-                final_results.extend(reactions)  # Добавляем все реакции для данной группы
+                if len(reactions) == 0:
+                    final_results.append('Реакция невозможна или ошибка в написании')
+                    break
+                elif group == 'Все неизвестные вещества найдены':
+                    final_results.append(f'{group}, попробуйте ввести эту реакцию уже с ниже приведенными веществами')
+                    final_results.extend(reactions)
+                else:
+                    final_results.append(f"Как из {group}:")
+                    final_results.extend(reactions)  # Добавляем все реакции для данной группы
 
             return final_results  # Возвращаем сгруппированные реакции
         else:
