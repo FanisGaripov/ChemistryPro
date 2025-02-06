@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .card {
+            border: 2px solid #5d4fff;
             border-radius: 10px; /* Закругление углов карточки */
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
         }
@@ -18,7 +19,7 @@
             border-radius: 5px; /* Закругление углов текстового поля */
         }
         .btn-primary {
-            background-color: #007bff; /* Цвет кнопки */
+            background-color: #5d4fff; /* Цвет кнопки */
             border: none; /* Удаление рамки */
         }
         .btn-primary:hover {
@@ -33,7 +34,9 @@
     <div class="container">
         <div class="card p-4">
             <h2 class="text-center">Цепочки превращений хим.реакций</h2>
-            <h5 class="text-center">Вводить следует каждое вещество через знак "="</h5>
+            <h5 class="text-center">Вещества можно вводить через -, =, ->, =>, также через пробел</h5>
+            <p class="text-center">Поиск зависит от регистра, недопустимо написание aL2o3 или Al2o3, вместо Al2O3</p>
+            <p class="text-center">Неизвестные вещества заменяйте на X1, X2, X3...</p>
             <form method="post">
                 <div class="form-group">
                     <input type="text" id="chemical_formula" name="chemical_formula" class="form-control" placeholder="Например: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3">

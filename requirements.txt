@@ -5,3 +5,4 @@ chempy
 gunicorn
 werkzeug
 psycopg2
+python-dotenv

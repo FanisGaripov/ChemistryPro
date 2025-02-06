@@ -12,10 +12,12 @@ from bs4 import BeautifulSoup
 from urllib.parse import quote
 import random
 from datetime import datetime
+from dotenv import load_dotenv
 # импортируем все библиотеки
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///products.db'
+load_dotenv()
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = 'static/upload'
 app.secret_key = 'supersecretkey'
@@ -23,6 +25,55 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
 c = []
+
+
+def download_avatar_from_yandex_disk(filename):
+    token = os.getenv('YANDEX_TOKEN')
+    headers = {
+        'Authorization': f'OAuth {token}'
+    }
+
+    # Получение ссылки для загрузки
+    download_url = f'https://cloud-api.yandex.net/v1/disk/resources/download?path=users_avatars/{filename}'
+    response = requests.get(download_url, headers=headers)
+
+    if response.status_code == 200:
+        download_link = response.json().get('href')
+
+        # Проверяем, получена ли ссылка на загрузку
+        if not download_link:
+            print(f'No download link received for {filename}.')
+            return False
+
+        # Загрузка файла
+        avatar_response = requests.get(download_link)
+
+        if avatar_response.status_code == 200:
+            with open(os.path.join('static/upload', filename), 'wb') as f:
+                f.write(avatar_response.content)
+            return True
+        else:
+            print(f'Failed to download the file. Status code: {avatar_response.status_code}')
+            print(f'Response content: {avatar_response.content}')
+    else:
+        print(f'Failed to get download URL. Status code: {response.status_code}')
+        print(f'Response content: {response.content}')
+
+    return False
+
+def check_and_download_avatars():
+    users = User.query.all()
+    for user in users:
+        if user.avatar:
+            avatar_path = os.path.join('static/upload', user.avatar)
+            if not os.path.exists(avatar_path):
+                print(f'Avatar for user {user.username} not found, downloading from Yandex Disk...')
+                if download_avatar_from_yandex_disk(user.avatar):
+                    print(f'Avatar for user {user.username} downloaded successfully.')
+                else:
+                    print(f'Failed to download avatar for user {user.username}.')
+        else:
+            print(f'User {user.username} has no avatar defined.')
 
 
 def molecular_mass(formula):
@@ -472,7 +523,40 @@ def complete_reaction_page():
 def get_reaction_chain(reaction):
     # цепочка превращений
     if request.method == 'POST':
-        reaction = request.form.get("chemical_formula", False)
+        if '=' in reaction and '>' not in reaction:
+            reaction = reaction
+        elif '-' in reaction and '>' not in reaction:
+            reactions_list = reaction.split('-')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
+        elif ' ' in reaction:
+            reactions_list = reaction.split(' ')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
+        elif '->' in reaction:
+            reactions_list = reaction.split('->')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
+        elif '=>' in reaction:
+            reactions_list = reaction.split('=>')
+            reaction = ''
+            for i in range(len(reactions_list)):
+                if i != len(reactions_list) - 1:
+                    reaction += reactions_list[i] + '='
+                else:
+                    reaction += reactions_list[i]
         url = f"https://chemer.ru/services/reactions/chains/{reaction}"
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
@@ -482,6 +566,7 @@ def get_reaction_chain(reaction):
         response = session.get(url)
 
         if response.status_code == 200:
+            final_results = []
             soup = BeautifulSoup(response.text, 'html.parser')
             inset_divs = soup.find_all('div', class_='inset')  # Ищем все группы
             reaction_groups = {}  # Словарь для групп реакций
@@ -501,18 +586,31 @@ def get_reaction_chain(reaction):
                     if reactions:
                         # Находим соответствующую группу для текущей секции
                         group_header = content_section.find_previous('div', class_='inset').find('h2')
-                        if group_header:
+                        if group_header and group_header != 'Все неизвестные вещества найдены':
                             group_name = group_header.get_text().strip()
                             for reaction in reactions:
                                 reaction_text = reaction.get_text().strip()  # Извлекаем текст реакции
                                 if group_name in reaction_groups:
                                     reaction_groups[group_name].append(reaction_text)  # Добавляем реакцию в соответствующую группу
+                    else:
+                        group_header = content_section.find_previous('div', class_='inset').find('h2')
+                        group_name = group_header.get_text().strip()
+                        reactions = soup.find_all('a', rel='nofollow')
+                        for reaction in reactions:
+                            if group_name in reaction_groups:
+                                reaction_groups[group_name].append(reaction.text)
 
             # Формируем окончательный результат
-            final_results = []
             for group, reactions in reaction_groups.items():
-                final_results.append(f"Как из {group}:")
-                final_results.extend(reactions)  # Добавляем все реакции для данной группы
+                if len(reactions) == 0:
+                    final_results.append('Реакция невозможна или ошибка в написании')
+                    break
+                elif group == 'Все неизвестные вещества найдены':
+                    final_results.append(f'{group}, попробуйте ввести эту реакцию уже с ниже приведенными веществами')
+                    final_results.extend(reactions)
+                else:
+                    final_results.append(f"Как из {group}:")
+                    final_results.extend(reactions)  # Добавляем все реакции для данной группы
 
             return final_results  # Возвращаем сгруппированные реакции
         else:
@@ -701,6 +799,28 @@ def tablica():
     return render_template('tablica.html', user=user)
 
 
+@app.route('/sw.js')
+def sw():
+    return app.send_static_file('sw.js')
+
+
+@app.route('/yandex_682e07bf768831de.html')
+def ya():
+    user = flask_login.current_user
+    return render_template('yandex_682e07bf768831de.html', user=user)
+
+
+@app.route('/googled5c4e477b332cb57.html')
+def google():
+    user = flask_login.current_user
+    return render_template('googled5c4e477b332cb57.html', user=user)
+
+
+@app.route('/offline.html')
+def offline():
+    return app.send_static_file('offline.html')
+
+
 @app.route('/tablica_rastvorimosti', methods=['GET', 'POST'])
 def tablica_rastvorimosti():
     # таблица растворимости
@@ -713,6 +833,15 @@ def tablica_kislotnosti():
     # таблица кислот ( ошибка в названии функции ) :))
     user = flask_login.current_user
     return render_template('tablica_kislotnosti.html', user=user)
+
+
+@app.route('/sw.js')
+def service_worker():
+    return send_from_directory(app.static_folder, 'sw.js')
+
+@app.route('/manifest.json')
+def manifest():
+    return send_from_directory(app.static_folder, 'manifest.json')
 
 
 @app.route('/uchebnik', methods=['GET', 'POST'])
@@ -1171,7 +1300,7 @@ def delete_profile(username):
     bugcode = 0
     polzovatel = User.query.filter_by(username=username).first()
     if user.is_authenticated:
-        if user.username == polzovatel.username or user.admin == 1:
+        if user.admin == 1 or user.username == polzovatel.username:
             try:
                 filename = polzovatel.avatar
                 db.session.delete(polzovatel)
@@ -1231,46 +1360,74 @@ def all_profiles():
     return render_template('all_profiles.html', user=user, polzovatel=polzovatel)
 
 
+# Функция загрузки файла на Яндекс.Диск
+def upload_to_yandex_disk(file_path, filename):
+    # Источник доступа к API
+    token = os.getenv('YANDEX_TOKEN')
+    headers = {
+        'Authorization': f'OAuth {token}'
+    }
+    # URL для загрузки файла
+    upload_url = f'https://cloud-api.yandex.net/v1/disk/resources/upload?path=users_avatars/{filename}&overwrite=true'
+    response = requests.get(upload_url, headers=headers)
+
+    if response.status_code == 200:
+        upload_link = response.json().get('href')
+        with open(file_path, 'rb') as f:
+            requests.put(upload_link, data=f)
+        return True
+    return False
+
+
 @app.route('/edit_profile', methods=['GET', 'POST'])
+@login_required
 def edit_profile():
-    # изменить профиль
     user = flask_login.current_user
-    if user.is_authenticated:
-        if request.method == 'POST':
-            username = request.form['username']
-            name = request.form['name']
-            surname = request.form['surname']
-            email = request.form['email']
-            status = request.form['status']
 
-            checking = User.query.filter_by(username=username).first()
-            if checking == False:
-                user.username = username
-                user.surname = surname
-                user.name = name
-                user.email = email
-                user.status = status
-                if not os.path.exists(app.config['UPLOAD_FOLDER']):
-                    os.makedirs(app.config['UPLOAD_FOLDER'])
+    if request.method == 'POST':
+        # Получение данных из формы
+        username = request.form['username']
+        name = request.form['name']
+        surname = request.form['surname']
+        email = request.form['email']
+        status = request.form['status']
+        checking = User.query.filter_by(username=username).first()
 
-                # Обработка загрузки аватара
-                if 'avatar' in request.files:
-                    file = request.files['avatar']
-                    if file:
-                        filename = secure_filename(file.filename)
-                        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                        user.avatar = filename  # Сохраняем имя файла в БД
+        if checking and checking.id != user.id:
+            bugcode = 4
+            return render_template('bug.html', user=user, bugcode=bugcode)
 
-                db.session.commit()
-                return redirect(url_for('profile'))
+        user.username = username
+        user.name = name
+        user.surname = surname
+        user.email = email
+        user.status = status
 
-        return render_template('edit_profile.html', user=user)
-    else:
-        return redirect(url_for('login'))
+        # Загрузка аватара
+        if 'avatar' in request.files:
+            file = request.files['avatar']
+            if file and file.filename != '':
+                filename = secure_filename(file.filename)
+                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file.save(file_path)  # Локальное сохранение файла на сервер
+
+                # Загружаем файл на Yandex.Disk
+                if upload_to_yandex_disk(file_path, filename):
+                    user.avatar = filename  # Сохраняем имя файла в БД
+
+        try:
+            db.session.commit()
+            return redirect(url_for('profile'))
+        except Exception as e:
+            db.session.rollback()
+            return redirect(url_for('edit_profile'))
+
+    return render_template('edit_profile.html', user=user)
 
 
 with app.app_context():
     db.create_all()
+    check_and_download_avatars()
 
 
 @app.route('/logout')

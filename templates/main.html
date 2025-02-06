@@ -13,8 +13,11 @@
             background-color: #ffffff;
             font-family: Arial, sans-serif;
         }
+        #shrift {
+            color: #000000;
+        }
         .hero {
-            background-color: #55555e;
+            background: linear-gradient(#b3a5ed, #a5a8f2);
             color: white;
             padding: 60px 0;
             text-align: center;
@@ -22,23 +25,66 @@
         .features {
             margin: 50px 0;
         }
+        .card {
+            border: 2px solid #5d4fff; /* Обводка карточки */
+            border-radius: 10px;
+            background-color: #ffffff; /* Белый фон карточки */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        @media (min-width: 992px) {
+        .card {
+        height: 250px;
+        }
+        }
+        @media (max-width: 991px) {
+        .card {
+        height: auto;
+        }
+        }
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* Размещаем элементы равномерно */
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        }
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .card-text {
+            font-size: 1rem;
+            color: #555;
+        }
+        .cards-group {
+        font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #5d4fff;
+            border: none;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+        .btn-primary:hover {
+            background-color: #474754;
+        }
         footer {
             background-color: #55555e;
             color: white;
             padding: 20px 0;
             text-align: center;
         }
-        .btn.btn-light {
-        color: black; /* Установите цвет текста кнопки черным */
-        }
         A {
-        color: white; /* Цвет ссылок */
+            color: white; /* Цвет ссылок */
         }
         A:visited {
-        color: white; /* Цвет посещенных ссылок */
+            color: white; /* Цвет посещенных ссылок */
         }
         A:active {
-        color: gray; /* Цвет активных ссылок */
+            color: gray; /* Цвет активных ссылок */
         }
     </style>
 </head>
@@ -54,60 +100,66 @@
         </div>
     </header>
 
+    <div class="container features">
+        <h2 class="cards-group text-center">Добро Пожаловать!</h2>
+        <p class="text-center">ChemistryPRO — химический портал и ученический проект. Здесь Вы сможете воспользоваться разными функциями: начиная от вычисления Молярной Массы, заканчивая получением Структур Органических Веществ. Также на сайте присутствует много таблиц, и дополнительных функций. Чтобы ознакомиться листайте вниз.</p>
+    </div>
+
     <!-- Основной контент -->
     <div class="container features">
-        <h2 class="text-center">Наши функции</h2>
+        <h2 class="cards-group text-center">Наши функции</h2>
+        <br>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Цепочки превращений</h5>
                         <p class="card-text">Создайте цепочки превращений химических реакций с помощью нашего онлайн-инструмента.</p>
                         <a href="/get_reaction_chain" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Уравнивание реакций</h5>
                         <p class="card-text">Уравнивайте химические реакции разной сложности с помощью нашего онлайн-инструмента.</p>
                         <a href="/uravnivanie" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Дописывание хим.реакций</h5>
-                        <p class="card-text">Функция дописывания продуктов реакции, работает при помощи api (Бета).</p>
+                        <p class="card-text">Функция дописывания продуктов реакции, работает при помощи API (Beta).</p>
                         <a href="/complete_reaction" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Молярные массы</h5>
-                        <p class="card-text">Попробуйте наш новый калькулятор молярных масс веществ и хим.реакций.</p>
+                        <p class="card-text">Попробуйте наш новый калькулятор молярных масс веществ и химических реакций.</p>
                         <a href="/molyarnaya_massa" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Электронная конфигурация</h5>
                         <p class="card-text">Справочник электронных конфигураций хим.элементов.</p>
                         <a href="/electronic_configuration" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Структура органических в-в</h5>
-                        <p class="card-text">Узнаем структуру органических в-в при помощи названия(бета).</p>
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Структура органических веществ</h5>
+                        <p class="card-text">Узнаем структуру органических веществ при помощи названия (Beta).</p>
                         <a href="/orghim" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
@@ -116,29 +168,30 @@
     </div>
 
     <div class="container features">
-        <h2 class="text-center">Таблицы</h2>
+        <h2 class="cards-group text-center">Таблицы</h2>
+        <br>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Таблица Менделеева</h5>
                         <p class="card-text">Помощь в работе с инструментами сайта.</p>
                         <a href="/tablica" class="btn btn-primary">Ознакомиться</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Таблица растворимостей</h5>
                         <p class="card-text">Помощь при составлении уравнений разной сложности.</p>
                         <a href="/tablica_rastvorimosti" class="btn btn-primary">Ознакомиться</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Таблица кислот</h5>
                         <p class="card-text">В таблице указаны наиболее известные кислоты и их остатки.</p>
                         <a href="/tablica_kislotnosti" class="btn btn-primary">Ознакомиться</a>
@@ -148,47 +201,48 @@
         </div>
     </div>
 
-
     <div class="container features">
-        <h2 class="text-center">Калькуляторы</h2>
+        <h2 class="cards-group text-center">Калькуляторы</h2>
+        <br>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Молярные массы</h5>
-                        <p class="card-text">Попробуйте наш новый калькулятор молярных масс веществ и хим.реакций.</p>
+                        <p class="card-text">Попробуйте наш новый калькулятор молярных масс веществ и химических реакций.</p>
                         <a href="/molyarnaya_massa" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Калькулятор Растворимостей</h5>
-                        <p class="card-text">Калькулятор,который позволяет узнать массу и доли растворенных веществ. </p>
+                        <p class="card-text">Калькулятор, который позволяет узнать массу и доли растворенных веществ.</p>
                         <a href="/rastvory" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
-    
+
+
     <div class="container features">
-        <h2 class="text-center">Развлечения</h2>
+        <h2 class="cards-group text-center">Может быть интересно</h2>
+        <br>
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Мини-игра</h5>
                         <p class="card-text">Запоминайте химические элементы из Периодической системы химических элементов с помощью игры</p>
                         <a href="/minigame" class="btn btn-primary">Играть</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4 mb-4">
                 <div class="card">
-                    <div class="card-body">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Общий чат</h5>
                         <p class="card-text">Общайтесь с другими пользователями сайта: шутите, развлекайтесь, решайте проблемы.</p>
                         <a href="/chat" class="btn btn-primary">Общаться</a>

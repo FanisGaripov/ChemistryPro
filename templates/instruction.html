@@ -31,6 +31,10 @@
         <a href="https://chemer.ru/services/reactions/chains/" target="_blank" class="text-primary">chemer.ru</a>
     </p>
 
+    <h4 class="mt-5">Скачать приложение(PWA):</h4>
+    <br>
+    <button id="installBtn" style="display: none;">Установить приложение</button>
+
     <h4 class="mt-5">Список всех пользователей:</h4>
     <br>
     <p>
@@ -57,4 +61,32 @@
         margin-top: 20px;
     }
 </style>
+<script>
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Предотвращаем автоматическое отображение уведомления
+            e.preventDefault();
+            // Сохраняем событие, чтобы позже его вызвать
+            deferredPrompt = e;
+            // Показываем кнопку установки
+            document.getElementById('installBtn').style.display = 'block';
+        });
+
+        document.getElementById('installBtn').addEventListener('click', (e) => {
+            // Скрываем кнопку установки
+            document.getElementById('installBtn').style.display = 'none';
+            // Показываем диалог установки
+            deferredPrompt.prompt();
+            // Ждем, чтобы пользователь ответил на диалог
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Пользователь принял установку');
+                } else {
+                    console.log('Пользователь отклонил установку');
+                }
+                deferredPrompt = null;
+            });
+        });
+    </script>
 {% endblock %}
