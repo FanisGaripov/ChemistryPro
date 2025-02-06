@@ -48,9 +48,9 @@
                     <h4 class="text-center mt-3">{{ reaction }}:</h4>
                     {% for i in react2 %}
                         {% if 'Как из' in i %}
-                        <h5 class="text-center">{{ i }}</h5>
+                        <h5 class="text-center">{{ i|replace('`overset(t)(=)`', '<span style="position: relative;"><span style="position: absolute; top: -10px; left: 0;">t°</span>=</span>')|safe }}</h5>
                         {% else %}
-                        <p class="text-center">{{ i }}</p>
+                        <p class="text-center">{{ i|replace('`overset(t)(=)`', '<span style="position: relative;"><span style="position: absolute; top: -10px; left: 0;">t°</span>=</span>')|safe }}</p>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
