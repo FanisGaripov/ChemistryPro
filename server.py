@@ -442,7 +442,6 @@ def osnova():
         chemical_formula = request.form['chemical_formula']
         try:
             resultat2 = f'{chemical_formula}: {uravnivanie(chemical_formula)}'
-            print(resultat2)
         except:
             redirect('/')
     return render_template('index.html', resultat2=resultat2, user=user)
@@ -982,7 +981,6 @@ def minigamefunc():
         k.append(i)
     b = k[a]
     nazv = atomic_masses[b]
-    print(b, nazv)
     return b, nazv
 
 
