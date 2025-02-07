@@ -525,38 +525,57 @@ def get_reaction_chain(reaction):
     if request.method == 'POST':
         if '=' in reaction and '>' not in reaction:
             reaction = reaction
+            if ' ' in reaction:
+                reaction = reaction.replace(' ', '')
         elif '-' in reaction and '>' not in reaction:
             reactions_list = reaction.split('-')
             reaction = ''
             for i in range(len(reactions_list)):
                 if i != len(reactions_list) - 1:
                     reaction += reactions_list[i] + '='
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
                 else:
                     reaction += reactions_list[i]
-        elif ' ' in reaction:
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
+        elif ' ' in reaction and '>' not in reaction and '=' not in reaction and '-' not in reaction:
             reactions_list = reaction.split(' ')
             reaction = ''
+            reactions_list = [r for r in reactions_list if r.strip() != '']
             for i in range(len(reactions_list)):
                 if i != len(reactions_list) - 1:
                     reaction += reactions_list[i] + '='
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
                 else:
                     reaction += reactions_list[i]
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
         elif '->' in reaction:
             reactions_list = reaction.split('->')
             reaction = ''
             for i in range(len(reactions_list)):
                 if i != len(reactions_list) - 1:
                     reaction += reactions_list[i] + '='
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
                 else:
                     reaction += reactions_list[i]
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
         elif '=>' in reaction:
             reactions_list = reaction.split('=>')
             reaction = ''
             for i in range(len(reactions_list)):
                 if i != len(reactions_list) - 1:
                     reaction += reactions_list[i] + '='
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
                 else:
                     reaction += reactions_list[i]
+                    if ' ' in reaction:
+                        reaction = reaction.replace(' ', '')
         url = f"https://chemer.ru/services/reactions/chains/{reaction}"
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
