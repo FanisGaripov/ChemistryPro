@@ -650,6 +650,48 @@ def get_reaction_chain_page():
     return render_template('get_reaction_chain.html', get_reaction_chain=get_reaction_chain, user=user, reaction=reaction, react2=react2)
 
 
+@app.route('/organic_reactions', methods=['GET', 'POST'])
+def organic():
+    user = flask_login.current_user
+    image_tags = []
+    k = 0
+    zapros = ''
+
+    if request.method == 'POST':
+        zapros = request.form.get("chemical_formula", False)
+        url = 'http://acetyl.ru/process/recv.php'
+
+        # Параметры запроса
+        params = {
+            'search': zapros,
+            'sizesd': 1,
+            'colsd': 0,
+            'test': 0,
+            'butt': 4
+        }
+
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            answer = response.text
+
+            soup = BeautifulSoup(answer, 'html.parser')
+
+            images = soup.find_all('img')
+            for img in images:
+                src = img['src'][2:-2].replace('\\', '')
+                if not src.startswith('http'):
+                    src = f'http://acetyl.ru{src}'
+                if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png':
+                    k += 1
+                    image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}">')
+
+        else:
+            image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
+
+    return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize())
+
+
 @app.route('/aboutme', methods=['GET', 'POST'])
 def aboutme():
     # обо мне
