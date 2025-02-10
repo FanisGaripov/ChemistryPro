@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Цепочки превращений{% endblock %}
+
+{% block content %}
+<head>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border: 2px solid #5d4fff;
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #5d4fff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+        #sidebar A {
+            color: white; /* Цвет ссылок в боковой панели */
+        }
+        .image-container {
+            overflow-x: auto;  /* Включаем горизонтальную прокрутку */
+            white-space: nowrap; /* Не переносим строки */
+        }
+        .image-container img {
+            max-height: 200px; /* Ограничиваем высоту изображений */
+            margin-right: 10px; /* Отступ между изображениями */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Органические реакции</h2>
+            <h5 class="text-center">Введите любую органическую реакцию - получите ответ</h5>
+            <p class="text-center">Если введете просто название органического вещества, то выведутся все возможные реакции с веществом</p>
+            <form method="post">
+                <div class="form-group">
+                    <input type="text" id="chemical_formula" name="chemical_formula" class="form-control" placeholder="Например: метан + br2">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Решить</button>
+                <div>
+                    {% if zapros != '' %}
+                    <h5 class="text-center mt-3">{{ zapros }} = ?</h5>
+                    {% endif %}
+                    <div class="image-container">
+                        {% for img_tag in image_tags %}
+                            {% if 'Ошибка' in img_tag %}
+                                <h5 class="text-center mt-3">Такой реакции не существует</h5>
+                            {% elif img_tag == '' %}
+                                <h5 class="text-center mt-3">Введите реакцию</h5>
+                            {% else %}
+                                <div class="text-center mt-3">{{ img_tag|safe }}</div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+                <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://acetyl.ru/" target="_blank"><font color="blue">Acetyl.ru</font></a></h5>
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}
