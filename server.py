@@ -656,6 +656,7 @@ def organic():
     image_tags = []
     k = 0
     zapros = ''
+    dec_ans2 = ''
 
     if request.method == 'POST':
         zapros = request.form.get("chemical_formula", False)
@@ -682,14 +683,30 @@ def organic():
                 src = img['src'][2:-2].replace('\\', '')
                 if not src.startswith('http'):
                     src = f'http://acetyl.ru{src}'
-                if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png':
+                if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
                     k += 1
                     image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}">')
 
         else:
             image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
 
-    return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize())
+        url2 = 'http://acetyl.ru/klass/search.php'
+        params2 = {
+            'searvar': zapros
+        }
+
+        response = requests.get(url2, params=params2)
+        if response.status_code == 200:
+            answer = response.text
+
+            soup = BeautifulSoup(answer, 'html.parser')
+            text_content = soup.get_text(separator="\n", strip=True)
+            dec_ans2 = text_content.encode().decode('unicode_escape').replace('\\', '')
+            a = len(zapros) + 14
+            dec_ans2 = dec_ans2[8:-a].replace('</div>', '').replace('\t', '').split('\n')
+            dec_ans2 = [item.capitalize() for item in dec_ans2 if item != '']
+
+    return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
 
 
 @app.route('/aboutme', methods=['GET', 'POST'])
