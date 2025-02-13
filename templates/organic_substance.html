@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Органика{% endblock %}
+
+{% block content %}
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 50%;
+            margin: auto;
+        }
+        td {
+            border: 1px solid black;
+            width: 25px;
+            height: 30px;
+            text-align: center;
+            cursor: pointer;
+        }
+        td:hover {
+            background-color: #f0f0f0;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .card {
+            border: 2px solid #5d4fff;
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #5d4fff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+        #sidebar A {
+        color: white; /* Цвет ссылок в боковой панели */
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Графический ввод органических веществ</h2>
+            <p class="text-center">Введите любое вещество</p>
+            <table id="myTable">
+                <script>
+                    // Создаем пустую таблицу 10x10
+                    for (var i = 0; i < 10; i++) {
+                        document.write("<tr>");
+                        for (var j = 0; j < 10; j++) {
+                            document.write("<td onclick='insertElement(" + (i + 1) + ", " + (j + 1) + ")'></td>");
+                        }
+                        document.write("</tr>");
+                    }
+
+                    let selectedElement = "";
+                    let coordinates = [];
+                    let eraserMode = false; // Состояние ластика
+
+                    function selectElement(element) {
+                        selectedElement = element;
+                        eraserMode = false; // Выключаем ластик при выборе элемента
+                    }
+
+                    function enableEraser() {
+                        eraserMode = true; // Включаем режим ластика
+                        selectedElement = "eraser"; // Сбрасываем выбранный элемент
+                    }
+
+                    function insertElement(x, y) {
+                        const cell = document.getElementById('myTable').rows[x - 1].cells[y - 1];
+
+                        if (eraserMode) {
+                            cell.textContent = ''; // Удаляем содержимое ячейки
+                            cell.className = ''; // Удаляем класс
+                            coordinates.push({ x: x, y: y, element: selectedElement });
+                        } else if (selectedElement) {
+                            cell.textContent = selectedElement;
+                            coordinates.push({ x: x, y: y, element: selectedElement });
+                        } else {
+                            alert('Пожалуйста, выберите элемент или включите ластик!');
+                        }
+                    }
+
+                    function sendCoordinates() {
+                        if (coordinates.length === 0) {
+                            alert('Нет выбранных веществ для отправки!');
+                            return;
+                        }
+
+                        fetch('/send_coordinates', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ coordinates: coordinates })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                            window.location.reload();
+
+                            // Обновление изображения и названия вещества на странице
+                            if (data.length > 0) {
+                                const lastSubstance = data[data.length - 1]; // Получаем последнее вещество
+                                const photoUrl = session['photo_url']; // Получаем URL изображения
+                                const substanceName = lastSubstance; // Имя вещества
+
+                                // Обновляем элементы на странице
+                                document.getElementById('substanceImage').src = photoUrl;
+                                document.getElementById('substanceName').textContent = substanceName;
+
+                                // Очистка выбранных координат после отправки
+                                coordinates = [];
+                                clearTable(); // Очистка таблицы после отправки
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                    }
+
+                    function clearTable() {
+                        const table = document.getElementById('myTable');
+                        for (let i = 0; i < 10; i++) {
+                            for (let j = 0; j < 10; j++) {
+                                const cell = table.rows[i].cells[j];
+                                cell.textContent = ''; // Сброс содержимого ячеек
+                                cell.className = ''; // Удаление класса
+                                coordinates = [];
+                            }
+                        }
+                    }
+                </script>
+            </table>
+
+            <div class="button-container">
+                <button onclick="selectElement('C')">C</button>
+                <button onclick="selectElement('O')">O</button>
+                <button onclick="selectElement('N')">N</button>
+                <button onclick="selectElement('S')">S</button>
+                <button onclick="selectElement('F')">F</button>
+                <button onclick="selectElement('Cl')">Cl</button>
+                <button onclick="selectElement('Br')">Br</button>
+                <button onclick="selectElement('I')">I</button>
+                <button onclick="selectElement('Na')">Na</button>
+                <button onclick="selectElement('K')">K</button>
+                <button onclick="enableEraser()">Ластик</button> <!-- Кнопка для включения ластика -->
+                <button onclick="clearTable()">Очистить</button> <!-- Кнопка для очистки таблицы -->
+            </div>
+
+            <div class="button-container">
+                <button onclick="sendCoordinates()">Отправить</button>
+            </div>
+            <br>
+            <div>
+    {% if photo_url and substance_name %}
+        <div>
+            <img id="substanceImage" src="{{ photo_url }}" alt="Substance Image">
+            <div id="substanceName">{{ substance_name|safe }}</div>
+        </div>
+    {% endif %}
+</div>
+        </div>
+</div>
+</body>
+</html>
+{% endblock %}
