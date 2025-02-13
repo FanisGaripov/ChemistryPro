@@ -709,6 +709,67 @@ def organic():
     return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
 
 
+@app.route('/send_coordinates', methods=['POST'])
+def send_coordinates():
+    tabinf = ''
+    data = request.json
+    coordinates = data.get('coordinates', [])
+    responses = []
+    instr = ''
+
+    for coord in coordinates:
+        X_coord = coord['x']
+        Y_coord = coord['y']
+        element = coord['element']
+        if element == 'C':
+            instr = '01'
+        elif element == 'O':
+            instr = '02'
+        elif element == 'N':
+            instr = '03'
+        elif element == 'S':
+            instr = '04'
+        elif element == 'F':
+            instr = '05'
+        elif element == 'Cl':
+            instr = '06'
+        elif element == 'Br':
+            instr = '07'
+        elif element == 'I':
+            instr = '08'
+        elif element == 'Na':
+            instr = '09'
+        elif element == 'K':
+            instr = '10'
+
+        if tabinf == '':
+            url = f'http://acetyl.ru/process/graf.php?instr={instr}&tx={X_coord}&ty={Y_coord}&tz=00&tabinf=&test=0&ww=985'
+        else:
+            url = f'http://acetyl.ru/process/graf.php?instr={instr}&tx={X_coord}&ty={Y_coord}&tz=00&tabinf={tabinf}&test=0&ww=985'
+
+        response = requests.get(url)
+        if response.status_code == 200:
+            answer = response.text
+            print(answer)
+            parsed_data = json.loads(answer)
+            tabinf = parsed_data['tabinf']
+            substance = parsed_data['res']
+            responses.append(substance[0])
+            photo_url = (f"http://acetyl.ru/s/{substance[1]}.png")
+            session['photo_url'] = photo_url
+            session['substance_name'] = substance[0]
+
+    return jsonify(responses)
+
+
+@app.route('/organic_substance', methods=['GET', 'POST'])
+def organic_substance():
+    user = flask_login.current_user
+    photo_url = session.get('photo_url', None)
+    substance_name = session.get('substance_name', None)
+    return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name)
+
+
 @app.route('/aboutme', methods=['GET', 'POST'])
 def aboutme():
     # обо мне
