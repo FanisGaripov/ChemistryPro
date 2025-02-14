@@ -1,13 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}ChemistryPRO - Органика{% endblock %}
+{% block title %}ChemistryPRO - Графический ввод органических веществ{% endblock %}
 
 {% block content %}
     <style>
         table {
             border-collapse: collapse;
-            width: 50%;
+            width: 70%;
             margin: auto;
+        }
+        @media (max-width: 780px) {
+        table {
+            width: 100%; /* Ширина для мобильных устройств */
+        }
         }
         td {
             border: 1px solid black;
@@ -44,6 +49,18 @@
         #sidebar A {
         color: white; /* Цвет ссылок в боковой панели */
         }
+        .styled-button {
+            padding: 10px 15px;
+            margin: 5px;
+            font-size: 16px;
+            color: white;
+            border: 1px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            background-color: #5d4fff;
+        }
+        .send { background-color: #4CAF50; }
     </style>
 </head>
 <body>
@@ -144,29 +161,29 @@
             </table>
 
             <div class="button-container">
-                <button onclick="selectElement('C')">C</button>
-                <button onclick="selectElement('O')">O</button>
-                <button onclick="selectElement('N')">N</button>
-                <button onclick="selectElement('S')">S</button>
-                <button onclick="selectElement('F')">F</button>
-                <button onclick="selectElement('Cl')">Cl</button>
-                <button onclick="selectElement('Br')">Br</button>
-                <button onclick="selectElement('I')">I</button>
-                <button onclick="selectElement('Na')">Na</button>
-                <button onclick="selectElement('K')">K</button>
-                <button onclick="enableEraser()">Ластик</button> <!-- Кнопка для включения ластика -->
-                <button onclick="clearTable()">Очистить</button> <!-- Кнопка для очистки таблицы -->
+                <button class="styled-button" onclick="selectElement('C')">C</button>
+                <button class="styled-button" onclick="selectElement('O')">O</button>
+                <button class="styled-button" onclick="selectElement('N')">N</button>
+                <button class="styled-button" onclick="selectElement('S')">S</button>
+                <button class="styled-button" onclick="selectElement('F')">F</button>
+                <button class="styled-button" onclick="selectElement('Cl')">Cl</button>
+                <button class="styled-button" onclick="selectElement('Br')">Br</button>
+                <button class="styled-button" onclick="selectElement('I')">I</button>
+                <button class="styled-button" onclick="selectElement('Na')">Na</button>
+                <button class="styled-button" onclick="selectElement('K')">K</button>
+                <button class="styled-button" onclick="enableEraser()">Ластик</button> <!-- Кнопка для включения ластика -->
+                <button class="styled-button" onclick="clearTable()">Очистить</button> <!-- Кнопка для очистки таблицы -->
             </div>
 
             <div class="button-container">
-                <button onclick="sendCoordinates()">Отправить</button>
+                <button class="styled-button send" onclick="sendCoordinates()">Отправить</button>
             </div>
             <br>
             <div>
     {% if photo_url and substance_name %}
-        <div>
+        <div style="text-align: center;">
             <img id="substanceImage" src="{{ photo_url }}" alt="Substance Image">
-            <div id="substanceName">{{ substance_name|safe }}</div>
+            <div><h5 id="substanceName">{{ substance_name|safe }}</h5></div>
         </div>
     {% endif %}
 </div>

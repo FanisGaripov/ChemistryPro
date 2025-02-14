@@ -15,7 +15,7 @@
        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-    
+
        ym(99820869, "init", {
             clickmap:true,
             trackLinks:true,
@@ -26,6 +26,7 @@
     <noscript><div><img src="https://mc.yandex.ru/watch/99820869" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
     <!-- /Yandex.Metrika counter -->
     <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
     <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
@@ -170,8 +171,7 @@
                         <a class="nav-link" href="/electronic_configuration"><i class="fas fa-plus-circle"></i> Электронная конфигурация</a>
                         <a class="nav-link" href="/organic_reactions"><i class="fa fa-leaf" aria-hidden="true"></i> Органические реакции</a>
                         <a class="nav-link" href="/get_reaction_chain"><i class="fa fa-terminal"></i> Цепочки превращений</a>
-                        <a class="nav-link" href="/orghim"><i class="fa fa-list-ol"></i> Структура органических веществ</a>
-                        <a class="nav-link" href="/organic_substance"><i class="fa fa-list-ol"></i> Графический ввод органических веществ</a>
+                        <a class="nav-link" href="/select-organic-input"><i class="fa fa-list-ol"></i> Узнать органическое вещество</a>
                         <a class="nav-link" href="/chat"><i class="fa fa-comment"></i> Общий чат</a>
                         <a class="nav-link" href="/minigame"><i class="fa fa-gamepad"></i> Мини-Игра</a>
                     </div>
