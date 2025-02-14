@@ -770,6 +770,12 @@ def organic_substance():
     return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name)
 
 
+@app.route('/select-organic-input', methods=['GET', 'POST'])
+def red_or_blue_tablet():
+    user = flask_login.current_user
+    return render_template('red_or_blue_tablet.html', user=user)
+
+
 @app.route('/aboutme', methods=['GET', 'POST'])
 def aboutme():
     # обо мне
