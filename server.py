@@ -961,6 +961,11 @@ def google():
     return render_template('googled5c4e477b332cb57.html', user=user)
 
 
+@app.route('/ads.txt')
+def ads():
+    return app.send_static_file('ads.txt')
+
+
 @app.route('/offline.html')
 def offline():
     return app.send_static_file('offline.html')
