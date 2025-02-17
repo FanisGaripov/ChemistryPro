@@ -257,36 +257,22 @@
 </div>
 
 <!-- контент дочерних шаблонов -->
-<body>
-    <div class="ad-sidebar left">
-        <!-- Yandex.RTB R-A-13796850-6 -->
-        <div id="yandex_rtb_R-A-13796850-6"></div>
-        <script>
-            window.yaContextCb.push(() => {
-                Ya.Context.AdvManager.render({
-                    "blockId": "R-A-13796850-6",
-                    "renderTo": "yandex_rtb_R-A-13796850-6"
-                });
-            });
-        </script>
-    </div>
-
-    <div class="container my-3">
-        {% block content %}
-        {% endblock %}
-
-        <div id="yandex_rtb_R-A-13796850-1"></div>
-        <script>
-            window.yaContextCb.push(() => {
-                Ya.Context.AdvManager.render({
-                    "blockId": "R-A-13796850-1",
-                    "renderTo": "yandex_rtb_R-A-13796850-1",
-                    "type": "feed"
-                });
-            });
-        </script>
-    </div>
-</body>
+<div class="container my-3">
+    {% block content %}
+    {% endblock %}
+    <body>
+    <div id="yandex_rtb_R-A-13796850-1"></div>
+    <script>
+      window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+          "blockId": "R-A-13796850-1",
+          "renderTo": "yandex_rtb_R-A-13796850-1",
+          "type": "feed"
+        })
+      })
+    </script>
+    </body>
+</div>
 
 
 <!-- дополнительная навигационная панель -->
