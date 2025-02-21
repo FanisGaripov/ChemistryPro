@@ -46,9 +46,10 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Решить</button>
                 {% if reaction == '' %}
-                    <p class="text-center mt-3">Введите реакцию</p>
+                    <h5 class="text-center mt-3">Введите реакцию</h5>
                 {% elif reaction != '' %}
-                    <p class="text-center mt-3">{{ react1 }}</p>
+                    <h5 class="text-center mt-3">Конечная реакция:</h5>
+                    <h5 class="text-center mt-3">{{ react1 }}</h5>
                 {% endif %}
                 <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemequations.com/ru/" target="_blank"><font color="blue">chemequations.com</font></a></h5>
             </form>
