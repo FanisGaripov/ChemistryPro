@@ -278,14 +278,9 @@ def electronic_configuration(element):
         return "Элемент не найден", ""
 
     configurations = []
-    configurations1 = []
     subshells = ['1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d', '5p', '6s', '4f', '5d', '6p', '7s', '5f',
                  '6d', '7p']
     electrons = [2, 2, 6, 2, 6, 2, 10, 6, 2, 10, 6, 2, 14, 10, 6, 2, 14, 10, 6]
-
-    subshells1 = ['1s', '2s', '2p', '3s', '3p', '3d', '4s', '4p', '4d', '4f', '5s', '5p', '5d', '5f', '6s', '6p', '6d',
-                  '7s', '7p']
-    electrons1 = [2, 2, 6, 2, 6, 10, 2, 6, 10, 14, 2, 6, 10, 14, 2, 6, 10, 2, 6]
 
     for i in range(len(subshells)):
         if atomic_number > 0:
@@ -296,18 +291,17 @@ def electronic_configuration(element):
                 configurations.append(f"{subshells[i]}^{atomic_number}")
                 break
 
-    for i in range(len(subshells1)):
-        if atomic_number1 > 0:
-            if atomic_number1 >= electrons1[i]:
-                configurations1.append(f"{subshells1[i]}^{electrons1[i]}")
-                atomic_number1 -= electrons1[i]
-            else:
-                configurations1.append(f"{subshells1[i]}^{atomic_number1}")
-                break
+    configurations1 = configurations
+
+    priority = {
+        '1s': 1, '2s': 2, '2p': 3, '3s': 4, '3p': 5, '3d': 6, '4s': 7, '4p': 8, '4d': 9, '4f': 10, '5s': 11,
+        '5p': 12, '5d': 13, '5f': 14, '6s': 15, '6p': 16, '6d': 17, '7s': 18, '7p': 19
+    }
+
+    configurations2 = sorted(configurations1, key=lambda x: priority.get(x.split('^')[0], float('inf')))
 
     configuration_string = ' '.join(configurations)
-
-    configuration_string2 = ' '.join(configurations1)
+    configuration_string2 = ' '.join(configurations2)
 
     # Графическое представление(текстовое, используются [↑] и [↓], открывающая и закрывающая скобка - это одна клетка)
     graphic_representation = generate_graphical_representation(configurations)
@@ -675,17 +669,18 @@ def organic():
 
         if response.status_code == 200:
             answer = response.text
-
-            soup = BeautifulSoup(answer, 'html.parser')
-
+            parsed_data = json.loads(answer)
+            soup = BeautifulSoup(str(parsed_data), 'html.parser')
             images = soup.find_all('img')
             for img in images:
-                src = img['src'][2:-2].replace('\\', '')
+                src = img['src']
                 if not src.startswith('http'):
                     src = f'http://acetyl.ru{src}'
                 if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
                     k += 1
                     image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}">')
+                elif k == 0:
+                    image_tags.append('Картинок нет')
 
         else:
             image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
@@ -698,12 +693,12 @@ def organic():
         response = requests.get(url2, params=params2)
         if response.status_code == 200:
             answer = response.text
-
-            soup = BeautifulSoup(answer, 'html.parser')
+            parsed_data = json.loads(answer)
+            res = parsed_data['res']
+            soup = BeautifulSoup(str(res), 'html.parser')
             text_content = soup.get_text(separator="\n", strip=True)
-            dec_ans2 = text_content.encode().decode('unicode_escape').replace('\\', '')
-            a = len(zapros) + 14
-            dec_ans2 = dec_ans2[8:-a].replace('</div>', '').replace('\t', '').split('\n')
+            dec_ans2 = text_content
+            dec_ans2 = dec_ans2[0::].split('\n')
             dec_ans2 = [item.capitalize() for item in dec_ans2 if item != '']
 
     return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
@@ -912,8 +907,15 @@ def chat_messages():
 @app.route('/chat/saving')
 def chat_saving():
     # Загрузка истории чата
-    if chat_history_file != '[]':
-        file_path = os.path.join('chat_history.json')
+    with open('chat_history.json', 'r', encoding='utf-8') as f:
+        chat_history = json.load(f)
+    if chat_history != '[]':
+        file_path = 'chat_history.txt'
+        with open(file_path, 'w', encoding='utf-8') as f:
+            for entry in chat_history:
+                # Форматирование строки
+                formatted_message = f"{entry['timestamp']} - {entry['username']}: {entry['message']}\n"
+                f.write(formatted_message)
         return send_file(file_path, as_attachment=True)
     else:
         return 'Чат пуст'
@@ -921,7 +923,7 @@ def chat_saving():
 
 @app.route('/download-db')
 def download_db():
-    # загрузка базы данных пользователя. вынужден использовать, т.к не могу встроить миграцию на хостинг
+    # ф-ция уже не нужна, т.к база данных переехала на postgresql, но все равно оставлю для локальных тестов :)
     user = flask_login.current_user
     if user.is_authenticated and user.admin == 1:
         try:
