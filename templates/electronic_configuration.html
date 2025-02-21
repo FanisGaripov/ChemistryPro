@@ -42,8 +42,11 @@
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Узнать</button>
                 {% if element != '' %}
-                    <p class="text-center mt-3">{{ element }}: {{ configuration1 }}</p>
-                    <p class="text-center mt-3">Зарядовое число атома: {{ atomic }}</p>
+                    <h5 class="text-center mt-3">{{ element }} - электронная конфигурация:</h5>
+                    <p class="text-center mt-3">Школьный вариант(по возрастанию): {{ configuration1 }}</p>
+                    <p class="text-center mt-3">Общепринятный вариант: {{ configuration }}</p>
+                    <H5 class="text-center mt-3">Зарядовое число атома: {{ atomic }}</H5>
+                    <h5 class="text-center mt-3">Графическое представление:</h5>
                     <pre>{{ graphic_representation }}</pre>
                 {% endif %}
             </form>
