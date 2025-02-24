@@ -13,6 +13,7 @@ from urllib.parse import quote
 import random
 from datetime import datetime
 from dotenv import load_dotenv
+from apscheduler.schedulers.background import BackgroundScheduler
 # импортируем все библиотеки
 
 app = Flask(__name__)
@@ -36,28 +37,47 @@ def download_avatar_from_yandex_disk(filename):
     # Получение ссылки для загрузки
     download_url = f'https://cloud-api.yandex.net/v1/disk/resources/download?path=users_avatars/{filename}'
     response = requests.get(download_url, headers=headers)
+    if filename != 'chat_history.json':
+        if response.status_code == 200:
+            download_link = response.json().get('href')
 
-    if response.status_code == 200:
-        download_link = response.json().get('href')
+            # Проверяем, получена ли ссылка на загрузку
+            if not download_link:
+                print(f'No download link received for {filename}.')
+                return False
 
-        # Проверяем, получена ли ссылка на загрузку
-        if not download_link:
-            print(f'No download link received for {filename}.')
-            return False
+            # Загрузка файла
+            avatar_response = requests.get(download_link)
 
-        # Загрузка файла
-        avatar_response = requests.get(download_link)
-
-        if avatar_response.status_code == 200:
-            with open(os.path.join('static/upload', filename), 'wb') as f:
-                f.write(avatar_response.content)
-            return True
+            if avatar_response.status_code == 200:
+                with open(os.path.join('static/upload', filename), 'wb') as f:
+                    f.write(avatar_response.content)
+                return True
+            else:
+                print(f'Failed to download the file. Status code: {avatar_response.status_code}')
+                print(f'Response content: {avatar_response.content}')
         else:
-            print(f'Failed to download the file. Status code: {avatar_response.status_code}')
-            print(f'Response content: {avatar_response.content}')
-    else:
-        print(f'Failed to get download URL. Status code: {response.status_code}')
-        print(f'Response content: {response.content}')
+            print(f'Failed to get download URL. Status code: {response.status_code}')
+            print(f'Response content: {response.content}')
+    elif filename == 'chat_history.json':
+        if response.status_code == 200:
+            download_link = response.json().get('href')
+            if not download_link:
+                print(f'No download link received for {filename}.')
+                return False
+
+            avatar_response = requests.get(download_link)
+
+            if avatar_response.status_code == 200:
+                with open(os.path.join('', filename), 'wb') as f:
+                    f.write(avatar_response.content)
+                return True
+            else:
+                print(f'Failed to download chat file. Status code: {avatar_response.status_code}')
+                print(f'Response content: {avatar_response.content}')
+        else:
+            print(f'Failed to get download URL. Status code: {response.status_code}')
+            print(f'Response content: {response.content}')
 
     return False
 
@@ -921,6 +941,16 @@ def chat_saving():
         return 'Чат пуст'
 
 
+def scheduled_task():
+    chat_file_path = 'chat_history.json'
+    upload_to_yandex_disk(chat_file_path, os.path.basename(chat_file_path))
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(scheduled_task, 'interval', hours=1)
+scheduler.start()
+
+
 @app.route('/download-db')
 def download_db():
     # ф-ция уже не нужна, т.к база данных переехала на postgresql, но все равно оставлю для локальных тестов :)
@@ -1591,4 +1621,7 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    try:
+        app.run(debug=True, host='0.0.0.0', port=5000)
+    finally:
+        scheduler.shutdown()
