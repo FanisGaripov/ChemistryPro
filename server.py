@@ -684,42 +684,45 @@ def organic():
             'test': 0,
             'butt': 4
         }
+        if zapros != '':
+            response = requests.get(url, params=params)
 
-        response = requests.get(url, params=params)
+            if response.status_code == 200:
+                answer = response.text
+                parsed_data = json.loads(answer)
+                soup = BeautifulSoup(str(parsed_data), 'html.parser')
+                images = soup.find_all('img')
+                for img in images:
+                    src = img['src']
+                    title = img.get('title', '')
+                    if not src.startswith('http'):
+                        src = f'http://acetyl.ru{src}'
+                    if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
+                        k += 1
+                        image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}" title="{title}">')
+                        if title is not None:
+                            image_tags.append(title)
+                    elif k == 0:
+                        image_tags.append('Картинок нет')
 
-        if response.status_code == 200:
-            answer = response.text
-            parsed_data = json.loads(answer)
-            soup = BeautifulSoup(str(parsed_data), 'html.parser')
-            images = soup.find_all('img')
-            for img in images:
-                src = img['src']
-                if not src.startswith('http'):
-                    src = f'http://acetyl.ru{src}'
-                if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
-                    k += 1
-                    image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}">')
-                elif k == 0:
-                    image_tags.append('Картинок нет')
+            else:
+                image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
 
-        else:
-            image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
+            url2 = 'http://acetyl.ru/klass/search.php'
+            params2 = {
+                'searvar': zapros
+            }
 
-        url2 = 'http://acetyl.ru/klass/search.php'
-        params2 = {
-            'searvar': zapros
-        }
-
-        response = requests.get(url2, params=params2)
-        if response.status_code == 200:
-            answer = response.text
-            parsed_data = json.loads(answer)
-            res = parsed_data['res']
-            soup = BeautifulSoup(str(res), 'html.parser')
-            text_content = soup.get_text(separator="\n", strip=True)
-            dec_ans2 = text_content
-            dec_ans2 = dec_ans2[0::].split('\n')
-            dec_ans2 = [item.capitalize() for item in dec_ans2 if item != '']
+            response = requests.get(url2, params=params2)
+            if response.status_code == 200:
+                answer = response.text
+                parsed_data = json.loads(answer)
+                res = parsed_data['res']
+                soup = BeautifulSoup(str(res), 'html.parser')
+                text_content = soup.get_text(separator="\n", strip=True)
+                dec_ans2 = text_content
+                dec_ans2 = dec_ans2[0::].split('\n')
+                dec_ans2 = [item.capitalize() for item in dec_ans2 if item != '']
 
     return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
 
