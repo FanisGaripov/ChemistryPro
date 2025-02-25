@@ -53,13 +53,13 @@
                 <div>
                     {% if zapros != '' %}
                     <h5 class="text-center mt-3">{{ zapros }} = ?</h5>
+                    {% else %}
+                    <h5 class="text-center mt-3">Введите реакцию</h5>
                     {% endif %}
                     <div class="image-container">
                         {% for img_tag in image_tags %}
                             {% if 'Ошибка' in img_tag or image_tags[0] == 'Картинок нет' or 'Ошибка при получении страницы' in image_tags[0] %}
                                 <h5 class="text-center mt-3">Такой реакции не существует</h5>
-                            {% elif img_tag == '' %}
-                                <h5 class="text-center mt-3">Введите реакцию</h5>
                             {% else %}
                                 <div class="text-center mt-3">{{ img_tag|safe }}</div>
                             {% endif %}
