@@ -62,6 +62,14 @@
             background-color: #5d4fff;
         }
         .send { background-color: #4CAF50; }
+        .image-container {
+            overflow-x: auto;  /* Включаем горизонтальную прокрутку */
+            white-space: nowrap; /* Не переносим строки */
+        }
+        .image-container img {
+            max-height: 200px; /* Ограничиваем высоту изображений */
+            margin-right: 10px; /* Отступ между изображениями */
+        }
     </style>
 </head>
 <body>
@@ -185,6 +193,11 @@
         <div style="text-align: center;">
             <img id="substanceImage" src="{{ photo_url }}" alt="Substance Image">
             <div><h5 id="substanceName">{{ substance_name|safe }}</h5></div>
+            <br>
+            {% if image_container %}
+            <h5 class="text-center">Все реакции с {{ substance_name_new }}</h5>
+            {{ image_container|safe }}
+            {% endif %}
         </div>
     {% endif %}
 </div>
