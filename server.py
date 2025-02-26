@@ -786,7 +786,7 @@ def organic_substance():
     photo_url = session.get('photo_url', None)
     substance_name = session.get('substance_name', None)
     substance_name_new = ''
-    if '<br>Чтобы продолжить цепь, кликните по любой <em>свободной</em> клетке рядом' in substance_name:
+    if substance_name is not None and '<br>Чтобы продолжить цепь, кликните по любой <em>свободной</em> клетке рядом' in substance_name:
        substance_name = substance_name[0:5]
     image_container = ''
     if photo_url is not None and substance_name is not None:
