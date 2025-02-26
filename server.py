@@ -782,6 +782,8 @@ def send_coordinates():
 
 @app.route('/organic_substance', methods=['GET', 'POST'])
 def organic_substance():
+    k = 0
+    image_tags = []
     user = flask_login.current_user
     photo_url = session.get('photo_url', None)
     substance_name = session.get('substance_name', None)
@@ -790,7 +792,7 @@ def organic_substance():
        substance_name = substance_name[0:5]
     image_container = ''
     if photo_url is not None and substance_name is not None:
-        url = 'https://chemistrypro.onrender.com/organic_reactions'
+        url = 'http://acetyl.ru/process/recv.php'
         if '<br>' in substance_name:
             substance_name_new = substance_name.split('<br>')
             substance_name_new = substance_name_new[0]
@@ -798,21 +800,40 @@ def organic_substance():
             substance_name_new = substance_name
 
         # Параметры запроса
-        data = {
-            'chemical_formula': f'{substance_name_new}'
+        params = {
+            'search': substance_name_new,
+            'sizesd': 1,
+            'colsd': 0,
+            'test': 0,
+            'butt': 4
         }
 
         # Отправка GET-запроса
-        response = requests.post(url, data=data)
+        response = requests.get(url, params=params)
 
         # Проверка статуса ответа
         if response.status_code == 200:
-            soup = BeautifulSoup(response.text, 'html.parser')
-            image_container = soup.find('div', class_='image-container')
-        else:
-            print(f'Ошибка при получении страницы: {response.status_code}')
+            answer = response.text
+            parsed_data = json.loads(answer)
+            soup = BeautifulSoup(str(parsed_data), 'html.parser')
+            images = soup.find_all('img')
+            for img in images:
+                src = img['src']
+                title = img.get('title', '')
+                if not src.startswith('http'):
+                    src = f'http://acetyl.ru{src}'
+                if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
+                    k += 1
+                    image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}" title="{title}">')
+                    if title is not None:
+                        image_tags.append(title)
+                elif k == 0:
+                    image_tags.append('Картинок нет')
 
-    return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name, image_container=image_container, substance_name_new=substance_name_new)
+        else:
+            image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
+
+    return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name, image_tags=image_tags, substance_name_new=substance_name_new)
 
 
 @app.route('/select-organic-input', methods=['GET', 'POST'])
