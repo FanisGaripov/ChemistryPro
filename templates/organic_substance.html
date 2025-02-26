@@ -194,10 +194,16 @@
             <img id="substanceImage" src="{{ photo_url }}" alt="Substance Image">
             <div><h5 id="substanceName">{{ substance_name|safe }}</h5></div>
             <br>
-            {% if image_container %}
             <h5 class="text-center">Все реакции с {{ substance_name_new }}</h5>
-            {{ image_container|safe }}
-            {% endif %}
+            <div class="image-container">
+                {% for img_tag in image_tags %}
+                    {% if 'Ошибка' in img_tag or image_tags[0] == 'Картинок нет' or 'Ошибка при получении страницы' in image_tags[0] %}
+                        <h5 class="text-center mt-3">Такой реакции не существует</h5>
+                    {% else %}
+                        <div class="text-center mt-3">{{ img_tag|safe }}</div>
+                    {% endif %}
+                {% endfor %}
+            </div>
         </div>
     {% endif %}
 </div>
