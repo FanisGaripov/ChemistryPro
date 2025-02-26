@@ -785,7 +785,34 @@ def organic_substance():
     user = flask_login.current_user
     photo_url = session.get('photo_url', None)
     substance_name = session.get('substance_name', None)
-    return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name)
+    substance_name_new = ''
+    if '<br>Чтобы продолжить цепь, кликните по любой <em>свободной</em> клетке рядом' in substance_name:
+       substance_name = substance_name[0:5]
+    image_container = ''
+    if photo_url is not None and substance_name is not None:
+        url = 'https://chemistrypro.onrender.com/organic_reactions'
+        if '<br>' in substance_name:
+            substance_name_new = substance_name.split('<br>')
+            substance_name_new = substance_name_new[0]
+        else:
+            substance_name_new = substance_name
+
+        # Параметры запроса
+        data = {
+            'chemical_formula': f'{substance_name_new}'
+        }
+
+        # Отправка GET-запроса
+        response = requests.post(url, data=data)
+
+        # Проверка статуса ответа
+        if response.status_code == 200:
+            soup = BeautifulSoup(response.text, 'html.parser')
+            image_container = soup.find('div', class_='image-container')
+        else:
+            print(f'Ошибка при получении страницы: {response.status_code}')
+
+    return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name, image_container=image_container, substance_name_new=substance_name_new)
 
 
 @app.route('/select-organic-input', methods=['GET', 'POST'])
