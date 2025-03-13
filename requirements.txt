@@ -7,3 +7,4 @@ werkzeug
 psycopg2
 python-dotenv
 APScheduler
+g4f[all] 
