@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - ChatGPT Онлайн{% endblock %}
+
+{% block content %}
+<head>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border: 2px solid #5d4fff;
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #5d4fff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+        .chat-message {
+            margin: 10px 0;
+        }
+        .user-message {
+            text-align: right;
+            color: #5d4fff;
+        }
+        .gpt-message {
+            text-align: left;
+            color: #343a40;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Чат GPT-4</h2>
+            <p class="text-center">Это бесплатный ИИ, который включает в себя огромное количество нейросетей, обученных на большом количестве данных. Здесь и химия, и информатика, и физика и тд. В зависимости от типа запроса, для Вас будет подобран бот, который сможет дать Вам ответ!</>
+            <p class="text-center">Предупреждение: Загрузка может быть довольно долгой, если бот печатает много текста. На сайте временно не реализован потоковый вывод информации в целях экономии ресурсов.</p>
+            <div id="chat-box" class="mb-4">
+                {% for message in chat_history %}
+                    <div class="chat-message {{ message.sender }}">
+                        <strong>
+                            {% if message.sender == 'user' %}
+                                Вы:
+                            {% else %}
+                                GPT-4:
+                            {% endif %}
+                        </strong> {{ message.text|safe }}
+                    </div>
+                {% endfor %}
+            </div>
+            <form method="post">
+                <div class="form-group">
+                    <input type="text" id="user_input" name="user_input" class="form-control" placeholder="Как уравнять химическую реакцию?" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Решить</button>
+            </form>
+            <form method="post" action="/clear">
+                <button type="submit" class="btn btn-danger btn-block mt-3">Очистить историю</button>
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}
