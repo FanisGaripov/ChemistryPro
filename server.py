@@ -14,6 +14,7 @@ import random
 from datetime import datetime
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
+from g4f.client import Client
 # импортируем все библиотеки
 
 app = Flask(__name__)
@@ -863,6 +864,38 @@ def instruction():
 def documentation():
     user = flask_login.current_user
     return render_template('documentation.html', user=user)
+
+
+@app.route('/chat-gpt', methods=['GET', 'POST'])
+def chat_gpt_gf4():
+    user = flask_login.current_user
+    if 'chatgpt_history' not in session:
+        session['chatgpt_history'] = []
+    if request.method == 'POST':
+        user_input = request.form["user_input"]
+        chat_response = chatgpt(user_input)
+        session['chatgpt_history'].append({"sender": "user", "text": user_input})
+        session['chatgpt_history'].append({"sender": "gpt", "text": chat_response})
+        session.modified = True
+        return render_template("index.html", user=user, chat_history=session['chatgpt_history'])
+
+    return render_template("index.html", user=user, chat_history=session['chatgpt_history'])
+
+
+def chatgpt(user_input):
+    client = Client()
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": user_input}],
+        web_search=False
+    )
+    return f"<pre><code>{response.choices[0].message.content}</code></pre>"
+
+
+@app.route('/clear', methods=['POST'])
+def clear_chatgpt_history():
+    session.pop('chatgpt_history', None)
+    return redirect('/chat-gpt')
 
 
 @app.route('/rastvory', methods=['GET', 'POST'])
