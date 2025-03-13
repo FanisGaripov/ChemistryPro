@@ -877,9 +877,9 @@ def chat_gpt_gf4():
         session['chatgpt_history'].append({"sender": "user", "text": user_input})
         session['chatgpt_history'].append({"sender": "gpt", "text": chat_response})
         session.modified = True
-        return render_template("index.html", user=user, chat_history=session['chatgpt_history'])
+        return render_template("chatgpt.html", user=user, chat_history=session['chatgpt_history'])
 
-    return render_template("index.html", user=user, chat_history=session['chatgpt_history'])
+    return render_template("chatgpt.html", user=user, chat_history=session['chatgpt_history'])
 
 
 def chatgpt(user_input):
