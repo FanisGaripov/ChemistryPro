@@ -889,7 +889,7 @@ def chatgpt(user_input):
         messages=[{"role": "user", "content": user_input}],
         web_search=False
     )
-    return f"<pre><code>{response.choices[0].message.content}</code></pre>"
+    return f"<div class='gpt-response'>{response.choices[0].message.content}</div>"
 
 
 @app.route('/clear', methods=['POST'])
