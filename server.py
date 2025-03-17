@@ -15,6 +15,7 @@ from datetime import datetime
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from g4f.client import Client
+from qualitative_reactions import qualitative_reactions_notorganic
 # импортируем все библиотеки
 
 app = Flask(__name__)
@@ -518,6 +519,7 @@ def get_chemical_equation_solution(reaction):
 def complete_reaction_page():
     # страница, отвечающая за вывод завершенных реакций предыдущим методом
     react1 = ''
+    check_qualitative_reaction_notorganic = ''
     user = flask_login.current_user
     reaction = ''
     if request.method == 'POST':
@@ -531,8 +533,10 @@ def complete_reaction_page():
             react1 = react1.replace('(aq)', '')
         if '(l)' in react1:
             react1 = react1.replace('(l)', '')
+        if qualitative_reactions_notorganic(reaction):
+            check_qualitative_reaction_notorganic = qualitative_reactions_notorganic(reaction)
 
-    return render_template('complete_reaction.html', get_chemical_equation_solution=get_chemical_equation_solution, react1=react1, user=user, reaction=reaction)
+    return render_template('complete_reaction.html', get_chemical_equation_solution=get_chemical_equation_solution, react1=react1, user=user, reaction=reaction, check_qualitative_reaction_notorganic=check_qualitative_reaction_notorganic)
 
 
 def get_reaction_chain(reaction):
