@@ -50,6 +50,9 @@
                 {% elif reaction != '' %}
                     <h5 class="text-center mt-3">Конечная реакция:</h5>
                     <h5 class="text-center mt-3">{{ react1 }}</h5>
+                {% if check_qualitative_reaction_notorganic != '' %}
+                    <h5 class="text-center mt-3">{{ check_qualitative_reaction_notorganic }}</h5>
+                {% endif %}
                 {% endif %}
                 <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemequations.com/ru/" target="_blank"><font color="blue">chemequations.com</font></a></h5>
             </form>
