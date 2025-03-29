@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}ChemistryPRO - {{ category }}{% endblock %}
+{% block description %}ChemistryPRO - Задания ЕГЭ по теме {{ category }}{% endblock %}
+{% block content %}
+<main class="main-content">
+<div class="container">
+    <h1>Задания ЕГЭ по теме: {{ category }}</h1>
+    <div class="tasks-container">
+        {% for task in tasks %}
+        <div class="task-item">
+            <h3>Задание {{ loop.index }}</h3>
+            <p><strong>{{ task.type }}</strong></p>
+            <div class="task-text">{{ task.text }}</div>
+            {% if task.image %}
+            <img src="{{ task.image }}" class="task-image" alt="Изображение задания">
+            {% endif %}
+        </div>
+        <br>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .image-container {
+        text-align: center; /* Центрируем изображения */
+        margin: 1.5rem 0; /* Отступы сверху и снизу */
+    }
+
+    .content-image {
+        max-width: 100%; /* Ограничиваем максимальную ширину */
+        height: auto; /* Автоматическая высота для сохранения пропорций */
+        border-radius: 10px; /* Закругляем углы изображений */
+    }
+
+    .content-text {
+        margin: 1.5rem 0; /* Отступы для текста */
+        line-height: 1.6; /* Высота строки для лучшей читаемости */
+    }
+</style>
+</main>
+{% endblock %}
