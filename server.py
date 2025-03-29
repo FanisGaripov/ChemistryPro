@@ -98,6 +98,56 @@ def check_and_download_avatars():
             print(f'User {user.username} has no avatar defined.')
 
 
+def load_tasks_from_files(number):
+    catalog = {}
+    if number == 1:
+        tasks_dir = 'База заданий ОГЭ'
+    else:
+        tasks_dir = 'База заданий ЕГЭ'
+
+    for filename in os.listdir(tasks_dir):
+        if filename.startswith('tasks_type_') and filename.endswith('.json'):
+            theme = filename.replace('tasks_type_', '').replace('.json', '')
+            try:
+                with open(os.path.join(tasks_dir, filename), 'r', encoding='utf-8') as f:
+                    tasks = json.load(f)
+                    catalog[theme] = tasks
+            except Exception as e:
+                print(f"Ошибка загрузки файла {filename}: {e}")
+
+    return catalog
+
+
+oge_catalog = load_tasks_from_files(1)
+ege_catalog = load_tasks_from_files(2)
+
+
+@app.route('/oge', methods=['GET', 'POST'])
+def OGE_catalog():
+    user = flask_login.current_user
+    return render_template('oge_catalog.html', catalog=oge_catalog, user=user)
+
+
+@app.route('/oge/<category>')
+def OGE_zadaniya(category):
+    user = flask_login.current_user
+    tasks = oge_catalog.get(category, [])
+    return render_template('OGE.html', category=category, tasks=tasks, user=user)
+
+
+@app.route('/ege', methods=['GET', 'POST'])
+def EGE_catalog():
+    user = flask_login.current_user
+    return render_template('ege_catalog.html', catalog=ege_catalog, user=user)
+
+
+@app.route('/ege/<category>')
+def EGE_zadaniya(category):
+    user = flask_login.current_user
+    tasks = ege_catalog.get(category, [])
+    return render_template('EGE.html', category=category, tasks=tasks, user=user)
+
+
 def molecular_mass(formula):
     # Словарь с атомными массами элементов
     atomic_masses = {
