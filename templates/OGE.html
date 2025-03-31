@@ -5,7 +5,7 @@
 {% block content %}
 <main class="main-content">
 <div class="container">
-    <h1>Задания ОГЭ по теме: {{ category }}</h1>
+    <h1>Задания ОГЭ по теме: {{ pretty_category }}</h1>
     <div class="tasks-container">
         {% for task in tasks %}
         <div class="task-item">
