@@ -1005,34 +1005,66 @@ def documentation():
 
 
 @app.route('/chat-gpt', methods=['GET', 'POST'])
-def chat_gpt_gf4():
+def chatgpt():
     user = flask_login.current_user
     if 'chatgpt_history' not in session:
         session['chatgpt_history'] = []
-    if request.method == 'POST':
-        user_input = request.form["user_input"]
-        chat_response = chatgpt(user_input)
-        session['chatgpt_history'].append({"sender": "user", "text": user_input})
-        session['chatgpt_history'].append({"sender": "gpt", "text": chat_response})
         session.modified = True
-        return render_template("chatgpt.html", user=user, chat_history=session['chatgpt_history'])
-
-    return render_template("chatgpt.html", user=user, chat_history=session['chatgpt_history'])
+    return render_template('chatgpt.html', user=user, chat_history=session['chatgpt_history'])
 
 
-def chatgpt(user_input):
-    client = Client()
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": user_input}],
-        web_search=False
-    )
-    return f"<div class='gpt-response'>{response.choices[0].message.content}</div>"
+@app.route('/stream')
+def stream():
+    question = request.args.get('question')
+    # Обновляем историю чата
+    session['chatgpt_history'].append({"sender": "user", "text": question})
+    session.modified = True
+
+    response = ask_chemistry_question(question)
+    return Response(stream_with_context(response_stream(response)),
+                    content_type='text/event-stream')
+
+
+def response_stream(response):
+    for chunk in response:
+        if isinstance(chunk, str):
+            yield f"data: {chunk}\n\n"
+
+    yield "data: [DONE]\n\n"
+
+
+def ask_chemistry_question(question):
+    """Функция для отправки вопроса ИИ и получения ответа с потоковым выводом."""
+    full_response = ''
+    try:
+        response = g4f.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": question}],
+            stream=True
+        )
+        for chunk in response:
+            if isinstance(chunk, str):
+                full_response += chunk
+                yield chunk
+
+    except Exception as e:
+        yield f"Произошла ошибка: {e}"
+
+
+@app.route('/save-chat-history', methods=['POST'])
+def save_chat_history():
+    if request.method == 'POST':
+        data = request.get_json()
+        session['chatgpt_history'] = data.get('history', [])
+        session.modified = True
+        return jsonify({'status': 'success'})
+    return jsonify({'status': 'error'})
 
 
 @app.route('/clear', methods=['POST'])
 def clear_chatgpt_history():
     session.pop('chatgpt_history', None)
+    session.modified = True  # Убедитесь, что изменения зарегистрированы
     return redirect('/chat-gpt')
 
 
