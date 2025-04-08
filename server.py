@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, session, url_for, jsonify, send_file, send_from_directory
+from flask import Flask, render_template, request, redirect, flash, session, url_for, jsonify, send_file, send_from_directory, Response, stream_with_context
 import re
 from mod import db, User, UserGameState
 from chempy import balance_stoichiometry
@@ -16,6 +16,7 @@ from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from g4f.client import Client
 from qualitative_reactions import qualitative_reactions_notorganic
+import g4f
 # импортируем все библиотеки
 
 app = Flask(__name__)
