@@ -44,37 +44,149 @@
             white-space: pre-wrap;
             font-family: monospace;
         }
+        .loading {
+            color: #3498db;
+            text-align: center;
+            padding: 15px;
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            padding: 15px;
+        }
+        #answer {
+            white-space: pre-wrap; /* Сохраняет пробелы и переносы строк */
+            word-wrap: break-word; /* Переносит длинные слова */
+            font-family: inherit; /* Использует шрифт родителя */
+            line-height: 1.6; /* Улучшает читаемость */
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="card p-4">
-            <h2 class="text-center">Чат GPT-4</h2>
-            <p class="text-center">Это бесплатный ИИ, который включает в себя огромное количество нейросетей, обученных на большом количестве данных. Здесь и химия, и информатика, и физика и тд. В зависимости от типа запроса, для Вас будет подобран бот, который сможет дать Вам ответ!</>
-            <p class="text-center text-danger">Предупреждение: Загрузка может быть довольно долгой, если бот печатает много текста. На сайте временно не реализован потоковый вывод информации в целях экономии ресурсов.</p>
-            <div id="chat-box" class="mb-4">
+            <h2 class="text-center"><i class="fas fa-brain"></i> ChemistryPRO AI Assistant</h2>
+            <p class="text-center">Ваш бесплатный интеллектуальный помощник в химии и других науках</p>
+
+            <!-- История чата -->
+            <div id="chatHistory">
                 {% for message in chat_history %}
-                    <div class="chat-message {{ message.sender }}">
-                        <strong>
-                            {% if message.sender == 'user' %}
-                                Вы:
-                            {% else %}
-                                GPT-4:
-                            {% endif %}
-                        </strong> {{ message.text|safe }}
+                    <div class="chat-message {{ 'user-message' if message.sender == 'user' else 'gpt-message' }}">
+                        <strong>{{ 'Вы' if message.sender == 'user' else 'ИИ' }}:</strong>
+                        <div class="message-content">{{ message.text|safe }}</div>
                     </div>
                 {% endfor %}
             </div>
-            <form method="post">
+
+            <form id="questionForm">
                 <div class="form-group">
                     <input type="text" id="user_input" name="user_input" class="form-control" placeholder="Как уравнять химическую реакцию?" required>
                 </div>
-                <button type="submit" class="btn btn-primary btn-block">Отправить</button>
+                <button type="submit" class="btn btn-primary btn-block">Спросить у ИИ</button>
             </form>
             <form method="post" action="/clear">
                 <button type="submit" class="btn btn-danger btn-block mt-3">Очистить историю</button>
             </form>
+            <div id="answer" style="white-space: pre-wrap;"></div>
         </div>
     </div>
+
+    <script>
+    const form = document.getElementById('questionForm');
+    const chatHistory = document.getElementById('chatHistory');
+    let currentEventSource = null;
+    let responseCount = 0; // Счетчик для уникальных ID ответов
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const question = document.getElementById('user_input').value.trim();
+        if (!question) return;
+
+        // Добавляем вопрос пользователя
+        addMessageToHistory('user', question);
+
+        // Создаем уникальный ID для этого ответа
+        const responseId = `gpt-response-${++responseCount}`;
+        // Добавляем контейнер для ответа (пока пустой)
+        addMessageToHistory('gpt', '', responseId);
+
+        // Очищаем поле ввода
+        document.getElementById('user_input').value = '';
+
+        // Закрываем предыдущее соединение, если есть
+        if (currentEventSource) {
+            currentEventSource.close();
+        }
+
+        // Начинаем новое соединение SSE
+        currentEventSource = new EventSource(`/stream?question=${encodeURIComponent(question)}`);
+
+        let fullResponse = '';
+        const responseElement = document.getElementById(responseId);
+
+        currentEventSource.onmessage = function(event) {
+            if (event.data === "[DONE]") {
+                currentEventSource.close();
+                saveChatHistory();
+                return;
+            }
+
+            fullResponse += event.data;
+            responseElement.innerHTML = fullResponse;
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            if (MathJax.typeset) {
+                MathJax.typeset([responseElement]);
+            }
+        };
+
+        currentEventSource.onerror = function() {
+            currentEventSource.close();
+        };
+    });
+
+    // Функция для добавления сообщения в историю
+    function addMessageToHistory(sender, text, elementId = null) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `chat-message ${sender}-message`;
+
+        const content = `<strong>${sender === 'user' ? 'Вы' : 'ИИ'}:</strong>
+                        <div class="message-content" ${elementId ? `id="${elementId}"` : ''}>${escapeHtml(text)}</div>`;
+
+        messageDiv.innerHTML = content;
+        chatHistory.appendChild(messageDiv);
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    // Функция для сохранения истории
+    function saveChatHistory() {
+        const messages = [];
+        document.querySelectorAll('#chatHistory .chat-message').forEach(msg => {
+            const sender = msg.classList.contains('user-message') ? 'user' : 'gpt';
+            const content = msg.querySelector('.message-content').innerHTML;
+            messages.push({sender, text: content});
+        });
+
+        fetch('/save-chat-history', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({history: messages}),
+            credentials: 'same-origin'
+        }).catch(err => console.error('Ошибка сохранения истории:', err));
+    }
+
+    // Функция для экранирования HTML
+    function escapeHtml(unsafe) {
+        return unsafe
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+</script>
 </body>
 {% endblock %}
