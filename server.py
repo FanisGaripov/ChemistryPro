@@ -1005,6 +1005,22 @@ def documentation():
     return render_template('documentation.html', user=user)
 
 
+@app.route('/get_molecule', methods=['GET', 'POST'])
+def get_molecule():
+    user = flask_login.current_user
+    formula = ''
+    if request.method == "POST":
+        name = request.form.get('name')
+        pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/record/SDF?record_type=3d"
+        response = requests.get(pubchem_url)
+        if response.status_code == 200:
+            formula = response.text
+        print(response.text)
+        return render_template('get_molecule.html', formula=formula, user=user)
+    else:
+        return render_template('get_molecule.html', formula=None, user=user)
+
+
 @app.route('/chat-gpt', methods=['GET', 'POST'])
 def chatgpt():
     user = flask_login.current_user
