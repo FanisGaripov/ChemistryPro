@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}3D Molecule Viewer{% endblock %}
+{% block description %}Просмотр 3D-структур химических соединений{% endblock %}
+
+{% block content %}
+<div class="molecule-viewer-container">
+    <h1>Поиск 3D-структуры молекулы</h1>
+
+    <form method="POST" class="form-group">
+        <input type="text" name="name" placeholder="Введите название (на англ., например: methane)" required>
+        <button type="submit">Загрузить</button>
+    </form>
+
+    {% if formula %}
+    <div class="molecule-viewer-wrapper">
+        <div id="viewer-container"></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/3Dmol/2.1.0/3Dmol-min.js"></script>
+    <script>
+        let viewer = $3Dmol.createViewer("viewer-container", {
+            backgroundColor: "black",
+            defaultcolors: $3Dmol.elementColors.rasmol
+        });
+
+        try {
+            viewer.addModel(`{{ formula }}`, "sdf");
+            viewer.setStyle({}, {sphere: {radius: 0.4}, stick: {radius: 0.15}});
+            viewer.zoomTo();
+            viewer.render();
+            viewer.rotate(90, 0, 0);
+        } catch(e) {
+            console.error("Ошибка загрузки молекулы:", e);
+            document.querySelector(".molecule-viewer-wrapper").innerHTML =
+                '<p class="error-message">Ошибка загрузки молекулы. Проверьте название.</p>';
+        }
+    </script>
+    {% endif %}
+
+    {% if formula is none or 'Status: 404' in formula %}
+    <p class="info-message">Введите название вещества, чтобы увидеть 3D-структуру.</p>
+    {% endif %}
+</div>
+
+<style>
+    .molecule-viewer-container {
+        max-width: 100%;
+        padding: 20px;
+    }
+
+    .molecule-viewer-wrapper {
+        width: 100%;
+        height: 500px;
+        border: 1px solid #ddd;
+        margin: 20px 0;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #viewer-container {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    .form-group input {
+        padding: 10px;
+        width: 300px;
+        max-width: 100%;
+    }
+
+    .form-group button {
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .error-message {
+        color: red;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .info-message {
+        color: #666;
+    }
+</style>
+{% endblock %}
