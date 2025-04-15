@@ -38,26 +38,13 @@
             color: #666;
             padding: 15px;
         }
-        .btn-primary {
-            background-color: #5d4fff; /* Цвет кнопки */
-            border: none; /* Удаление рамки */
-        }
-        .btn-primary:hover {
-            background-color: #0056b3; /* Цвет кнопки при наведении */
-        }
     </style>
 </head>
 
 <body>
     <div class="container">
         <div class="card p-4">
-            <h3 class="text-center">Поиск 3D-структуры молекулы</h3>
-            <form method="POST">
-                <div class="form-group">
-                    <input type="text" name="name" class="form-control" placeholder="Введите название вещества, например метан" required>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Загрузить</button>
-            </form>
+            <h3 class="text-center">3D-структура {{ name }}</h3>
 
             {% if formula %}
             <div class="molecule-viewer-wrapper">
