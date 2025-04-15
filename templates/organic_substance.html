@@ -194,6 +194,8 @@
             <img id="substanceImage" src="{{ photo_url }}" alt="Substance Image">
             <div><h5 id="substanceName">{{ substance_name|safe }}</h5></div>
             <br>
+            <a href="/get_molecule/{{ substance_name }}" style="text-align: center; display: block;"><font color="blue">3D-модель {{ substance_name }}</font></a>
+            <br>
             <h5 class="text-center">Все реакции с {{ substance_name_new }}</h5>
             <div class="image-container">
                 {% for img_tag in image_tags %}
