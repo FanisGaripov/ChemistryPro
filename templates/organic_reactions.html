@@ -53,6 +53,7 @@
                 <div>
                     {% if zapros != '' %}
                     <h5 class="text-center mt-3">{{ zapros }} = ?</h5>
+                    <a href="/get_molecule/{{ zapros }}" style="text-align: center; display: block;"><font color="blue">3D-модель {{ zapros }}</font></a>
                     {% else %}
                     <h5 class="text-center mt-3">Введите реакцию</h5>
                     {% endif %}
