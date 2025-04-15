@@ -17,6 +17,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from g4f.client import Client
 from qualitative_reactions import qualitative_reactions_notorganic
 import g4f
+from deep_translator import MyMemoryTranslator
+from string import ascii_letters, digits
 # импортируем все библиотеки
 
 app = Flask(__name__)
@@ -1005,20 +1007,80 @@ def documentation():
     return render_template('documentation.html', user=user)
 
 
+def validate_for_molecules(name):
+    allowed_chars = ascii_letters + digits + ',._- ='
+    return all(c in allowed_chars for c in name)
+
+
 @app.route('/get_molecule', methods=['GET', 'POST'])
 def get_molecule():
     user = flask_login.current_user
     formula = ''
     if request.method == "POST":
         name = request.form.get('name')
-        pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{name}/record/SDF?record_type=3d"
+        print(f'Получен запрос {name}')
+        # translate_api_url = f'https://ftapi.pythonanywhere.com/translate?sl=ru&dl=en&text={name}'
+        # response_to_api = requests.get(translate_api_url)
+        # if response_to_api.status_code == 200:
+        #     name = response_to_api.text
+        #     parsed_data = json.loads(name)
+        #     print(parsed_data)
+        #     name = parsed_data['destination-text']
+        #     if len(name.split()) >= 2:
+        #         name = '-'.join(name.split())
+        #     print(name)
+        if validate_for_molecules(name):
+            translation = name
+        else:
+            translation = MyMemoryTranslator(source="ru-RU", target="en-US").translate(name)
+        translation = re.sub(r"[^\w\s=,._-]", "", translation)
+        print(f'Вот перевод: {translation}')
+        if len(translation.split()) > 1:
+            translation = '-'.join(translation.split())
+            print(translation)
+        pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{translation}/record/SDF?record_type=3d"
         response = requests.get(pubchem_url)
         if response.status_code == 200:
             formula = response.text
+        else:
+            formula = None
         print(response.text)
         return render_template('get_molecule.html', formula=formula, user=user)
     else:
         return render_template('get_molecule.html', formula=None, user=user)
+
+
+@app.route('/get_molecule/<name>', methods=['GET', 'POST'])
+def get_molecule_from_url(name):
+    user = flask_login.current_user
+    # translate_api_url = f'https://ftapi.pythonanywhere.com/translate?sl=ru&dl=en&text={name}'
+    # response_to_api = requests.get(translate_api_url)
+    # if response_to_api.status_code == 200:
+    #     name = response_to_api.text
+    #     parsed_data = json.loads(name)
+    #     print(parsed_data)
+    #     name = parsed_data['destination-text']
+    #     if len(name.split()) >= 2:
+    #         name = '-'.join(name.split())
+    #     print(name)
+    if validate_for_molecules(name):
+        translation = name
+    else:
+        translation = MyMemoryTranslator(source="ru-RU", target="en-US").translate(name)
+    translation = re.sub(r"[^\w\s=,._-]", "", translation)
+    # translation = translation.replace(',', '_')
+    print(f'Вот перевод: {translation}')
+    if len(translation.split()) > 1:
+        translation = '-'.join(translation.split())
+        print(translation)
+    pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{translation}/record/SDF?record_type=3d"
+    response = requests.get(pubchem_url)
+    if response.status_code == 200:
+        formula = response.text
+    else:
+        formula = None
+    print(response.text)
+    return render_template('get_molecule_from_url.html', formula=formula, user=user, name=name)
 
 
 @app.route('/chat-gpt', methods=['GET', 'POST'])
