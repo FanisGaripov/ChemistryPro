@@ -49,6 +49,7 @@
                 {% if klass %}
                 <h5 class="text-center" style="margin: 10px 0;">Класс: {{ klass }}</h5>
                 {% endif %}
+                <a href="/get_molecule/{{ substance_name }}" style="text-align: center; display: block;"><font color="blue">3D-модель {{ substance_name }}</font></a>
                 <pre>
                     <object type="image/svg+xml" data="{{ url_for('static', filename=svg_file) }}" style="width: 100%; height: 100%;">
                         Ваш браузер не поддерживает SVG
