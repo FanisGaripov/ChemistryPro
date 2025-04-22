@@ -1306,7 +1306,7 @@ def download_db():
 def tablica():
     # таблица менделеева
     user = flask_login.current_user
-    return render_template('tablica.html', user=user)
+    return render_template('moretable.html', user=user)
 
 
 @app.route('/tablica_old', methods=['GET', 'POST'])
