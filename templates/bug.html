@@ -29,6 +29,9 @@
 {% elif bugcode == 9 %}
 <p>Произошла ошибка миниигры. Либо Вы не авторизованы, либо Ваша сессия уже сброшена. Код ошибка: 9</p>
 <a class="nav-link" href="/minigame"><font color="gray">Вернуться в миниигру.</font></a>
-{% endif %}
 <a class="nav-link" href="/"><font color="gray">На главную</a>
+{% elif bugcode == 10 %}
+<p>Химического элемента с таким атомным номером не существует. Код ошибки: 10</p>
+<a class="nav-link" href="/element"><font color="gray">Вернуться</font></a>
+{% endif %}
 {% endblock %}

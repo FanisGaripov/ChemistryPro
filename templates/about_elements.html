@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - {{ symbol }} - {{ name }}{% endblock %}
+
+{% block description %}ChemistryPRO - описание химического элемента {{ symbol }} - {{ name }}{% endblock %}
+
+{% block content %}
+<head>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border: 2px solid #5d4fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .element-icon {
+            background-color: {% if groupblock == 'Неметаллы' %}#ffffba{% elif groupblock == 'Благородные газы' %}#ffc4c4{% elif groupblock == 'Щелочные металлы' %}#ffc4c4{% elif groupblock == 'Щелочноземельный металл' %}#d2d2ff{% elif groupblock == 'Переходный металл' %}#b9dcff{% elif groupblock == 'Постпереходные металлы' %}#b9ffb9{% elif groupblock == 'Металлоид' %}#e0eeba{% elif groupblock == 'Лантанид' %}#adffff{% elif groupblock == 'Актинид' %}#c1ffeb{% elif groupblock == 'Галоген' %}#ffffba{% endif %};
+            color: black;
+            width: 150px;
+            height: 170px;
+            border-radius: 10px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding: 15px;
+        }
+        .element-symbol {
+            font-size: 42px;
+            font-weight: bold;
+        }
+        .element-number {
+            font-size: 16px;
+            text-align: left;
+        }
+        .element-name {
+            font-size: 18px;
+        }
+        .element-mass {
+            font-size: 16px;
+            margin-top: 8px;
+        }
+        .property-list {
+            width: 100%;
+        }
+        .property-item {
+            margin-bottom: 8px;
+        }
+        .property-item strong {
+            color: #5d4fff;
+        }
+        .wikipedia-link {
+            margin-top: 15px;
+            display: inline-block;
+        }
+        .property-item_electrons {
+            background: #f9f9ff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border-left: 4px solid #5d4fff;
+        }
+        .property-item_electrons strong {
+            color: #5d4fff;
+        }
+        .property-list_electrons {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        .fixed-bottom {
+            position: relative;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- Иконка элемента сверху -->
+            <div class="element-icon">
+                <div class="element-number">{{ atomicnumber }}</div>
+                <div class="element-symbol">{{ symbol }}</div>
+                <div class="element-name">{{ name }}</div>
+                <div class="element-mass">{{ atomicmass }} г/моль</div>
+            </div>
+
+            <!-- Основная информация об элементе -->
+            <div class="property-list">
+                <p class="property-item"><strong>Символ вещества:</strong> {{ symbol }}</p>
+                <p class="property-item"><strong>Название:</strong> {{ name }}</p>
+                <p class="property-item"><strong>Порядковый номер:</strong> {{ atomicnumber }}</p>
+                <div class="property-list_electrons">
+                <p class="property-item_electrons"><strong>Электроны:</strong> {{ atomicnumber }}</p>
+                <p class="property-item_electrons"><strong>Протоны:</strong> {{ atomicnumber }}</p>
+                    <p class="property-item_electrons"><strong>Нейтроны:</strong> {{ (atomicmass - atomicnumber)|round }}</p></div>
+                <p class="property-item"><strong>Группа:</strong> {{ group }}</p>
+                <p class="property-item"><strong>Период:</strong> {{ period }}</p>
+                <p class="property-item"><strong>Атомная масса:</strong> {{ atomicmass }} г/моль</p>
+                <p class="property-item"><strong>Цвет для обозначения:</strong> {{ cpxhexcolor }}</p>
+                <p class="property-item"><strong>Электронная конфигурация:</strong> {{ electronicconfiguration }}</p>
+                <p class="property-item"><strong>Электроотрицательность:</strong> {{ electronegativity }} (Шкала Полинга)</p>
+                <p class="property-item"><strong>Радиус Ван-дер-Ваальса:</strong> {{ atomicradius }}</p>
+                <p class="property-item"><strong>Энергия ионизации:</strong> {{ ionizationenergy }}</p>
+                {% if electronaffinity == None %}
+                <p class="property-item"><strong>Сродство к электрону:</strong> Нет</p>
+                {% else %}
+                <p class="property-item"><strong>Сродство к электрону:</strong> {{ electronaffinity }}</p>
+                {% endif %}
+                <p class="property-item"><strong>Степени окисления:</strong> {{ oxidationstates }}</p>
+                {% if standartstate == 'Монолитная' %}
+                <p class="property-item"><strong>Стандартное состояние:</strong> Твердое</p>
+                {% else %}
+                <p class="property-item"><strong>Стандартное состояние:</strong> {{ standartstate }}</p>
+                {% endif %}
+                {% if meltingpoint != None %}
+                <p class="property-item"><strong>Температура плавления:</strong> {{ meltingpoint }} K, {{ (meltingpoint - 273.15)|round(2) }}°C</p>
+                {% endif %}
+                {% if boilingpoint != None %}
+                <p class="property-item"><strong>Точка кипения:</strong> {{ boilingpoint }} K, {{ (boilingpoint - 273.15)|round(2) }}°C</p>
+                {% endif %}
+                <p class="property-item"><strong>Плотность:</strong> {{ density }} г/см³</p>
+                <p class="property-item"><strong>Группа:</strong> {{ groupblock }}</p>
+                <p class="property-item"><strong>Год открытия:</strong> {{ year }}</p>
+                <p class="wikipedia-link"><strong>Wikipedia:</strong> <a style="color: blue" href="https://ru.wikipedia.org/wiki/{{ name }}">https://ru.wikipedia.org/wiki/{{ name }}</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
