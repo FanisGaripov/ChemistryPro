@@ -1309,6 +1309,12 @@ def tablica():
     return render_template('tablica.html', user=user)
 
 
+@app.route('/tablica_old', methods=['GET', 'POST'])
+def tablica_old():
+    user = flask_login.current_user
+    return render_template('tablica_old.html', user=user)
+
+
 @app.route('/sw.js')
 def sw():
     return app.send_static_file('sw.js')
@@ -1364,6 +1370,73 @@ def uchebnik():
     # я не знаю почему учебник, но это просто страница со справочным материалом по органике
     user = flask_login.current_user
     return render_template('uchebnik.html', user=user)
+
+
+@app.route('/element/<int:id>')
+def about_elements(id):
+    user = flask_login.current_user
+    if 0 < id <= 118:
+        with open('elements_normal2.json', 'r', encoding='utf-8') as f:
+            parsed_data = json.load(f)
+        data = parsed_data[str(id)]
+        period = 0
+        if 1 <= id <= 2:
+            period = 1
+        elif 3 <= id <= 10:
+            period = 2
+        elif 11 <= id <= 18:
+            period = 3
+        elif 19 <= id <= 36:
+            period = 4
+        elif 37 <= id <= 54:
+            period = 5
+        elif 55 <= id <= 86:
+            period = 6
+        elif 87 <= id <= 118:
+            period = 7
+        group = 0
+        if id == 1 or id == 3 or id == 11 or id == 19 or id == 29 or id == 37 or id == 47 or id == 55 or id == 79 or id == 87:
+            group = 1
+        elif id == 4 or id == 12 or id == 20 or id == 30 or id == 38 or id == 48 or id == 56 or id == 80 or id == 88:
+            group = 2
+        elif id == 5 or id == 13 or id == 21 or id == 31 or id == 39 or id == 49 or 57 <= id <= 71 or id == 81 or 89 <= id <= 103:
+            group = 3
+        elif id == 6 or id == 14 or id == 22 or id == 32 or id == 40 or id == 50 or id == 72 or id == 82 or id == 104:
+            group = 4
+        elif id == 7 or id == 15 or id == 23 or id == 33 or id == 41 or id == 51 or id == 73 or id == 83 or id == 105:
+            group = 5
+        elif id == 8 or id == 16 or id == 24 or id == 34 or id == 42 or id == 52 or id == 74 or id == 84:
+            group = 6
+        elif id == 9 or id == 17 or id == 25 or id == 35 or id == 43 or id == 53 or id == 75 or id == 85:
+            group = 7
+        else:
+            group = 8
+        atomicnumber = id
+        symbol = data["Symbol"]
+        name = data["Name"]
+        atomicmass = data["AtomicMass"]
+        cpxhexcolor = data["CPKHexColor"]
+        electronicconfiguration = data["ElectronConfiguration"]
+        electronegativity = data['Electronegativity']
+        atomicradius = data['AtomicRadius']
+        ionizationenergy = data['IonizationEnergy']
+        electronaffinity = data['ElectronAffinity']
+        oxidationstates = data['OxidationStates']
+        standartstate = data['StandardState']
+        meltingpoint = data['MeltingPoint']
+        boilingpoint = data['BoilingPoint']
+        density = data['Density']
+        groupblock = data['GroupBlock']
+        year = data['YearDiscovered']
+        return render_template('about_elements.html', user=user, symbol=symbol, name=name, period=period, group=group, atomicnumber=int(atomicnumber),
+                               atomicmass=float(atomicmass), cpxhexcolor=cpxhexcolor, electronicconfiguration=electronicconfiguration,
+                               electronegativity=electronegativity, atomicradius=atomicradius, ionizationenergy=ionizationenergy,
+                               electronaffinity=electronaffinity, oxidationstates=oxidationstates, standartstate=standartstate,
+                               meltingpoint=meltingpoint, boilingpoint=boilingpoint, density=density, groupblock=groupblock,
+                               year=year)
+    else:
+        bugcode = 10
+        return render_template('bug.html', user=user, bugcode=bugcode)
 
 
 def minigamefunc():
