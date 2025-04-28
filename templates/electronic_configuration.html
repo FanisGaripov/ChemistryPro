@@ -29,6 +29,11 @@
         #sidebar A {
         color: white; /* Цвет ссылок в боковой панели */
         }
+        canvas {
+            display: block;
+            max-width: 100%;
+            height: auto !important;
+        }
     </style>
 </head>
 <body>
@@ -48,9 +53,135 @@
                     <H5 class="text-center mt-3">Зарядовое число атома: {{ atomic }}</H5>
                     <h5 class="text-center mt-3">Графическое представление:</h5>
                     <pre>{{ graphic_representation }}</pre>
-                {% endif %}
+                    {% if config %}
+                        <div class="config">
+                            <div>
+                                {% for orb in config %}
+                                    <span class="orbital">{{ orb.subshell }}<sup>{{ orb.electrons }}</sup></span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <canvas id="atomCanvas" width="300" height="300"></canvas>
+                    {% endif %}
             </form>
         </div>
     </div>
+<script>
+        const canvas = document.getElementById('atomCanvas');
+        const ctx = canvas.getContext('2d');
+        const center = { x: canvas.width/2, y: canvas.height/2 };
+
+        // Параметры орбиталей
+        const orbitalProps = {
+            's': { color: '#3498db', positions: 2 },
+            'p': { color: '#e74c3c', positions: 6, angleOffset: Math.PI/2 },
+            'd': { color: '#2ecc71', positions: 10, angleOffset: Math.PI/5 },
+            'f': { color: '#9b59b6', positions: 14, angleOffset: Math.PI/8 }
+        };
+
+        // Данные из Flask
+        const atomConfig = JSON.parse('{{ config|tojson|safe }}' || '[]');
+        let animationAngle = 0;
+        let scaleFactor = 1;
+
+        function calculateScale() {
+            if (atomConfig.length === 0) return 1;
+
+            // Находим максимальный радиус орбитали
+            let maxRadius = 0;
+            atomConfig.forEach(orbital => {
+                const radius = 70 + (orbital.level - 1) * 100;
+                if (radius > maxRadius) maxRadius = radius;
+            });
+
+            // Добавляем радиус электрона и отступ
+            maxRadius += 20;
+
+            // Вычисляем масштаб, чтобы вместить все орбитали
+            const canvasRadius = Math.min(canvas.width, canvas.height) / 2;
+            return Math.min(1, (canvasRadius * 0.9) / maxRadius);
+        }
+
+        function drawAtom() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Вычисляем текущий масштаб
+            scaleFactor = calculateScale();
+
+            // Сохраняем текущее состояние canvas
+            ctx.save();
+
+            // Применяем масштабирование
+            ctx.translate(center.x, center.y);
+            ctx.scale(scaleFactor, scaleFactor);
+            ctx.translate(-center.x, -center.y);
+
+            // Ядро
+            ctx.beginPath();
+            ctx.arc(center.x, center.y, 20, 0, Math.PI*2);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold ' + (16 / scaleFactor) + 'px Arial';
+            ctx.textAlign = 'center';
+
+            // Орбитали и электроны
+            atomConfig.forEach(orbital => {
+                const radius = 70 + (orbital.level - 1) * 100;
+                const props = orbitalProps[orbital.type];
+                const angleStep = (2 * Math.PI) / orbital.electrons || 1;
+
+                // Рисуем орбиталь
+                ctx.beginPath();
+                ctx.arc(center.x, center.y, radius, 0, Math.PI*2);
+                ctx.strokeStyle = props.color;
+                ctx.lineWidth = 1.5 / scaleFactor;
+                ctx.stroke();
+
+                // Равномерно распределяем электроны
+                for (let i = 0; i < orbital.electrons; i++) {
+                    const angle = i * angleStep + animationAngle;
+                    const x = center.x + radius * Math.cos(angle);
+                    const y = center.y + radius * Math.sin(angle);
+                    drawElectron(x, y, props.color);
+                }
+            });
+
+            // Восстанавливаем состояние canvas
+            ctx.restore();
+
+            animationAngle += 0.005;
+            requestAnimationFrame(drawAtom);
+        }
+
+        function drawElectron(x, y, color) {
+            // Электрон
+            ctx.beginPath();
+            ctx.arc(x, y, 7 / scaleFactor, 0, Math.PI*2);
+            ctx.fillStyle = color;
+            ctx.fill();
+
+            // Блик
+            ctx.beginPath();
+            ctx.arc(x-3/scaleFactor, y-3/scaleFactor, 2/scaleFactor, 0, Math.PI*2);
+            ctx.fillStyle = 'rgba(255,255,255,0.8)';
+            ctx.fill();
+        }
+
+        function loadAtom() {
+            const element = document.getElementById('elementSelect').value;
+            if (element) window.location.href = `/${element}`;
+        }
+
+        // Обработчик изменения размера окна
+        window.addEventListener('resize', function() {
+            // Можно добавить логику изменения размера canvas при необходимости
+        });
+
+        // Запускаем анимацию если есть конфигурация
+        if (atomConfig.length > 0) drawAtom();
+    </script>
 </body>
 {% endblock %}
