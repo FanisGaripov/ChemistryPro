@@ -548,6 +548,8 @@ def generate_graphical_representation(configurations):
 def electronic_configuration_page():
     # функция, которая отображает страницу электронной конфигурации, предыдущая функция отвечает за обработку ответа
     element = ''
+    config = ''
+    atomic_num = ''
     user = flask_login.current_user
     configuration = ''
     configuration1 = ''
@@ -557,9 +559,12 @@ def electronic_configuration_page():
         element = request.form.get("element", False)
         try:
             configuration, configuration1, graphic_representation, atomic = electronic_configuration(element)
+            config = get_electron_config(int(atomic))
         except Exception as e:
             configuration1, configuration, graphic_representation, atomic = '', '', '', ''
-    return render_template('electronic_configuration.html', configuration=configuration, configuration1=configuration1, graphic_representation=graphic_representation, atomic=atomic, user=user, element=element)
+    return render_template('electronic_configuration.html', configuration=configuration, configuration1=configuration1,
+                           graphic_representation=graphic_representation, atomic=atomic, user=user, element=element,
+                           config=config, atomic_number=atomic, current_element=element)
 
 
 def uravnivanie(formula):
@@ -1013,56 +1018,15 @@ def validate_for_molecules(name):
 
 
 @app.route('/get_molecule', methods=['GET', 'POST'])
-def get_molecule():
-    user = flask_login.current_user
-    formula = ''
-    if request.method == "POST":
-        name = request.form.get('name')
-        print(f'Получен запрос {name}')
-        # translate_api_url = f'https://ftapi.pythonanywhere.com/translate?sl=ru&dl=en&text={name}'
-        # response_to_api = requests.get(translate_api_url)
-        # if response_to_api.status_code == 200:
-        #     name = response_to_api.text
-        #     parsed_data = json.loads(name)
-        #     print(parsed_data)
-        #     name = parsed_data['destination-text']
-        #     if len(name.split()) >= 2:
-        #         name = '-'.join(name.split())
-        #     print(name)
-        if validate_for_molecules(name):
-            translation = name
-        else:
-            translation = MyMemoryTranslator(source="ru-RU", target="en-US").translate(name)
-        translation = re.sub(r"[^\w\s=,._-]", "", translation)
-        print(f'Вот перевод: {translation}')
-        if len(translation.split()) > 1:
-            translation = '-'.join(translation.split())
-            print(translation)
-        pubchem_url = f"https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/{translation}/record/SDF?record_type=3d"
-        response = requests.get(pubchem_url)
-        if response.status_code == 200:
-            formula = response.text
-        else:
-            formula = None
-        print(response.text)
-        return render_template('get_molecule.html', formula=formula, user=user)
-    else:
-        return render_template('get_molecule.html', formula=None, user=user)
-
-
 @app.route('/get_molecule/<name>', methods=['GET', 'POST'])
-def get_molecule_from_url(name):
+def get_molecule_from_url(name=None, parameter=True):
     user = flask_login.current_user
-    # translate_api_url = f'https://ftapi.pythonanywhere.com/translate?sl=ru&dl=en&text={name}'
-    # response_to_api = requests.get(translate_api_url)
-    # if response_to_api.status_code == 200:
-    #     name = response_to_api.text
-    #     parsed_data = json.loads(name)
-    #     print(parsed_data)
-    #     name = parsed_data['destination-text']
-    #     if len(name.split()) >= 2:
-    #         name = '-'.join(name.split())
-    #     print(name)
+    if name == None:
+        parameter = False
+        if request.method == "POST":
+            name = request.form.get('name')
+        else:
+            return render_template('get_molecule.html', formula=None, user=user)
     if validate_for_molecules(name):
         translation = name
     else:
@@ -1080,7 +1044,10 @@ def get_molecule_from_url(name):
     else:
         formula = None
     print(response.text)
-    return render_template('get_molecule_from_url.html', formula=formula, user=user, name=name)
+    if parameter == True:
+        return render_template('get_molecule_from_url.html', formula=formula, user=user, name=name)
+    else:
+        return render_template('get_molecule.html', formula=formula, user=user)
 
 
 @app.route('/chat-gpt', methods=['GET', 'POST'])
@@ -1372,9 +1339,75 @@ def uchebnik():
     return render_template('uchebnik.html', user=user)
 
 
+def get_electron_config(atomic_number):
+    # функция повторяет суть функции electronic_confuguration, но есть небольшие различия. В будущем нужно будет переписать чтобы не повторять одну и ту же ф-цию дважды
+    elements_by_number = {
+        1: 'H', 2: 'He', 3: 'Li', 4: 'Be', 5: 'B', 6: 'C', 7: 'N', 8: 'O', 9: 'F', 10: 'Ne',
+        11: 'Na', 12: 'Mg', 13: 'Al', 14: 'Si', 15: 'P', 16: 'S', 17: 'Cl', 18: 'Ar', 19: 'K',
+        20: 'Ca', 21: 'Sc', 22: 'Ti', 23: 'V', 24: 'Cr', 25: 'Mn', 26: 'Fe', 27: 'Co', 28: 'Ni',
+        29: 'Cu', 30: 'Zn', 31: 'Ga', 32: 'Ge', 33: 'As', 34: 'Se', 35: 'Br', 36: 'Kr', 37: 'Rb',
+        38: 'Sr', 39: 'Y', 40: 'Zr', 41: 'Nb', 42: 'Mo', 43: 'Tc', 44: 'Ru', 45: 'Rh', 46: 'Pd',
+        47: 'Ag', 48: 'Cd', 49: 'In', 50: 'Sn', 51: 'Sb', 52: 'Te', 53: 'I', 54: 'Xe', 55: 'Cs',
+        56: 'Ba', 57: 'La', 58: 'Ce', 59: 'Pr', 60: 'Nd', 61: 'Pm', 62: 'Sm', 63: 'Eu', 64: 'Gd',
+        65: 'Tb', 66: 'Dy', 67: 'Ho', 68: 'Er', 69: 'Tm', 70: 'Yb', 71: 'Lu', 72: 'Hf', 73: 'Ta',
+        74: 'W', 75: 'Re', 76: 'Os', 77: 'Ir', 78: 'Pt', 79: 'Au', 80: 'Hg', 81: 'Tl', 82: 'Pb',
+        83: 'Bi', 84: 'Po', 85: 'At', 86: 'Rn', 87: 'Fr', 88: 'Ra', 89: 'Ac', 90: 'Th', 91: 'Pa',
+        92: 'U', 93: 'Np', 94: 'Pu', 95: 'Am', 96: 'Cm', 97: 'Bk', 98: 'Cf', 99: 'Es', 100: 'Fm',
+        101: 'Md', 102: 'No', 103: 'Lr', 104: 'Rf', 105: 'Db', 106: 'Sg', 107: 'Bh', 108: 'Hs',
+        109: 'Mt', 110: 'Ds', 111: 'Rg', 112: 'Cn', 113: 'Nh', 114: 'Fl', 115: 'Mc', 116: 'Lv',
+        117: 'Ts', 118: 'Og'
+    }
+
+    element = elements_by_number.get(atomic_number if atomic_number else '')
+    if not element:
+        return None, None
+
+    # Порядок заполнения орбиталей (правило Клечковского) https://ru.wikipedia.org/wiki/Правило_Клечковского
+    orbitals = [
+        {'sub': '1s', 'max': 2}, {'sub': '2s', 'max': 2}, {'sub': '2p', 'max': 6},
+        {'sub': '3s', 'max': 2}, {'sub': '3p', 'max': 6}, {'sub': '4s', 'max': 2},
+        {'sub': '3d', 'max': 10}, {'sub': '4p', 'max': 6}, {'sub': '5s', 'max': 2},
+        {'sub': '4d', 'max': 10}, {'sub': '5p', 'max': 6}, {'sub': '6s', 'max': 2},
+        {'sub': '4f', 'max': 14}, {'sub': '5d', 'max': 10}, {'sub': '6p', 'max': 6},
+        {'sub': '7s', 'max': 2}, {'sub': '5f', 'max': 14}, {'sub': '6d', 'max': 10},
+        {'sub': '7p', 'max': 6}, {'sub': '8s', 'max': 2}
+    ]
+
+    config = []
+    remaining = atomic_number
+
+    for orb in orbitals:
+        if remaining <= 0:
+            break
+        electrons = min(orb['max'], remaining)
+        config.append({
+            'subshell': orb['sub'],
+            'electrons': electrons,
+            'type': orb['sub'][1],
+            'level': int(orb['sub'][0])
+        })
+        remaining -= electrons
+
+    return config
+
+
 @app.route('/element/<int:id>')
 def about_elements(id):
     user = flask_login.current_user
+    elements_list = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
+                     'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K',
+                     'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni',
+                     'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb',
+                     'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd',
+                     'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs',
+                     'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd',
+                     'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta',
+                     'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb',
+                     'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa',
+                     'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm',
+                     'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs',
+                     'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv',
+                     'Ts', 'Og']
     if 0 < id <= 118:
         with open('elements_normal2.json', 'r', encoding='utf-8') as f:
             parsed_data = json.load(f)
@@ -1413,6 +1446,7 @@ def about_elements(id):
             group = 8
         atomicnumber = id
         symbol = data["Symbol"]
+        config = get_electron_config(atomicnumber) if atomicnumber else (None, None)
         name = data["Name"]
         atomicmass = data["AtomicMass"]
         cpxhexcolor = data["CPKHexColor"]
@@ -1433,7 +1467,7 @@ def about_elements(id):
                                electronegativity=electronegativity, atomicradius=atomicradius, ionizationenergy=ionizationenergy,
                                electronaffinity=electronaffinity, oxidationstates=oxidationstates, standartstate=standartstate,
                                meltingpoint=meltingpoint, boilingpoint=boilingpoint, density=density, groupblock=groupblock,
-                               year=year)
+                               year=year, config=config, current_element=symbol if symbol else None)
     else:
         bugcode = 10
         return render_template('bug.html', user=user, bugcode=bugcode)
