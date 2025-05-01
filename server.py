@@ -1142,6 +1142,23 @@ def rastvory():
     return render_template('rastvory.html', user=user)
 
 
+@app.route('/reaction-output-calculator', methods=['GET', 'POST'])
+def reaction_output_calculator():
+    user = flask_login.current_user
+    if request.method == 'POST':
+        actual_output = request.form.get('actual_output', type=float)
+        theoretical_output = request.form.get('theoretical_output', type=float)
+        percent = request.form.get('percent', type=float)
+        if actual_output and theoretical_output is not None:
+            percent = (actual_output / theoretical_output) * 100
+        elif actual_output and percent is not None:
+            theoretical_output = actual_output / (percent / 100)
+        elif theoretical_output and percent is not None:
+            actual_output = theoretical_output * (percent / 100)
+        return render_template('output_calculator.html', user=user, percent=percent, actual_output=actual_output, theoretical_output=theoretical_output)
+    return render_template('output_calculator.html', user=user)
+
+
 chat_history_file = 'chat_history.json'
 
 
@@ -1337,6 +1354,12 @@ def uchebnik():
     # я не знаю почему учебник, но это просто страница со справочным материалом по органике
     user = flask_login.current_user
     return render_template('uchebnik.html', user=user)
+
+
+@app.route('/glossary_of_chemistry_terms')
+def glossarium():
+    user = flask_login.current_user
+    return render_template('glossary.html', user=user)
 
 
 def get_electron_config(atomic_number):
