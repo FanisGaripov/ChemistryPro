@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}{% endblock %}
+{% block content %}
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border: 2px solid #5d4fff;
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #5d4fff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+        #sidebar A {
+        color: white; /* Цвет ссылок в боковой панели */
+        }
+    </style>
+<body>
+<div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Калькулятор процентного выхода</h2>
+            <p class="text-center">Введите данные:</p>
+            <form method="post">
+                <div class="form-group">
+                    <label for="actual_output">Фактический выход (г):</label>
+        <input class="form-control" type="text" id="actual_output" name="actual_output">
+        <br>
+        <label for="theoretical_output">Теоретический выход (г):</label>
+        <input class="form-control" type="text" id="theoretical_output" name="theoretical_output">
+        <br>
+        <label for="percent">Процентный выход (в %):</label>
+        <input class="form-control" type="text" id="percent" name="percent">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Рассчитать</button>
+                {% if actual_output is not none %}
+                <h2>Результаты:</h2>
+                <ul>
+                    {% if actual_output is not none %}
+                    <li>Фактический выход: {{ actual_output }} г</li>
+                    {% endif %}
+                    {% if theoretical_output is not none %}
+                    <li>Теоретический выход: {{ theoretical_output }} г</li>
+                    {% endif %}
+                    {% if percent is not none %}
+                    <li>Процентный выход: {{ percent }} %</li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</body>
+{% endblock %}
