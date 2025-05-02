@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Онлайн Лабораторные Работы{% endblock %}
+{% block description %}ChemistryPRO - на этой странице Вы найдете список всех симуляций и лабораторных работ, которые можно проводить на компьютере.{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="text-center my-4">Онлайн лабораторные работы (симуляции)</h1>
+
+    <div class="row mb-4">
+        <div class="col-md-8 mx-auto">
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> Все симуляции безопасны и могут быть проведены прямо в браузере без дополнительного оборудования.
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for exp in all_experiments %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm experiment-card">
+                <div class="card-header text-white" style="background-color: #5d4fff;">
+                    <h5 class="card-title mb-0">{{ experiments_data[exp] }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="card-text">Виртуальная лабораторная работа: "{{ experiments_data[exp] }}"</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="experiments/{{ exp }}" class="btn btn-experiment btn-block">
+                        <i class="fas fa-flask"></i> Начать эксперимент
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .experiment-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #5d4fff;
+    }
+    .experiment-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(93, 79, 255, 0.2);
+    }
+    .card-header {
+        font-weight: 600;
+    }
+    .btn-experiment {
+        background-color: #5d4fff;
+        border-color: #5d4fff;
+        color: white;
+        transition: all 0.3s ease;
+    }
+    .btn-experiment:hover {
+        background-color: #4a3ccc;
+        border-color: #4a3ccc;
+        color: white;
+    }
+    .card-body {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}
