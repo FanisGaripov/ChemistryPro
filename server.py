@@ -1362,6 +1362,63 @@ def glossarium():
     return render_template('glossary.html', user=user)
 
 
+@app.route('/experiments', methods=['GET', 'POST'])
+def experiments():
+    user = flask_login.current_user
+    experiments_data = {
+        'acid-base-solutions': 'Кислотно-основные растворы',
+        'atomic-interactions': 'Атомные взаимодействия',
+        'balancing-chemical-equations': 'Уравнивание химических уравнений',
+        'balloons-and-static-electricity': 'Воздушные шары и статическое электричество',
+        'beers-law-lab': 'Лаборатория закона Бера',
+        'blackbody-spectrum': 'Спектр абсолютно чёрного тела',
+        'build-a-molecule': 'Построение молекулы',
+        'build-a-nucleus': 'Построение ядра атома',
+        'build-an-atom': 'Построение атома',
+        'concentration': 'Концентрация растворов',
+        'coulombs-law': 'Закон Кулона',
+        'density': 'Плотность веществ',
+        'diffusion': 'Диффузия',
+        'energy-forms-and-changes': 'Формы и превращения энергии',
+        'fourier-making-waves': 'Волны Фурье',
+        'gas-properties': 'Свойства газов',
+        'gases-intro': 'Введение в газы',
+        'isotopes-and-atomic-mass': 'Изотопы и атомная масса',
+        'models-of-the-hydrogen-atom': 'Модели атома водорода',
+        'molarity': 'Молярность',
+        'molecule-polarity': 'Полярность молекул',
+        'molecule-shapes-basics': 'Формы молекул (основы)',
+        'molecule-shapes': 'Формы молекул',
+        'molecules-and-light': 'Молекулы и свет',
+        'ph-scale-basics': 'Шкала pH (основы)',
+        'ph-scale': 'Шкала pH',
+        'reactants-products-and-leftovers': 'Реагенты, продукты и остатки',
+        'rutherford-scattering': 'Опыт Резерфорда',
+        'states-of-matter-basics': 'Агрегатные состояния (основы)',
+        'states-of-matter': 'Агрегатные состояния',
+        'wave-on-a-string': 'Волна на струне'
+    }
+
+    # Для обратной совместимости сохраняем и исходный список
+    all_experiments = list(experiments_data.keys())
+
+    return render_template(
+        'experiments.html',
+        user=user,
+        all_experiments=all_experiments,
+        experiments_data=experiments_data
+    )
+
+
+@app.route('/experiments/<exp_name>', methods=['GET', 'POST'])
+def experiment_page(exp_name):
+    # страница для каждого эксперимента(отдельная)
+    if exp_name != 'build-a-molecule' or exp_name != 'models-of-the-hydrogen-atom':
+        return send_from_directory('templates/onlinelabs', f'{exp_name}_ru.html')
+    elif exp_name == 'build-a-molecule' or exp_name == 'models-of-the-hydrogen-atom':
+        return send_from_directory('templates/onlinelabs', f'{exp_name}_en.html')
+
+
 def get_electron_config(atomic_number):
     # функция повторяет суть функции electronic_confuguration, но есть небольшие различия. В будущем нужно будет переписать чтобы не повторять одну и ту же ф-цию дважды
     elements_by_number = {
