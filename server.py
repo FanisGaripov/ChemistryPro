@@ -1318,8 +1318,7 @@ def google():
 
 @app.route('/sitemap.xml')
 def sitemap():
-    user = flask_login.current_user
-    return app.send_static_file('sitemap_chemistrypro.xml', user=user)
+    return app.send_static_file('sitemap_chemistrypro.xml')
 
 
 @app.route('/ads.txt')
@@ -2151,4 +2150,5 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+
 
