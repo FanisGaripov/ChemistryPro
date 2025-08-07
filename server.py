@@ -993,10 +993,7 @@ def red_or_blue_tablet():
 def aboutme():
     # обо мне
     user = flask_login.current_user
-    if user.is_authenticated:
-        return render_template('about.html', user=user)
-    else:
-        return render_template('login.html', user=user)
+    return render_template('about.html', user=user)
 
 
 @app.route('/instruction', methods=['GET', 'POST'])
@@ -2150,5 +2147,6 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+
 
 
