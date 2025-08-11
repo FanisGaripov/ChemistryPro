@@ -207,32 +207,105 @@ PRETTY_CATEGORY_NAMES_EGE = {
     "58_Нахождение_молекулярной_формулы_органического_в": "Нахождение молекулярной формулы органического вещества"
 }
 
+
+@app.route('/change_language/ru', methods=['GET', 'POST'])
+def language_ru():
+    if 'page' not in session:
+        session['page'] = '/'
+        session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
+    session['language'] = 'Ru'
+    session.modified = True
+    print(session['language'])
+    return redirect(session['page'])
+
+
+@app.route('/change_language/tat', methods=['GET', 'POST'])
+def language_tat():
+    if 'page' not in session:
+        session['page'] = '/'
+        session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
+    session['language'] = 'Tat'
+    session.modified = True
+    print(session['language'])
+    return redirect(session['page'])
+
+
 @app.route('/oge', methods=['GET', 'POST'])
 def OGE_catalog():
+    if 'page' not in session:
+        session['page'] = '/oge'
+        session.modified = True
+    session['page'] = '/oge'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    return render_template('oge_catalog.html', catalog=oge_catalog, user=user)
+    if session['language'] == 'Ru':
+        return render_template('oge_catalog.html', catalog=oge_catalog, user=user)
+    else:
+        return render_template('oge_catalog_tat.html', catalog=oge_catalog, user=user)
 
 
 @app.route('/oge/<category>')
 def OGE_zadaniya(category):
+    if 'page' not in session:
+        session['page'] = f'/oge/{category}'
+        session.modified = True
+    session['page'] = f'/oge/{category}'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
     tasks = oge_catalog.get(category, [])
     pretty_category = PRETTY_CATEGORY_NAMES_OGE.get(category, category.replace('_', ' '))
-    return render_template('OGE.html', category=category, tasks=tasks, user=user, pretty_category=pretty_category)
+    if session['language'] == 'Ru':
+        return render_template('OGE.html', category=category, tasks=tasks, user=user, pretty_category=pretty_category)
+    else:
+        return render_template('OGE_tat.html', category=category, tasks=tasks, user=user, pretty_category=pretty_category)
 
 
 @app.route('/ege', methods=['GET', 'POST'])
 def EGE_catalog():
+    if 'page' not in session:
+        session['page'] = '/ege'
+        session.modified = True
+    session['page'] = '/ege'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    return render_template('ege_catalog.html', catalog=ege_catalog, user=user)
+    if session['language'] == 'Ru':
+        return render_template('ege_catalog.html', catalog=ege_catalog, user=user)
+    else:
+        return render_template('ege_catalog_tat.html', catalog=ege_catalog, user=user)
 
 
 @app.route('/ege/<category>')
 def EGE_zadaniya(category):
+    if 'page' not in session:
+        session['page'] = f'/ege/{category}'
+        session.modified = True
+    session['page'] = f'/ege/{category}'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
     tasks = ege_catalog.get(category, [])
     pretty_category = PRETTY_CATEGORY_NAMES_EGE.get(category, category.replace('_', ' '))
-    return render_template('EGE.html', category=category, tasks=tasks, user=user, pretty_category=pretty_category)
+    if session['language'] == 'Ru':
+        return render_template('EGE.html', category=category, tasks=tasks, user=user, pretty_category=pretty_category)
+    else:
+        return render_template('EGE_tat.html', category=category, tasks=tasks, user=user, pretty_category=pretty_category)
 
 
 def molecular_mass(formula):
@@ -546,6 +619,14 @@ def generate_graphical_representation(configurations):
 
 @app.route('/electronic_configuration', methods=['GET', 'POST'])
 def electronic_configuration_page():
+    if 'page' not in session:
+        session['page'] = '/electronic_configuration'
+        session.modified = True
+    session['page'] = '/electronic_configuration'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # функция, которая отображает страницу электронной конфигурации, предыдущая функция отвечает за обработку ответа
     element = ''
     config = ''
@@ -562,9 +643,14 @@ def electronic_configuration_page():
             config = get_electron_config(int(atomic))
         except Exception as e:
             configuration1, configuration, graphic_representation, atomic = '', '', '', ''
-    return render_template('electronic_configuration.html', configuration=configuration, configuration1=configuration1,
-                           graphic_representation=graphic_representation, atomic=atomic, user=user, element=element,
-                           config=config, atomic_number=atomic, current_element=element)
+    if session['language'] == 'Ru':
+        return render_template('electronic_configuration.html', configuration=configuration, configuration1=configuration1,
+                               graphic_representation=graphic_representation, atomic=atomic, user=user, element=element,
+                               config=config, atomic_number=atomic, current_element=element)
+    else:
+        render_template('electronic_configuration_tat.html', configuration=configuration, configuration1=configuration1,
+                        graphic_representation=graphic_representation, atomic=atomic, user=user, element=element,
+                        config=config, atomic_number=atomic, current_element=element)
 
 
 def uravnivanie(formula):
@@ -586,13 +672,32 @@ def uravnivanie(formula):
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
+    if 'page' not in session:
+        session['page'] = '/'
+        session.modified = True
+    session['page'] = '/'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     #функция, которая возвращает главную страницу сайта( main.html )
     user = flask_login.current_user
-    return render_template('main.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('main.html', user=user)
+    else:
+        return render_template('main_tat.html', user=user)
 
 
 @app.route('/uravnivanie', methods=['GET', 'POST'])
 def osnova():
+    if 'page' not in session:
+        session['page'] = '/uravnivanie'
+        session.modified = True
+    session['page'] = '/uravnivanie'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # функция которая возвращает уравнивание хим.реакций( index.html )
     user = flask_login.current_user
     resultat2 = ''
@@ -602,11 +707,22 @@ def osnova():
             resultat2 = f'{chemical_formula}: {uravnivanie(chemical_formula)}'
         except:
             redirect('/')
-    return render_template('index.html', resultat2=resultat2, user=user)
+    if session['language'] == 'Ru':
+        return render_template('index.html', resultat2=resultat2, user=user)
+    else:
+        return render_template('index_tat.html', resultat2=resultat2, user=user)
 
 
 @app.route('/molyarnaya_massa', methods=['GET', 'POST'])
 def molyar_massa():
+    if 'page' not in session:
+        session['page'] = '/molyarnaya_massa'
+        session.modified = True
+    session['page'] = '/molyarnaya_massa'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # метод для вычисления молярной массы и отображения ее на сайте
     user = flask_login.current_user
     global resultat, dlyproverki, c
@@ -623,42 +739,52 @@ def molyar_massa():
                 otdelno.append(f"{count} x {element} ({round(mass, 2)} г/моль): {round(total_mass, 2)} г/моль, что составляет {round((round(total_mass, 2) / dlyproverki) * 100, 2)}%")
         except Exception as e:
             otdelno.append(f"{e}: такого вещества или соединения не существует")
-    return render_template('molyarnaya_massa.html', resultat=resultat, dlyproverki=dlyproverki, user=user, otdelno=otdelno)
+    if session['language'] == 'Ru':
+        return render_template('molyarnaya_massa.html', resultat=resultat, dlyproverki=dlyproverki, user=user, otdelno=otdelno)
+    else:
+        return render_template('molyarnaya_massa_tat.html', resultat=resultat, dlyproverki=dlyproverki, user=user,
+                               otdelno=otdelno)
 
 
 def get_chemical_equation_solution(reaction):
     '''метод обработчик дописывания хим.реакций. коротко о нем: принимает из основной функции реакцию, вставляет
     ее в ссылку и возвращает ответ, который парсит(выкидывает все лишнее) только до нужных строчек'''
-    if request.method == 'POST':
-        reaction = request.form.get("chemical_formula", False)
     # Кодируем реакцию для URL
-        encoded_reaction = quote(reaction)
+    encoded_reaction = quote(reaction)
 
     # Формируем URL с учетом химической реакции
-        url = f"https://chemequations.com/ru/?s={encoded_reaction}"
+    url = f"https://chemequations.com/ru/?s={encoded_reaction}"
 
     # Отправляем GET-запрос
-        response = requests.get(url)
+    response = requests.get(url)
 
     # Проверка успешности запроса
-        if response.status_code == 200:
-            # Парсим HTML-ответ
-            soup = BeautifulSoup(response.text, 'html.parser')
+    if response.status_code == 200:
+        # Парсим HTML-ответ
+        soup = BeautifulSoup(response.text, 'html.parser')
 
-            # Находим элемент с классом "equation main-equation well"
-            result = soup.find('h1', class_='equation main-equation well')
+        # Находим элемент с классом "equation main-equation well"
+        result = soup.find('h1', class_='equation main-equation well')
 
-            if result:
-                return result.get_text(strip=True)
-                # Возвращаем текст ответа
-            else:
-                return 'Решение не найдено.'
+        if result:
+            return result.get_text(strip=True)
+            # Возвращаем текст ответа
         else:
-            return f"Ошибка при запросе: {response.status_code}"
+            return 'Решение не найдено.'
+    else:
+        return f"Ошибка при запросе: {response.status_code}"
 
 
 @app.route('/complete_reaction', methods=['GET', 'POST'])
 def complete_reaction_page():
+    if 'page' not in session:
+        session['page'] = '/complete_reaction'
+        session.modified = True
+    session['page'] = '/complete_reaction'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # страница, отвечающая за вывод завершенных реакций предыдущим методом
     react1 = ''
     check_qualitative_reaction_notorganic = ''
@@ -678,128 +804,139 @@ def complete_reaction_page():
         if qualitative_reactions_notorganic(reaction):
             check_qualitative_reaction_notorganic = qualitative_reactions_notorganic(reaction)
 
-    return render_template('complete_reaction.html', get_chemical_equation_solution=get_chemical_equation_solution, react1=react1, user=user, reaction=reaction, check_qualitative_reaction_notorganic=check_qualitative_reaction_notorganic)
-
+    if session['language'] == 'Ru':
+        return render_template('complete_reaction.html', get_chemical_equation_solution=get_chemical_equation_solution, react1=react1, user=user, reaction=reaction, check_qualitative_reaction_notorganic=check_qualitative_reaction_notorganic)
+    else:
+        return render_template('complete_reaction_tat.html', get_chemical_equation_solution=get_chemical_equation_solution,
+                               react1=react1, user=user, reaction=reaction,
+                               check_qualitative_reaction_notorganic=check_qualitative_reaction_notorganic)
 
 def get_reaction_chain(reaction):
     # цепочка превращений
-    if request.method == 'POST':
-        if '=' in reaction and '>' not in reaction:
-            reaction = reaction
-            if ' ' in reaction:
-                reaction = reaction.replace(' ', '')
-        elif '-' in reaction and '>' not in reaction:
-            reactions_list = reaction.split('-')
-            reaction = ''
-            for i in range(len(reactions_list)):
-                if i != len(reactions_list) - 1:
-                    reaction += reactions_list[i] + '='
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-                else:
-                    reaction += reactions_list[i]
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-        elif ' ' in reaction and '>' not in reaction and '=' not in reaction and '-' not in reaction:
-            reactions_list = reaction.split(' ')
-            reaction = ''
-            reactions_list = [r for r in reactions_list if r.strip() != '']
-            for i in range(len(reactions_list)):
-                if i != len(reactions_list) - 1:
-                    reaction += reactions_list[i] + '='
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-                else:
-                    reaction += reactions_list[i]
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-        elif '->' in reaction:
-            reactions_list = reaction.split('->')
-            reaction = ''
-            for i in range(len(reactions_list)):
-                if i != len(reactions_list) - 1:
-                    reaction += reactions_list[i] + '='
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-                else:
-                    reaction += reactions_list[i]
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-        elif '=>' in reaction:
-            reactions_list = reaction.split('=>')
-            reaction = ''
-            for i in range(len(reactions_list)):
-                if i != len(reactions_list) - 1:
-                    reaction += reactions_list[i] + '='
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-                else:
-                    reaction += reactions_list[i]
-                    if ' ' in reaction:
-                        reaction = reaction.replace(' ', '')
-        url = f"https://chemer.ru/services/reactions/chains/{reaction}"
-        headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
-        }
-        session = requests.Session()
-        session.headers.update(headers)
-        response = session.get(url)
+    if '=' in reaction and '>' not in reaction:
+        reaction = reaction
+        if ' ' in reaction:
+            reaction = reaction.replace(' ', '')
+    elif '-' in reaction and '>' not in reaction:
+        reactions_list = reaction.split('-')
+        reaction = ''
+        for i in range(len(reactions_list)):
+            if i != len(reactions_list) - 1:
+                reaction += reactions_list[i] + '='
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+            else:
+                reaction += reactions_list[i]
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+    elif ' ' in reaction and '>' not in reaction and '=' not in reaction and '-' not in reaction:
+        reactions_list = reaction.split(' ')
+        reaction = ''
+        reactions_list = [r for r in reactions_list if r.strip() != '']
+        for i in range(len(reactions_list)):
+            if i != len(reactions_list) - 1:
+                reaction += reactions_list[i] + '='
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+            else:
+                reaction += reactions_list[i]
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+    elif '->' in reaction:
+        reactions_list = reaction.split('->')
+        reaction = ''
+        for i in range(len(reactions_list)):
+            if i != len(reactions_list) - 1:
+                reaction += reactions_list[i] + '='
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+            else:
+                reaction += reactions_list[i]
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+    elif '=>' in reaction:
+        reactions_list = reaction.split('=>')
+        reaction = ''
+        for i in range(len(reactions_list)):
+            if i != len(reactions_list) - 1:
+                reaction += reactions_list[i] + '='
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+            else:
+                reaction += reactions_list[i]
+                if ' ' in reaction:
+                    reaction = reaction.replace(' ', '')
+    url = f"https://chemer.ru/services/reactions/chains/{reaction}"
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'
+    }
+    session = requests.Session()
+    session.headers.update(headers)
+    response = session.get(url)
 
-        if response.status_code == 200:
-            final_results = []
-            soup = BeautifulSoup(response.text, 'html.parser')
-            inset_divs = soup.find_all('div', class_='inset')  # Ищем все группы
-            reaction_groups = {}  # Словарь для групп реакций
+    if response.status_code == 200:
+        final_results = []
+        soup = BeautifulSoup(response.text, 'html.parser')
+        inset_divs = soup.find_all('div', class_='inset')  # Ищем все группы
+        reaction_groups = {}  # Словарь для групп реакций
 
-            # Сначала собираем группы из h2
-            for inset_div in inset_divs:
-                product_header = inset_div.find('h2')
-                if product_header:
-                    product_text = product_header.get_text().strip()
-                    reaction_groups[product_text] = []  # Создаем пустой список для реакций этой группы
+        # Сначала собираем группы из h2
+        for inset_div in inset_divs:
+            product_header = inset_div.find('h2')
+            if product_header:
+                product_text = product_header.get_text().strip()
+                reaction_groups[product_text] = []  # Создаем пустой список для реакций этой группы
 
-            # Теперь собираем реакции и добавляем их в соответствующие группы
-            content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'
-            if content_sections:
-                for content_section in content_sections:
-                    reactions = content_section.find_all('p', class_='resizable-block')  # Ищем все 'p' внутри каждой секции
-                    if reactions:
-                        # Находим соответствующую группу для текущей секции
-                        group_header = content_section.find_previous('div', class_='inset').find('h2')
-                        if group_header and group_header != 'Все неизвестные вещества найдены':
-                            group_name = group_header.get_text().strip()
-                            for reaction in reactions:
-                                reaction_text = reaction.get_text().strip()  # Извлекаем текст реакции
-                                if group_name in reaction_groups:
-                                    reaction_groups[group_name].append(reaction_text)  # Добавляем реакцию в соответствующую группу
-                    else:
-                        group_header = content_section.find_previous('div', class_='inset').find('h2')
+        # Теперь собираем реакции и добавляем их в соответствующие группы
+        content_sections = soup.find_all('section', class_='content')  # Ищем все секции с классом 'content'
+        if content_sections:
+            for content_section in content_sections:
+                reactions = content_section.find_all('p', class_='resizable-block')  # Ищем все 'p' внутри каждой секции
+                if reactions:
+                    # Находим соответствующую группу для текущей секции
+                    group_header = content_section.find_previous('div', class_='inset').find('h2')
+                    if group_header and group_header != 'Все неизвестные вещества найдены':
                         group_name = group_header.get_text().strip()
-                        reactions = soup.find_all('a', rel='nofollow')
                         for reaction in reactions:
+                            reaction_text = reaction.get_text().strip()  # Извлекаем текст реакции
                             if group_name in reaction_groups:
-                                reaction_groups[group_name].append(reaction.text)
-
-            # Формируем окончательный результат
-            for group, reactions in reaction_groups.items():
-                if len(reactions) == 0:
-                    final_results.append('Реакция невозможна или ошибка в написании')
-                    break
-                elif group == 'Все неизвестные вещества найдены':
-                    final_results.append(f'{group}, попробуйте ввести эту реакцию уже с ниже приведенными веществами')
-                    final_results.extend(reactions)
+                                reaction_groups[group_name].append(reaction_text)  # Добавляем реакцию в соответствующую группу
                 else:
-                    final_results.append(f"Как из {group}:")
-                    final_results.extend(reactions)  # Добавляем все реакции для данной группы
+                    group_header = content_section.find_previous('div', class_='inset').find('h2')
+                    group_name = group_header.get_text().strip()
+                    reactions = soup.find_all('a', rel='nofollow')
+                    for reaction in reactions:
+                        if group_name in reaction_groups:
+                            reaction_groups[group_name].append(reaction.text)
 
-            return final_results  # Возвращаем сгруппированные реакции
-        else:
-            return [f"Ошибка при запросе: {response.status_code}"]  # Обработка ошибки запроса
+        # Формируем окончательный результат
+        for group, reactions in reaction_groups.items():
+            if len(reactions) == 0:
+                final_results.append('Реакция невозможна или ошибка в написании')
+                break
+            elif group == 'Все неизвестные вещества найдены':
+                final_results.append(f'{group}, попробуйте ввести эту реакцию уже с ниже приведенными веществами')
+                final_results.extend(reactions)
+            else:
+                final_results.append(f"Как из {group}:")
+                final_results.extend(reactions)  # Добавляем все реакции для данной группы
+
+        return final_results  # Возвращаем сгруппированные реакции
+    else:
+        return [f"Ошибка при запросе: {response.status_code}"]  # Обработка ошибки запроса
     return []
 
 
 @app.route('/get_reaction_chain', methods=['GET', 'POST'])
 def get_reaction_chain_page():
+    if 'page' not in session:
+        session['page'] = '/get_reaction_chain'
+        session.modified = True
+    session['page'] = '/get_reaction_chain'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # страница, которая выводит цепочку превращений, т.е прошлую функцию
     user = flask_login.current_user
     react2 = ''
@@ -808,70 +945,89 @@ def get_reaction_chain_page():
         reaction = request.form.get("chemical_formula", False)
         react2 = get_reaction_chain(reaction)
 
-    return render_template('get_reaction_chain.html', get_reaction_chain=get_reaction_chain, user=user, reaction=reaction, react2=react2)
+    if session['language'] == 'Ru':
+        return render_template('get_reaction_chain.html', get_reaction_chain=get_reaction_chain, user=user, reaction=reaction, react2=react2)
+    else:
+        return render_template('get_reaction_chain_tat.html', get_reaction_chain=get_reaction_chain, user=user,
+                               reaction=reaction, react2=react2)
+
+
+def organic_reactions(zapros):
+    image_tags = []
+    k = 0
+    dec_ans2 = ''
+    url = 'http://acetyl.ru/process/recv.php'
+    params = {
+        'search': zapros,
+        'sizesd': 1,
+        'colsd': 0,
+        'test': 0,
+        'butt': 4
+    }
+    if zapros != '':
+        response = requests.get(url, params=params)
+
+        if response.status_code == 200:
+            answer = response.text
+            parsed_data = json.loads(answer)
+            soup = BeautifulSoup(str(parsed_data), 'html.parser')
+            images = soup.find_all('img')
+            for img in images:
+                src = img['src']
+                title = img.get('title', '')
+                if not src.startswith('http'):
+                    src = f'http://acetyl.ru{src}'
+                if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
+                    k += 1
+                    image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}" title="{title}">')
+                    if title is not None:
+                        image_tags.append(title)
+                elif k == 0:
+                    image_tags.append('Картинок нет')
+
+        else:
+            image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
+
+        url2 = 'http://acetyl.ru/klass/search.php'
+        params2 = {
+            'searvar': zapros
+        }
+
+        response = requests.get(url2, params=params2)
+        if response.status_code == 200:
+            answer = response.text
+            parsed_data = json.loads(answer)
+            res = parsed_data['res']
+            soup = BeautifulSoup(str(res), 'html.parser')
+            text_content = soup.get_text(separator="\n", strip=True)
+            dec_ans2 = text_content
+            dec_ans2 = dec_ans2[0::].split('\n')
+            dec_ans2 = [item.capitalize() for item in dec_ans2 if item != '']
+
+    return image_tags, dec_ans2
 
 
 @app.route('/organic_reactions', methods=['GET', 'POST'])
 def organic():
+    if 'page' not in session:
+        session['page'] = '/organic_reactions'
+        session.modified = True
+    session['page'] = '/organic_reactions'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    image_tags = []
-    k = 0
     zapros = ''
-    dec_ans2 = ''
-
     if request.method == 'POST':
         zapros = request.form.get("chemical_formula", False)
-        url = 'http://acetyl.ru/process/recv.php'
+        image_tags, dec_ans2 = organic_reactions(zapros)
 
-        # Параметры запроса
-        params = {
-            'search': zapros,
-            'sizesd': 1,
-            'colsd': 0,
-            'test': 0,
-            'butt': 4
-        }
-        if zapros != '':
-            response = requests.get(url, params=params)
-
-            if response.status_code == 200:
-                answer = response.text
-                parsed_data = json.loads(answer)
-                soup = BeautifulSoup(str(parsed_data), 'html.parser')
-                images = soup.find_all('img')
-                for img in images:
-                    src = img['src']
-                    title = img.get('title', '')
-                    if not src.startswith('http'):
-                        src = f'http://acetyl.ru{src}'
-                    if src[-4::] != '.gif' and src[-12::] != 'wikiicon.png' and src[-17::] != 'starthelpicon.png':
-                        k += 1
-                        image_tags.append(f'{k})<img src="{src}" alt="{img.get("alt", "")}" title="{title}">')
-                        if title is not None:
-                            image_tags.append(title)
-                    elif k == 0:
-                        image_tags.append('Картинок нет')
-
-            else:
-                image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
-
-            url2 = 'http://acetyl.ru/klass/search.php'
-            params2 = {
-                'searvar': zapros
-            }
-
-            response = requests.get(url2, params=params2)
-            if response.status_code == 200:
-                answer = response.text
-                parsed_data = json.loads(answer)
-                res = parsed_data['res']
-                soup = BeautifulSoup(str(res), 'html.parser')
-                text_content = soup.get_text(separator="\n", strip=True)
-                dec_ans2 = text_content
-                dec_ans2 = dec_ans2[0::].split('\n')
-                dec_ans2 = [item.capitalize() for item in dec_ans2 if item != '']
-
-    return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
+    if session['language'] == 'Ru':
+        return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
+    else:
+        return render_template('organic_reactions_tat.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(),
+                               dec_ans2=dec_ans2)
 
 
 @app.route('/send_coordinates', methods=['POST'])
@@ -929,6 +1085,14 @@ def send_coordinates():
 
 @app.route('/organic_substance', methods=['GET', 'POST'])
 def organic_substance():
+    if 'page' not in session:
+        session['page'] = '/organic_substance'
+        session.modified = True
+    session['page'] = '/organic_substance'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     k = 0
     image_tags = []
     user = flask_login.current_user
@@ -980,33 +1144,87 @@ def organic_substance():
         else:
             image_tags.append(f'Ошибка при получении страницы: {response.status_code}')
 
-    return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name, image_tags=image_tags, substance_name_new=substance_name_new)
+    if session['language'] == 'Ru':
+        return render_template('organic_substance.html', user=user, photo_url=photo_url, substance_name=substance_name, image_tags=image_tags, substance_name_new=substance_name_new)
+    else:
+        return render_template('organic_substance_tat.html', user=user, photo_url=photo_url, substance_name=substance_name,
+                               image_tags=image_tags, substance_name_new=substance_name_new)
 
 
 @app.route('/select-organic-input', methods=['GET', 'POST'])
 def red_or_blue_tablet():
+    if 'page' not in session:
+        session['page'] = '/select-organic-input'
+        session.modified = True
+    session['page'] = '/select-organic-input'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    return render_template('red_or_blue_tablet.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('red_or_blue_tablet.html', user=user)
+    else:
+        return render_template('red_or_blue_tablet_tat.html', user=user)
 
 
 @app.route('/aboutme', methods=['GET', 'POST'])
 def aboutme():
+    if 'page' not in session:
+        session['page'] = '/aboutme'
+        session.modified = True
+    session['page'] = '/aboutme'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # обо мне
     user = flask_login.current_user
-    return render_template('about.html', user=user)
+    if user.is_authenticated:
+        if session['language'] == 'Ru':
+            return render_template('about.html', user=user)
+        else:
+            return render_template('about_tat.html', user=user)
+    else:
+        if session['language'] == 'Ru':
+            return render_template('login.html', user=user)
+        else:
+            return render_template('login_tat.html', user=user)
 
 
 @app.route('/instruction', methods=['GET', 'POST'])
 def instruction():
+    if 'page' not in session:
+        session['page'] = '/instruction'
+        session.modified = True
+    session['page'] = '/instruction'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # инструкция
     user = flask_login.current_user
-    return render_template('instruction.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('instruction.html', user=user)
+    else:
+        return render_template('instruction_tat.html', user=user)
 
 
 @app.route('/documentation')
 def documentation():
+    if 'page' not in session:
+        session['page'] = '/documentation'
+        session.modified = True
+    ession['page'] = '/documentation'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    return render_template('documentation.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('documentation.html', user=user)
+    else:
+        return render_template('documentation_tat.html', user=user)
 
 
 def validate_for_molecules(name):
@@ -1017,6 +1235,14 @@ def validate_for_molecules(name):
 @app.route('/get_molecule', methods=['GET', 'POST'])
 @app.route('/get_molecule/<name>', methods=['GET', 'POST'])
 def get_molecule_from_url(name=None, parameter=True):
+    if 'page' not in session:
+        session['page'] = '/get_molecule'
+        session.modified = True
+    session['page'] = '/get_molecule'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
     if name == None:
         parameter = False
@@ -1042,18 +1268,35 @@ def get_molecule_from_url(name=None, parameter=True):
         formula = None
     print(response.text)
     if parameter == True:
-        return render_template('get_molecule_from_url.html', formula=formula, user=user, name=name)
+        if session['language'] == 'Ru':
+            return render_template('get_molecule_from_url.html', formula=formula, user=user, name=name)
+        else:
+            return render_template('get_molecule_from_url_tat.html', formula=formula, user=user, name=name)
     else:
-        return render_template('get_molecule.html', formula=formula, user=user)
+        if session['language'] == 'Ru':
+            return render_template('get_molecule.html', formula=formula, user=user)
+        else:
+            return render_template('get_molecule_tat.html', formula=formula, user=user)
 
 
 @app.route('/chat-gpt', methods=['GET', 'POST'])
 def chatgpt():
+    if 'page' not in session:
+        session['page'] = '/chat-gpt'
+        session.modified = True
+    session['page'] = '/chat-gpt'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
     if 'chatgpt_history' not in session:
         session['chatgpt_history'] = []
         session.modified = True
-    return render_template('chatgpt.html', user=user, chat_history=session['chatgpt_history'])
+    if session['language'] == 'Ru':
+        return render_template('chatgpt.html', user=user, chat_history=session['chatgpt_history'])
+    else:
+        return render_template('chatgpt_tat.html', user=user, chat_history=session['chatgpt_history'])
 
 
 @app.route('/stream')
@@ -1113,6 +1356,14 @@ def clear_chatgpt_history():
 
 @app.route('/rastvory', methods=['GET', 'POST'])
 def rastvory():
+    if 'page' not in session:
+        session['page'] = '/rastvory'
+        session.modified = True
+    session['page'] = '/rastvory'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # калькулятор растворимостей
     user = flask_login.current_user
     if request.method == 'POST':
@@ -1134,13 +1385,27 @@ def rastvory():
             # Если известны масса вещества и массовая доля, рассчитываем массу раствора
             mass_solution = mass_solute / (mass_fraction / 100)
 
-        return render_template('rastvory.html', mass_solution=mass_solution, mass_solute=mass_solute, mass_fraction=mass_fraction, user=user)
-
-    return render_template('rastvory.html', user=user)
+        if session['language'] == 'Ru':
+            return render_template('rastvory.html', mass_solution=mass_solution, mass_solute=mass_solute, mass_fraction=mass_fraction, user=user)
+        else:
+            return render_template('rastvory_tat.html', mass_solution=mass_solution, mass_solute=mass_solute,
+                                   mass_fraction=mass_fraction, user=user)
+    if session['language'] == 'Ru':
+        return render_template('rastvory.html', user=user)
+    else:
+        return render_template('rastvory_tat.html', user=user)
 
 
 @app.route('/reaction-output-calculator', methods=['GET', 'POST'])
 def reaction_output_calculator():
+    if 'page' not in session:
+        session['page'] = '/reaction-output-calculator'
+        session.modified = True
+    session['page'] = '/reaction-output-calculator'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
     if request.method == 'POST':
         actual_output = request.form.get('actual_output', type=float)
@@ -1152,8 +1417,15 @@ def reaction_output_calculator():
             theoretical_output = actual_output / (percent / 100)
         elif theoretical_output and percent is not None:
             actual_output = theoretical_output * (percent / 100)
-        return render_template('output_calculator.html', user=user, percent=percent, actual_output=actual_output, theoretical_output=theoretical_output)
-    return render_template('output_calculator.html', user=user)
+        if session['language'] == 'Ru':
+            return render_template('output_calculator.html', user=user, percent=percent, actual_output=actual_output, theoretical_output=theoretical_output)
+        else:
+            return render_template('output_calculator_tat.html', user=user, percent=percent, actual_output=actual_output,
+                                   theoretical_output=theoretical_output)
+    if session['language'] == 'Ru':
+        return render_template('output_calculator.html', user=user)
+    else:
+        return render_template('output_calculator_tat.html', user=user)
 
 
 chat_history_file = 'chat_history.json'
@@ -1216,6 +1488,14 @@ chat = load_chat_history()  # Загружаем историю чата при 
 
 @app.route('/chat', methods=['GET', 'POST'])
 def chat_messages():
+    if 'page' not in session:
+        session['page'] = '/chat'
+        session.modified = True
+    session['page'] = '/chat'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # чат
     global chat
     user = flask_login.current_user
@@ -1233,7 +1513,10 @@ def chat_messages():
                     delete_all_messages()
             chat = load_chat_history()  # Обновляем чат после сохранения/удаления
             return redirect(url_for('chat_messages'))  # Перенаправляем на ту же страницу
-        return render_template('chat.html', user=user, chat=chat)
+        if session['language'] == 'Ru':
+            return render_template('chat.html', user=user, chat=chat)
+        else:
+            return render_template('chat_tat.html', user=user, chat=chat)
     else:
         return redirect(url_for('login'))
 
@@ -1285,15 +1568,37 @@ def download_db():
 
 @app.route('/tablica', methods=['GET', 'POST'])
 def tablica():
+    if 'page' not in session:
+        session['page'] = '/tablica'
+        session.modified = True
+    session['page'] = '/tablica'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # таблица менделеева
     user = flask_login.current_user
-    return render_template('moretable.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('moretable.html', user=user)
+    else:
+        return render_template('moretable_tat.html', user=user)
 
 
 @app.route('/tablica_old', methods=['GET', 'POST'])
 def tablica_old():
+    if 'page' not in session:
+        session['page'] = '/tablica_old'
+        session.modified = True
+    session['page'] = '/tablica_old'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    return render_template('tablica_old.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('tablica_old.html', user=user)
+    else:
+        return render_template('tablica_old_tat.html', user=user)
 
 
 @app.route('/sw.js')
@@ -1313,11 +1618,6 @@ def google():
     return render_template('googled5c4e477b332cb57.html', user=user)
 
 
-@app.route('/sitemap.xml')
-def sitemap():
-    return app.send_static_file('sitemap_chemistrypro.xml')
-
-
 @app.route('/ads.txt')
 def ads():
     return app.send_static_file('ads.txt')
@@ -1330,16 +1630,38 @@ def offline():
 
 @app.route('/tablica_rastvorimosti', methods=['GET', 'POST'])
 def tablica_rastvorimosti():
+    if 'page' not in session:
+        session['page'] = '/tablica_rastvorimosti'
+        session.modified = True
+    session['page'] = '/tablica_rastvorimosti'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # таблица растворимости
     user = flask_login.current_user
-    return render_template('tablica_rastvorimosti.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('tablica_rastvorimosti.html', user=user)
+    else:
+        return render_template('tablica_rastvorimosti_tat.html', user=user)
 
 
 @app.route('/tablica_kislotnosti', methods=['GET', 'POST'])
 def tablica_kislotnosti():
+    if 'page' not in session:
+        session['page'] = '/tablica_kislotnosti'
+        session.modified = True
+    session['page'] = '/tablica_kislotnosti'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # таблица кислот ( ошибка в названии функции ) :))
     user = flask_login.current_user
-    return render_template('tablica_kislotnosti.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('tablica_kislotnosti.html', user=user)
+    else:
+        return render_template('tablica_kislotnosti_tat.html', user=user)
 
 
 @app.route('/sw.js')
@@ -1353,63 +1675,139 @@ def manifest():
 
 @app.route('/uchebnik', methods=['GET', 'POST'])
 def uchebnik():
+    if 'page' not in session:
+        session['page'] = '/uchebnik'
+        session.modified = True
+    session['page'] = '/uchebnik'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # я не знаю почему учебник, но это просто страница со справочным материалом по органике
     user = flask_login.current_user
-    return render_template('uchebnik.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('uchebnik.html', user=user)
+    else:
+        return render_template('uchebnik_tat.html', user=user)
 
 
 @app.route('/glossary_of_chemistry_terms')
 def glossarium():
+    if 'page' not in session:
+        session['page'] = '/glossary_of_chemistry_terms'
+        session.modified = True
+    session['page'] = '/glossary_of_chemistry_terms'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    return render_template('glossary.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('glossary.html', user=user)
+    else:
+        return render_template('glossary_tat.html', user=user)
 
 
 @app.route('/experiments', methods=['GET', 'POST'])
 def experiments():
+    if 'page' not in session:
+        session['page'] = '/experiments'
+        session.modified = True
+    session['page'] = '/experiments'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
-    experiments_data = {
-        'acid-base-solutions': 'Кислотно-основные растворы',
-        'atomic-interactions': 'Атомные взаимодействия',
-        'balancing-chemical-equations': 'Уравнивание химических уравнений',
-        'balloons-and-static-electricity': 'Воздушные шары и статическое электричество',
-        'beers-law-lab': 'Лаборатория закона Бера',
-        'blackbody-spectrum': 'Спектр абсолютно чёрного тела',
-        'build-a-molecule': 'Построение молекулы',
-        'build-a-nucleus': 'Построение ядра атома',
-        'build-an-atom': 'Построение атома',
-        'concentration': 'Концентрация растворов',
-        'coulombs-law': 'Закон Кулона',
-        'density': 'Плотность веществ',
-        'diffusion': 'Диффузия',
-        'energy-forms-and-changes': 'Формы и превращения энергии',
-        'fourier-making-waves': 'Волны Фурье',
-        'gas-properties': 'Свойства газов',
-        'gases-intro': 'Введение в газы',
-        'isotopes-and-atomic-mass': 'Изотопы и атомная масса',
-        'models-of-the-hydrogen-atom': 'Модели атома водорода',
-        'molarity': 'Молярность',
-        'molecule-polarity': 'Полярность молекул',
-        'molecule-shapes-basics': 'Формы молекул (основы)',
-        'molecule-shapes': 'Формы молекул',
-        'molecules-and-light': 'Молекулы и свет',
-        'ph-scale-basics': 'Шкала pH (основы)',
-        'ph-scale': 'Шкала pH',
-        'reactants-products-and-leftovers': 'Реагенты, продукты и остатки',
-        'rutherford-scattering': 'Опыт Резерфорда',
-        'states-of-matter-basics': 'Агрегатные состояния (основы)',
-        'states-of-matter': 'Агрегатные состояния',
-        'wave-on-a-string': 'Волна на струне'
-    }
+    if session['language'] == 'Ru':
+        experiments_data = {
+            'acid-base-solutions': 'Кислотно-основные растворы',
+            'atomic-interactions': 'Атомные взаимодействия',
+            'balancing-chemical-equations': 'Уравнивание химических уравнений',
+            'balloons-and-static-electricity': 'Воздушные шары и статическое электричество',
+            'beers-law-lab': 'Лаборатория закона Бера',
+            'blackbody-spectrum': 'Спектр абсолютно чёрного тела',
+            'build-a-molecule': 'Построение молекулы',
+            'build-a-nucleus': 'Построение ядра атома',
+            'build-an-atom': 'Построение атома',
+            'concentration': 'Концентрация растворов',
+            'coulombs-law': 'Закон Кулона',
+            'density': 'Плотность веществ',
+            'diffusion': 'Диффузия',
+            'energy-forms-and-changes': 'Формы и превращения энергии',
+            'fourier-making-waves': 'Волны Фурье',
+            'gas-properties': 'Свойства газов',
+            'gases-intro': 'Введение в газы',
+            'isotopes-and-atomic-mass': 'Изотопы и атомная масса',
+            'models-of-the-hydrogen-atom': 'Модели атома водорода',
+            'molarity': 'Молярность',
+            'molecule-polarity': 'Полярность молекул',
+            'molecule-shapes-basics': 'Формы молекул (основы)',
+            'molecule-shapes': 'Формы молекул',
+            'molecules-and-light': 'Молекулы и свет',
+            'ph-scale-basics': 'Шкала pH (основы)',
+            'ph-scale': 'Шкала pH',
+            'reactants-products-and-leftovers': 'Реагенты, продукты и остатки',
+            'rutherford-scattering': 'Опыт Резерфорда',
+            'states-of-matter-basics': 'Агрегатные состояния (основы)',
+            'states-of-matter': 'Агрегатные состояния',
+            'wave-on-a-string': 'Волна на струне'
+        }
 
-    # Для обратной совместимости сохраняем и исходный список
-    all_experiments = list(experiments_data.keys())
+        # Для обратной совместимости сохраняем и исходный список
+        all_experiments = list(experiments_data.keys())
 
-    return render_template(
-        'experiments.html',
-        user=user,
-        all_experiments=all_experiments,
-        experiments_data=experiments_data
-    )
+        return render_template(
+            'experiments.html',
+            user=user,
+            all_experiments=all_experiments,
+            experiments_data=experiments_data
+        )
+    else:
+        experiments_data = {
+            'acid-base-solutions': 'Кислотно-основные растворы',
+            'atomic-interactions': 'Атомные взаимодействия',
+            'balancing-chemical-equations': 'Уравнивание химических уравнений',
+            'balloons-and-static-electricity': 'Воздушные шары и статическое электричество',
+            'beers-law-lab': 'Лаборатория закона Бера',
+            'blackbody-spectrum': 'Спектр абсолютно чёрного тела',
+            'build-a-molecule': 'Построение молекулы',
+            'build-a-nucleus': 'Построение ядра атома',
+            'build-an-atom': 'Построение атома',
+            'concentration': 'Концентрация растворов',
+            'coulombs-law': 'Закон Кулона',
+            'density': 'Плотность веществ',
+            'diffusion': 'Диффузия',
+            'energy-forms-and-changes': 'Формы и превращения энергии',
+            'fourier-making-waves': 'Волны Фурье',
+            'gas-properties': 'Свойства газов',
+            'gases-intro': 'Введение в газы',
+            'isotopes-and-atomic-mass': 'Изотопы и атомная масса',
+            'models-of-the-hydrogen-atom': 'Модели атома водорода',
+            'molarity': 'Молярность',
+            'molecule-polarity': 'Полярность молекул',
+            'molecule-shapes-basics': 'Формы молекул (основы)',
+            'molecule-shapes': 'Формы молекул',
+            'molecules-and-light': 'Молекулы и свет',
+            'ph-scale-basics': 'Шкала pH (основы)',
+            'ph-scale': 'Шкала pH',
+            'reactants-products-and-leftovers': 'Реагенты, продукты и остатки',
+            'rutherford-scattering': 'Опыт Резерфорда',
+            'states-of-matter-basics': 'Агрегатные состояния (основы)',
+            'states-of-matter': 'Агрегатные состояния',
+            'wave-on-a-string': 'Волна на струне'
+        }
+
+        # Для обратной совместимости сохраняем и исходный список
+        all_experiments = list(experiments_data.keys())
+
+        return render_template(
+            'experiments_tat.html',
+            user=user,
+            all_experiments=all_experiments,
+            experiments_data=experiments_data
+        )
+
 
 
 @app.route('/experiments/<exp_name>', methods=['GET', 'POST'])
@@ -1475,6 +1873,14 @@ def get_electron_config(atomic_number):
 
 @app.route('/element/<int:id>')
 def about_elements(id):
+    if 'page' not in session:
+        session['page'] = f'/element/{id}'
+        session.modified = True
+    session['page'] = f'/element/{id}'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
     elements_list = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
                      'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K',
@@ -1544,12 +1950,25 @@ def about_elements(id):
         density = data['Density']
         groupblock = data['GroupBlock']
         year = data['YearDiscovered']
-        return render_template('about_elements.html', user=user, symbol=symbol, name=name, period=period, group=group, atomicnumber=int(atomicnumber),
+        if session['language'] == 'Ru':
+            return render_template('about_elements.html', user=user, symbol=symbol, name=name, period=period, group=group, atomicnumber=int(atomicnumber),
                                atomicmass=float(atomicmass), cpxhexcolor=cpxhexcolor, electronicconfiguration=electronicconfiguration,
                                electronegativity=electronegativity, atomicradius=atomicradius, ionizationenergy=ionizationenergy,
                                electronaffinity=electronaffinity, oxidationstates=oxidationstates, standartstate=standartstate,
                                meltingpoint=meltingpoint, boilingpoint=boilingpoint, density=density, groupblock=groupblock,
                                year=year, config=config, current_element=symbol if symbol else None)
+        else:
+            return render_template('about_elements_tat.html', user=user, symbol=symbol, name=name, period=period,
+                                   group=group, atomicnumber=int(atomicnumber),
+                                   atomicmass=float(atomicmass), cpxhexcolor=cpxhexcolor,
+                                   electronicconfiguration=electronicconfiguration,
+                                   electronegativity=electronegativity, atomicradius=atomicradius,
+                                   ionizationenergy=ionizationenergy,
+                                   electronaffinity=electronaffinity, oxidationstates=oxidationstates,
+                                   standartstate=standartstate,
+                                   meltingpoint=meltingpoint, boilingpoint=boilingpoint, density=density,
+                                   groupblock=groupblock,
+                                   year=year, config=config, current_element=symbol if symbol else None)
     else:
         bugcode = 10
         return render_template('bug.html', user=user, bugcode=bugcode)
@@ -1690,6 +2109,14 @@ def minigamefunc():
 
 @app.route('/minigame', methods=['GET', 'POST'])
 def minigame():
+    if 'page' not in session:
+        session['page'] = '/minigame'
+        session.modified = True
+    session['page'] = '/minigame'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # функция, которая возвращает страницу мини-игры
     d = ""
     user = flask_login.current_user
@@ -1745,15 +2172,21 @@ def minigame():
                         # Обнуляем answer_list
                         game_state.answer_list = ''  # Здесь мы обнуляем answer_list
                         db.session.commit()  # Сохраняем изменения
-                        return render_template('winning.html', user=user, right_percent=right_percent)
+                        if session['language'] == 'Ru':
+                            return render_template('winning.html', user=user, right_percent=right_percent)
+                        else:
+                            return render_template('winning_tat.html', user=user, right_percent=right_percent)
                 else:
                     d = f'Неправильно, ответ: {game_state.answer_list.split()[-2]}'
                     game_state.total_answers += 1
                     user.summa += 1
                     db.session.commit()
-
-            return render_template('minigame.html', user=user, d=d, minigamefunc=minigamefunc, b=b,
+            if session['language'] == 'Ru':
+                return render_template('minigame.html', user=user, d=d, minigamefunc=minigamefunc, b=b,
                                    pravilno=game_state.correct_answers, otvety=game_state.total_answers)
+            else:
+                return render_template('minigame_tat.html', user=user, d=d, minigamefunc=minigamefunc, b=b,
+                                       pravilno=game_state.correct_answers, otvety=game_state.total_answers)
 
     else:
         return redirect(url_for('login'))
@@ -1857,6 +2290,14 @@ def extract_svg_and_symbols(html_code):
 
 @app.route('/orghim', methods=['GET', 'POST'])
 def orghim():
+    if 'page' not in session:
+        session['page'] = '/orghim'
+        session.modified = True
+    session['page'] = '/orghim'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # основная страница для работы с методами(предыдущими двумя). Все вместе это ф-ция орг.химии
     # ее суть в выведении названий веществ и картинок изомеров и самого вещества
     # изомеров только 10, т.к 70 изомеров декана, например, может сильно нагрузить устройство пользователя и сервер,
@@ -1900,9 +2341,16 @@ def orghim():
                         nazvaniya.append(nazv.capitalize())
                 combined = list(zip(nazvaniya, isomer_files))
 
-            return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass, combined=combined)
-
-    return render_template('orghim.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user, variants=variants, substance_name=substance_name)
+            if session['language'] == 'Ru':
+                return render_template('orghim.html', svg_file='output.svg', isomer_files=isomer_files, substance_name=substance_name, user=user, klass=klass, combined=combined)
+            else:
+                return render_template('orghim_tat.html', svg_file='output.svg', isomer_files=isomer_files,
+                                       substance_name=substance_name, user=user, klass=klass, combined=combined)
+    if session['language'] == 'Ru':
+        return render_template('orghim.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user, variants=variants, substance_name=substance_name)
+    else:
+        return render_template('orghim_tat.html', svg_file=None, isomer_files=None, nazvaniya=None, user=user,
+                               variants=variants, substance_name=substance_name)
 
 
 @app.errorhandler(404)
@@ -1916,6 +2364,14 @@ def page_not_found(e):
 bugcode = 0
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'page' not in session:
+        session['page'] = '/login'
+        session.modified = True
+    session['page'] = '/login'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     bugcode = 0
     # вход пользователя в аккаунт. берутся данные из базы данных
     user = flask_login.current_user
@@ -1936,7 +2392,10 @@ def login():
     if user.is_authenticated:
         return redirect(url_for('profile'))
     else:
-        return render_template('login.html', user=user)
+        if session['language'] == 'Ru':
+            return render_template('login.html', user=user)
+        else:
+            return render_template('login_tat.html', user=user)
 
 
 @login_manager.user_loader
@@ -1954,6 +2413,14 @@ def load_user_from_request(request):
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if 'page' not in session:
+        session['page'] = '/register'
+        session.modified = True
+    session['page'] = '/register'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     bugcode = 0
     # регистрация, идет работа с бд
     user = flask_login.current_user
@@ -1984,15 +2451,29 @@ def register():
         else:
             bugcode = 4
             return render_template('bug.html', bugcode=bugcode, user=user)
-    return render_template('register.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('register.html', user=user)
+    else:
+        return render_template('register_tat.html', user=user)
 
 
 @app.route('/profile')
 def profile():
+    if 'page' not in session:
+        session['page'] = '/profile'
+        session.modified = True
+    session['page'] = '/profile'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # профиль
     user = flask_login.current_user
     if user.is_authenticated:
-        return render_template('profile.html', user=user)
+        if session['language'] == 'Ru':
+            return render_template('profile.html', user=user)
+        else:
+            return render_template('profile_tat.html', user=user)
     else:
         return redirect(url_for('login'))
 
@@ -2026,6 +2507,14 @@ def delete_profile(username):
 
 @app.route('/profile/<username>', methods=["POST", "GET"])
 def other_profiles(username):
+    if 'page' not in session:
+        session['page'] = f'/profile/{username}'
+        session.modified = True
+    session['page'] = f'/profile/{username}'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # профили других людей
     polzovatel = User.query.filter_by(username=username).first()
     user = flask_login.current_user
@@ -2033,9 +2522,15 @@ def other_profiles(username):
     if polzovatel:
         admin = polzovatel.admin
         if polzovatel != user:
-            return render_template('otherprofile.html', user=user, polzovatel=polzovatel, admin=admin)
+            if session['language'] == 'Ru':
+                return render_template('otherprofile.html', user=user, polzovatel=polzovatel, admin=admin)
+            else:
+                return render_template('otherprofile_tat.html', user=user, polzovatel=polzovatel, admin=admin)
         else:
-            return render_template('profile.html', user=user)
+            if session['language'] == 'Ru':
+                return render_template('profile.html', user=user)
+            else:
+                return render_template('profile_tat.html', user=user)
     else:
         bugcode = 7
         return render_template("bug.html", user=user, bugcode=bugcode)
@@ -2058,10 +2553,21 @@ def make_admin(username):
 
 @app.route('/all_profiles/', methods=['GET', 'POST'])
 def all_profiles():
+    if 'page' not in session:
+        session['page'] = '/all_profiles'
+        session.modified = True
+    session['page'] = '/all_profiles'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     # функция, которая выводит список всех пользователей сайта
     user = flask_login.current_user
     polzovatel = User.query.all()
-    return render_template('all_profiles.html', user=user, polzovatel=polzovatel)
+    if session['language'] == 'Ru':
+        return render_template('all_profiles.html', user=user, polzovatel=polzovatel)
+    else:
+        return render_template('all_profiles_tat.html', user=user, polzovatel=polzovatel)
 
 
 # Функция загрузки файла на Яндекс.Диск
@@ -2086,6 +2592,14 @@ def upload_to_yandex_disk(file_path, filename):
 @app.route('/edit_profile', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    if 'page' not in session:
+        session['page'] = '/edit_profile'
+        session.modified = True
+    session['page'] = '/edit_profile'
+    session.modified = True
+    if 'language' not in session:
+        session['language'] = 'Ru'
+        session.modified = True
     user = flask_login.current_user
 
     if request.method == 'POST':
@@ -2125,8 +2639,10 @@ def edit_profile():
         except Exception as e:
             db.session.rollback()
             return redirect(url_for('edit_profile'))
-
-    return render_template('edit_profile.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('edit_profile.html', user=user)
+    else:
+        return render_template('edit_profile_tat.html', user=user)
 
 
 with app.app_context():
@@ -2142,11 +2658,67 @@ def logout():
     return redirect(url_for('login'))
 
 
+'''API CHEMISTRYPRO'''
+@app.route('/api/get_reaction_chain/<q>', methods=['GET'])
+def get_reaction_chain_api(q):
+    answer = get_reaction_chain(q)
+    return jsonify({'answer': answer})
+
+
+@app.route('/api/organic_reactions/<q>', methods=['GET'])
+def organic_reactions_api(q):
+    image_tags, dec_ans2 = organic_reactions(q)
+    return jsonify({'q': q.capitalize(),
+                    'image_tags': image_tags,
+                    'dec_ans2': dec_ans2})
+
+
+@app.route('/api/balancing_reactions/<q>', methods=['GET'])
+def balancing_reactions_api(q):
+    answer = uravnivanie(q)
+    return jsonify({'answer': answer})
+
+
+@app.route('/api/molyar_mass/<q>', methods=['GET'])
+def molyar_mass_api(q):
+    otdelno = []
+    massa, element_details = molecular_mass(q)
+    resultat = f"Молярная масса {q}: {massa} г/моль"
+    for element, mass, count, total_mass in element_details:
+        otdelno.append(
+            f"{count} x {element} ({round(mass, 2)} г/моль): {round(total_mass, 2)} г/моль, что составляет {round((round(total_mass, 2) / massa) * 100, 2)}%")
+    return jsonify({'answer': resultat,
+                    'about_every_element': otdelno})
+
+
+@app.route('/api/complete_reactions/<q>', methods=['GET'])
+def complete_reactions_api(q):
+    answer = get_chemical_equation_solution(q)
+    if '(g)' in answer:
+        answer = answer.replace('(g)', '')
+    if '(s)' in answer:
+        answer = answer.replace('(s)', '')
+    if '(aq)' in answer:
+        answer = answer.replace('(aq)', '')
+    if '(l)' in answer:
+        answer = answer.replace('(l)', '')
+    qualitative = qualitative_reactions_notorganic(q)
+    return jsonify({'answer': answer,
+                    'qualitative': qualitative})
+
+
+@app.route('/api/electronic_confuguration/<q>', methods=['GET'])
+def electronic_configuration_api(q):
+    configuration, school_configuration, graphic_representation, atomic_mass = electronic_configuration(element)
+    return jsonify({'configuration': configuration,
+                    'school_configuration': school_configuration,
+                    'graphic_representation': graphic_representation,
+                    'atomic_mass': atomic_mass})
+
+
+
 if __name__ == '__main__':
     try:
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
-
-
-
