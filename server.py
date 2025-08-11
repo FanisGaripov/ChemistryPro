@@ -2716,6 +2716,15 @@ def electronic_configuration_api(q):
                     'atomic_mass': atomic_mass})
 
 
+@app.route('/api/chatgpt/<q>', methods=['GET'])
+def chatgpt_api(q):
+    response = g4f.ChatCompletion.create(
+        model="gpt-4",
+        messages=[{"role": "user", "content": q}],
+        stream=False
+    )
+    return jsonify({'response': response})
+
 
 if __name__ == '__main__':
     try:
