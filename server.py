@@ -2681,12 +2681,11 @@ def balancing_reactions_api(q):
 
 @app.route('/api/molyar_mass/<q>', methods=['GET'])
 def molyar_mass_api(q):
-    otdelno = []
+    otdelno = ''
     massa, element_details = molecular_mass(q)
     resultat = f"Молярная масса {q}: {massa} г/моль"
     for element, mass, count, total_mass in element_details:
-        otdelno.append(
-            f"{count} x {element} ({round(mass, 2)} г/моль): {round(total_mass, 2)} г/моль, что составляет {round((round(total_mass, 2) / massa) * 100, 2)}%")
+        otdelno += f"{count} x {element} ({round(mass, 2)} г/моль): {round(total_mass, 2)} г/моль, что составляет {round((round(total_mass, 2) / massa) * 100, 2)}%\n"
     return jsonify({'answer': resultat,
                     'about_every_element': otdelno})
 
