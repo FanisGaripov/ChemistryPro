@@ -2709,7 +2709,7 @@ def complete_reactions_api(q):
 
 @app.route('/api/electronic_confuguration/<q>', methods=['GET'])
 def electronic_configuration_api(q):
-    configuration, school_configuration, graphic_representation, atomic_mass = electronic_configuration(element)
+    configuration, school_configuration, graphic_representation, atomic_mass = electronic_configuration(q)
     return jsonify({'configuration': configuration,
                     'school_configuration': school_configuration,
                     'graphic_representation': graphic_representation,
@@ -2732,4 +2732,3 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
-
