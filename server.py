@@ -2662,7 +2662,7 @@ def logout():
 @app.route('/api/get_reaction_chain/<q>', methods=['GET'])
 def get_reaction_chain_api(q):
     answer = get_reaction_chain(q)
-    return jsonify({'answer': answer})
+    return jsonify({'answer': ' \n'.join(answer)})
 
 
 @app.route('/api/organic_reactions/<q>', methods=['GET'])
