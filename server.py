@@ -1209,7 +1209,7 @@ def documentation():
     if 'page' not in session:
         session['page'] = '/documentation'
         session.modified = True
-    ession['page'] = '/documentation'
+    session['page'] = '/documentation'
     session.modified = True
     if 'language' not in session:
         session['language'] = 'Ru'
@@ -2725,3 +2725,4 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+
