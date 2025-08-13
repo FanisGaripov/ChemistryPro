@@ -1180,16 +1180,10 @@ def aboutme():
         session.modified = True
     # обо мне
     user = flask_login.current_user
-    if user.is_authenticated:
-        if session['language'] == 'Ru':
-            return render_template('about.html', user=user)
-        else:
-            return render_template('about_tat.html', user=user)
+    if session['language'] == 'Ru':
+        return render_template('about.html', user=user)
     else:
-        if session['language'] == 'Ru':
-            return render_template('login.html', user=user)
-        else:
-            return render_template('login_tat.html', user=user)
+        return render_template('about_tat.html', user=user)
 
 
 @app.route('/instruction', methods=['GET', 'POST'])
