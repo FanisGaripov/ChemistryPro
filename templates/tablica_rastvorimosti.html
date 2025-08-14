@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}ChemistryPRO - Таблица растворимости{% endblock %}
+{% block description %}Таблица растворимости — наглядная инфографика о растворимости солей.{% endblock %}
 
 {% block content %}
 <style>
@@ -14,4 +15,5 @@
 </div>
 <p>Таблица растворимости — наглядная инфографика о растворимости солей. На пересечении катиона (по горизонтали) и аниона (по вертикали) отображается информация о соли, состоящей из данного катиона и данного аниона. Смотрите вкладки ниже, чтобы понять, какая информация там содержится.</p>
 <img src="{{ url_for('static', filename='rastvory.png') }}" class="img-fluid mx-auto d-block" style="max-width: 100%; height: auto;">
+<img src="{{ url_for('static', filename='table_rastv2.jpg') }}" class="img-fluid mx-auto d-block" style="max-width: 100%; height: auto;">
 {% endblock %}

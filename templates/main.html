@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}ChemistryPRO - Ваш ресурс для изучения химии и химических реакций{% endblock %}
+{% block description %}ChemistryPRO - ваш ресурс для изучения химии и химических реакций. Здесь вы найдете таблицы, калькуляторы и много функций для успешного изучения химии.{% endblock %}
 
 {% block content %}
 <head>
@@ -122,6 +123,15 @@
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body text-center">
+                        <h5 class="card-title">Органические реакции</h5>
+                        <p class="card-text">Попробуйте новую функцию - решение органических реакций(особенно полезно 10-11 классам).</p>
+                        <a href="/organic_reactions" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
                         <h5 class="card-title">Уравнивание реакций</h5>
                         <p class="card-text">Уравнивайте химические реакции разной сложности с помощью нашего онлайн-инструмента.</p>
                         <a href="/uravnivanie" class="btn btn-primary">Попробовать</a>
@@ -132,7 +142,7 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">Дописывание хим.реакций</h5>
-                        <p class="card-text">Функция дописывания продуктов реакции, работает при помощи API (Beta).</p>
+                        <p class="card-text">Функция дописывания продуктов реакции, работает при помощи API.</p>
                         <a href="/complete_reaction" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
@@ -159,8 +169,87 @@
                 <div class="card">
                     <div class="card-body text-center">
                         <h5 class="card-title">Структура органических веществ</h5>
-                        <p class="card-text">Узнаем структуру органических веществ при помощи названия (Beta).</p>
+                        <p class="card-text">Узнаем структуру органических веществ при помощи названия.</p>
                         <a href="/orghim" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Графический ввод органических веществ</h5>
+                        <p class="card-text">Узнаем структуру органических веществ при помощи графического ввода.</p>
+                        <a href="/organic_substance" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">ChemistryPRO AI Assistant</h5>
+                        <p class="card-text">Введите свой запрос, а искусственный интеллект даст Вам ответ.</p>
+                        <a href="/chat-gpt" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Просмотр 3D-молекул</h5>
+                        <p class="card-text">Введите вещество и получите его объемное представление в виде молекул.</p>
+                        <a href="/get_molecule" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Yandex.RTB R-A-13796850-11 -->
+    <div id="yandex_rtb_R-A-13796850-11"></div>
+    <script>
+    window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+            "blockId": "R-A-13796850-11",
+            "renderTo": "yandex_rtb_R-A-13796850-11"
+        })
+    })
+    </script>
+    <div class="container features">
+        <h2 class="cards-group text-center">Подготовка к ОГЭ и ЕГЭ</h2>
+        <br>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Задания ОГЭ - 9 класс(ФИПИ)</h5>
+                        <p class="card-text">Актуальные задания ОГЭ по химии из ФИПИ 2025. Готовьтесь к ОГЭ на нашем сайте.</p>
+                        <a href="/oge" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Задания ЕГЭ - 11 класс(ФИПИ)</h5>
+                        <p class="card-text">Актуальные задания ЕГЭ по химии из ФИПИ 2025. Готовьтесь к ЕГЭ на нашем сайте.</p>
+                        <a href="/ege" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Онлайн лаборатория</h5>
+                        <p class="card-text">Здесь собраны известные симуляции разных химических процессов, которые можно посмотреть в своём браузере.</p>
+                        <a href="/experiments" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Глоссарий терминов</h5>
+                        <p class="card-text">Здесь собраны все термины(Wikipedia) по химии, которые могут пригодиться на уроках или экзамене.</p>
+                        <a href="/glossary_of_chemistry_terms" class="btn btn-primary">Ознакомиться</a>
                     </div>
                 </div>
             </div>
@@ -174,9 +263,18 @@
             <div class="col-md-4 mb-4">
                 <div class="card">
                     <div class="card-body text-center">
-                        <h5 class="card-title">Таблица Менделеева</h5>
-                        <p class="card-text">Помощь в работе с инструментами сайта.</p>
+                        <h5 class="card-title">Интерактивная Таблица Менделеева</h5>
+                        <p class="card-text">Попробуйте новую интерактивную Таблицу Менделеева(Pubchem).</p>
                         <a href="/tablica" class="btn btn-primary">Ознакомиться</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Таблица Менделеева</h5>
+                        <p class="card-text">Здесь Вы увидите старую версию раздела, также качественные реакции и тд.</p>
+                        <a href="/tablica_old" class="btn btn-primary">Ознакомиться</a>
                     </div>
                 </div>
             </div>
@@ -200,7 +298,16 @@
             </div>
         </div>
     </div>
-
+    <!-- Yandex.RTB R-A-13796850-12 -->
+    <div id="yandex_rtb_R-A-13796850-12"></div>
+    <script>
+    window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+            "blockId": "R-A-13796850-12",
+            "renderTo": "yandex_rtb_R-A-13796850-12"
+        })
+    })
+    </script>
     <div class="container features">
         <h2 class="cards-group text-center">Калькуляторы</h2>
         <br>
@@ -220,6 +327,15 @@
                         <h5 class="card-title">Калькулятор Растворимостей</h5>
                         <p class="card-text">Калькулятор, который позволяет узнать массу и доли растворенных веществ.</p>
                         <a href="/rastvory" class="btn btn-primary">Попробовать</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Калькулятор Процентного Выхода</h5>
+                        <p class="card-text">Калькулятор, который позволяет узнать теоретический и фактический выход веществ.</p>
+                        <a href="/reaction-output-calculator" class="btn btn-primary">Попробовать</a>
                     </div>
                 </div>
             </div>
@@ -249,6 +365,27 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div style="max-width: 400px; margin: 20px auto; background: white; font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(93, 79, 255, 0.1);">
+                        <h3 style="color: #5d4fff; text-align: center; margin: 5px 0 10px; font-size: 18px;">🚀 Физика + ИИ = PhysicsPro!</h3>
+                        <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">
+                            <strong>Искусственный интеллект</strong> поможет разобрать задачи по:
+                        </p>
+                        <ul style="margin: 8px 0; padding-left: 20px; font-size: 13px; line-height: 1.4;">
+                            <li>🔹 Механике и динамике</li>
+                            <li>🔹 Электродинамике</li>
+                            <li>🔹 Квантовой физике</li>
+                        </ul>
+                        <p style="margin: 8px 0 12px; font-size: 13px; font-style: italic; color: #666;">
+                            Просто задай вопрос — получи объяснение!
+                        </p>
+                        <div style="text-align: center;">
+                            <a href="https://physicspro.onrender.com" style="display: inline-block; padding: 8px 16px; background-color: #5d4fff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.3s;">Попробовать PhysicsPRO →</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -258,7 +395,7 @@
         <h2 class="text-center">Свяжитесь с нами</h2>
         <p class="text-center">Если у вас есть вопросы или предложения, не стесняйтесь обращаться!</p>
         <p class="text-center"><strong>Email:</strong> garipovfanis1@yandex.ru</p>
-        <p class="text-center"><strong>Телефон:</strong> +7 (917) 396-94-99</p>
+        <p class="text-center"><strong>Telegram-канал:</strong> @chemistrypro_off</p>
     </div>
 </body>
 </html>

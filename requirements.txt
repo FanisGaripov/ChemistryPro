@@ -6,3 +6,6 @@ gunicorn
 werkzeug
 psycopg2
 python-dotenv
+APScheduler
+g4f[all] 
+deep_translator
