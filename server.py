@@ -1019,6 +1019,8 @@ def organic():
         session.modified = True
     user = flask_login.current_user
     zapros = ''
+    image_tags = []
+    image_tags.append('Картинок нет')
     if request.method == 'POST':
         zapros = request.form.get("chemical_formula", False)
         image_tags, dec_ans2 = organic_reactions(zapros)
@@ -2728,5 +2730,6 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+
 
 
