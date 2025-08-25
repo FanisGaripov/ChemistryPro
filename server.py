@@ -1022,12 +1022,15 @@ def organic():
     if request.method == 'POST':
         zapros = request.form.get("chemical_formula", False)
         image_tags, dec_ans2 = organic_reactions(zapros)
-
+        if session['language'] == 'Ru':
+            return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
+        else:
+            return render_template('organic_reactions_tat.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(),
+                                   dec_ans2=dec_ans2)
     if session['language'] == 'Ru':
-        return render_template('organic_reactions.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(), dec_ans2=dec_ans2)
+        return render_template('organic_reactions.html', user=user)
     else:
-        return render_template('organic_reactions_tat.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(),
-                               dec_ans2=dec_ans2)
+        return render_template('organic_reactions_tat.html', user=user)
 
 
 @app.route('/send_coordinates', methods=['POST'])
@@ -2725,4 +2728,5 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+
 
