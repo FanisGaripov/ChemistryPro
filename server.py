@@ -1030,9 +1030,9 @@ def organic():
             return render_template('organic_reactions_tat.html', user=user, image_tags=image_tags, zapros=zapros.capitalize(),
                                    dec_ans2=dec_ans2)
     if session['language'] == 'Ru':
-        return render_template('organic_reactions.html', user=user)
+        return render_template('organic_reactions.html', user=user, image_tags=[], zapros=zapros.capitalize())
     else:
-        return render_template('organic_reactions_tat.html', user=user)
+        return render_template('organic_reactions_tat.html', user=user, image_tags=[], zapros=zapros.capitalize())
 
 
 @app.route('/send_coordinates', methods=['POST'])
@@ -2730,6 +2730,7 @@ if __name__ == '__main__':
         app.run(debug=True, host='0.0.0.0', port=5000)
     finally:
         scheduler.shutdown()
+
 
 
 
