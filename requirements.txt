@@ -9,3 +9,4 @@ python-dotenv
 APScheduler
 g4f[all] 
 deep_translator
+numpy==2.0.0
