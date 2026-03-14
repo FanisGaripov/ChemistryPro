@@ -2,7 +2,7 @@ name: CI - Linting
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "refactoring" ]
   pull_request:
     branches: [ "main" ]
 
@@ -24,7 +24,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install flake8 pytest
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements/lint.txt ]; then pip install -r requirements/lint.txt; fi
 
       - name: Lint with flake8
         run: |

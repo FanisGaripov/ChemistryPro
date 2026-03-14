@@ -1,20 +1,19 @@
 from flask import Blueprint, jsonify, request
 import g4f
+from qualitative_reactions import qualitative_reactions_notorganic
 from utils import (
+    electronic_configuration,
+    get_chemical_equation_solution,
     get_reaction_chain,
+    molecular_mass,
     organic_reactions,
     uravnivanie,
-    molecular_mass,
-    get_chemical_equation_solution,
-    electronic_configuration,
 )
-from qualitative_reactions import qualitative_reactions_notorganic
-
 
 """API CHEMISTRYPRO"""
 
 
-api = Blueprint('api', __name__)
+api = Blueprint("api", __name__)
 
 
 @api.route("/get_reaction_chain/<q>", methods=["GET"])

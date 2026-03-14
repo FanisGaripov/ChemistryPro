@@ -44,7 +44,6 @@ app.register_blueprint(api, url_prefix='/api')
 login_manager = LoginManager()
 login_manager.init_app(app)
 db.init_app(app)
-c = []
 
 
 def download_avatar_from_yandex_disk(filename):
@@ -980,7 +979,7 @@ def molyar_massa():
         session.modified = True
     # метод для вычисления молярной массы и отображения ее на сайте
     user = flask_login.current_user
-    global resultat, dlyproverki, c
+    global resultat, dlyproverki
     resultat = ""
     otdelno = []
     formatspisok = ""
