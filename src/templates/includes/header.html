@@ -7,6 +7,10 @@
         margin: 1rem 0.75rem 0;
         padding: 0.6rem 1.2rem;
         border-radius: 50px;
+        z-index: 1000;
+        display: flex;
+        flex-wrap: nowrap;
+        white-space: nowrap;
     }
     .navbar-brand {
         font-weight: 700;
@@ -21,6 +25,9 @@
         border-radius: 40px;
         padding: 0.5rem 1rem !important;
         transition: all 0.15s;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
     }
     .nav-link:hover {
         background: rgba(93, 79, 255, 0.08);
@@ -28,36 +35,76 @@
     }
     .nav-link i { margin-right: 6px; color: #5d4fff; opacity: 0.8; }
 
-    /* Стили для выпадающего меню */
-    .dropdown-menu {
+    .dropdown {
+        position: relative;
+    }
+
+    .dropdown-menu, .nav-link.dropdown-menu { {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: white;
         border: none;
         border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.15);
         padding: 0.8rem;
-        background: rgba(255,255,255,0.98);
-        backdrop-filter: blur(8px);
+        z-index: 9999;
+        margin-top: 10px;
     }
-    .dropdown-menu .nav-link { padding: 0.6rem 1.2rem !important; border-radius: 16px; }
-</style>
 
+    /* Для последнего дропдауна */
+    .nav-item:last-child .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+
+    /* Стили для элементов внутри дропдауна */
+    .dropdown-menu .nav-link {
+        color: #2d3a5e !important;
+        padding: 0.6rem 1.2rem !important;
+        border-radius: 16px;
+        margin: 0;
+        white-space: nowrap;
+        background: white;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .dropdown-menu .nav-link:hover {
+        background: rgba(93, 79, 255, 0.08) !important;
+        color: #5d4fff !important;
+    }
+    @media (max-width: 1200px) {
+        .navbar-toggler {
+            display: block !important;
+        }
+
+        .collapse.navbar-collapse {
+            display: none !important;
+        }
+</style>
 
 <nav class="navbar navbar-expand-lg custom-navbar">
     <div class="container">
         <img src="/static/lab.svg" alt="" class="logo-image" width="32" height="32">
         <a class="navbar-brand" href="/">ChemistryPRO</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation" onclick="toggleSidebar()">
-            <span class="navbar-toggler-icon"></span>
+        <button class="navbar-toggler" type="button" onclick="toggleSidebar()" style="border: none; outline: none; box-shadow: none;">
+            <span style="width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-bars" style="font-size: 24px; color: #5d4fff;"></i>
+            </span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link" href="/aboutme"><i class="fa fa-question-circle"></i> Обо мне</a>
+                    <a class="nav-link" href="/aboutme"><i class="fa fa-question-circle"></i>Обо мне</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleDropdown3()">
+                    <a class="nav-link dropdown-toggle" href="#" onclick="toggleDropdown(this)">
                         ОГЭ/ЕГЭ
                     </a>
-                    <div class="nav-link dropdown-menu" aria-labelledby="navbarDropdown1" id="dropdownMenu3" style="display: none;">
+                    <div class="dropdown-menu">
                         <a class="nav-link" href="/oge"><i class="fa-solid fa-9"></i> Задания ОГЭ</a>
                         <a class="nav-link" href="/ege"><i class="fa-solid fa-1"></i><i class="fa-solid fa-1"></i> Задания ЕГЭ</a>
                         <a class="nav-link" href="/experiments"><i class='fas fa-atom'></i> Онлайн Лаборатория</a>
@@ -65,10 +112,10 @@
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown1" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleDropdown1()">
+                    <a class="nav-link dropdown-toggle" href="#" onclick="toggleDropdown(this)">
                         Таблицы
                     </a>
-                    <div class="nav-link dropdown-menu" aria-labelledby="navbarDropdown1" id="dropdownMenu1" style="display: none;">
+                    <div class="dropdown-menu">
                         <a class="nav-link" href="/tablica"> Интерактивная таблица хим.элементов</a>
                         <a class="nav-link" href="/tablica_old"><i class="fas fa-paperclip"></i> Прошлая таблица хим.элементов</a>
                         <a class="nav-link" href="/tablica_rastvorimosti"><i class="fa fa-table"></i> Таблица растворимости</a>
@@ -76,30 +123,30 @@
                     </div>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/chat-gpt"><i class="fas fa-brain"></i> ChatGPT</a>
+                    <a class="nav-link" href="/chat-gpt"><i class="fas fa-brain"></i>ChatGPT</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleDropdown2()">
+                    <a class="nav-link dropdown-toggle" href="#" onclick="toggleDropdown(this)">
                         Калькуляторы
                     </a>
-                    <div class="nav-link dropdown-menu" aria-labelledby="navbarDropdown2" id="dropdownMenu2" style="display: none;">
+                    <div class="dropdown-menu">
                         <a class="nav-link" href="/molyarnaya_massa"><i class="fas fa-calculator"></i> Молярная масса</a>
-                        <a class="nav-link" href="/rastvory"><i class="fa fa-flask" aria-hidden="true"></i> Калькулятор Растворимостей</a>
-                        <a class="nav-link" href="/reaction-output-calculator"><i class="fa fa-percent" aria-hidden="true"></i> Калькулятор Процентного выхода</a>
+                        <a class="nav-link" href="/rastvory"><i class="fa fa-flask"></i> Калькулятор Растворимостей</a>
+                        <a class="nav-link" href="/reaction-output-calculator"><i class="fa fa-percent"></i> Калькулятор Процентного выхода</a>
                     </div>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="toggleDropdown()">
+                    <a class="nav-link dropdown-toggle" href="#" onclick="toggleDropdown(this)">
                         Функции
                     </a>
-                    <div class="nav-link dropdown-menu" aria-labelledby="navbarDropdown" id="dropdownMenu" style="display: none;">
+                    <div class="dropdown-menu">
                         <a class="nav-link" href="/complete_reaction"><i class="fa fa-magic"></i> Дописывание хим.реакций</a>
                         <a class="nav-link" href="/uravnivanie"><i class="fas fa-flask"></i> Уравнивание хим.реакций</a>
                         <a class="nav-link" href="/electronic_configuration"><i class="fas fa-plus-circle"></i> Электронная конфигурация</a>
-                        <a class="nav-link" href="/organic_reactions"><i class="fa fa-leaf" aria-hidden="true"></i> Органические реакции</a>
+                        <a class="nav-link" href="/organic_reactions"><i class="fa fa-leaf"></i> Органические реакции</a>
                         <a class="nav-link" href="/get_reaction_chain"><i class="fa fa-terminal"></i> Цепочки превращений</a>
                         <a class="nav-link" href="/select-organic-input"><i class="fa fa-list-ol"></i> Узнать органическое вещество</a>
-                        <a class="nav-link" href="/get_molecule"><i class="fa fa-search" aria-hidden="true"></i> Просмотр 3D-молекул</a>
+                        <a class="nav-link" href="/get_molecule"><i class="fa fa-search"></i> Просмотр 3D-молекул</a>
                         <a class="nav-link" href="/chat"><i class="fa fa-comment"></i> Общий чат</a>
                         <a class="nav-link" href="/minigame"><i class="fa fa-gamepad"></i> Мини-Игра</a>
                     </div>
@@ -115,3 +162,44 @@
         </div>
     </div>
 </nav>
+
+<script>
+    function toggleDropdown(element) {
+        // Закрываем все другие дропдауны
+        document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+            if (!dropdown.contains(element.parentElement)) {
+                dropdown.classList.remove('active');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            }
+        });
+
+        // Переключаем текущий дропдаун
+        const dropdown = element.parentElement;
+        const menu = dropdown.querySelector('.dropdown-menu');
+        const isActive = dropdown.classList.contains('active');
+
+        if (isActive) {
+            dropdown.classList.remove('active');
+            menu.style.display = 'none';
+        } else {
+            dropdown.classList.add('active');
+            menu.style.display = 'block';
+        }
+    }
+
+    // Закрываем дропдауны при клике вне их области
+    document.addEventListener('click', function(event) {
+        if (!event.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown').forEach(function(dropdown) {
+                dropdown.classList.remove('active');
+                const menu = dropdown.querySelector('.dropdown-menu');
+                if (menu) {
+                    menu.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
