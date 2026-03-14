@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Цепочки превращений{% endblock %}
+{% block description %}Цепочки превращений химических реакций: ввод веществ через -, =, ->, => или пробел. Поиск зависит от регистра, используйте правильное написание формул. Неизвестные вещества замените на X1, X2, X3 и т.д. Пример: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3.{% endblock %}
+
+{% block content %}
+<head>
+    <!-- Подключение Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            border: 2px solid #5d4fff;
+            border-radius: 10px; /* Закругление углов карточки */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Тень для карточки */
+        }
+        h2 {
+            color: #343a40; /* Темный цвет заголовка */
+        }
+        .form-control {
+            border-radius: 5px; /* Закругление углов текстового поля */
+        }
+        .btn-primary {
+            background-color: #5d4fff; /* Цвет кнопки */
+            border: none; /* Удаление рамки */
+        }
+        .btn-primary:hover {
+            background-color: #0056b3; /* Цвет кнопки при наведении */
+        }
+        #sidebar A {
+        color: white; /* Цвет ссылок в боковой панели */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="card p-4">
+            <h2 class="text-center">Цепочки превращений хим.реакций</h2>
+            <h5 class="text-center">Вещества можно вводить через -, =, ->, =>, также через пробел</h5>
+            <p class="text-center">Поиск зависит от регистра, недопустимо написание aL2o3 или Al2o3, вместо Al2O3</p>
+            <p class="text-center">Неизвестные вещества заменяйте на X1, X2, X3...</p>
+            <form method="post">
+                <div class="form-group">
+                    <input type="text" id="chemical_formula" name="chemical_formula" class="form-control" placeholder="Например: Al=Al2O3=AlCl3=Al(OH)3=Na3AlO3=Al(NO3)3">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Решить</button>
+                {% if reaction == '' %}
+                    <h5 class="text-center mt-3">Введите реакцию (неорганическую)</h5>
+                {% elif reaction != '' %}
+                    <h4 class="text-center mt-3">{{ reaction }}:</h4>
+                    {% for i in react2 %}
+                        {% if 'Как из' in i %}
+                        <h5 class="text-center">{{ i|replace('`overset(t)(=)`', '<span style="position: relative;"><span style="position: absolute; top: -10px; left: 0;">t°</span>=</span>')|replace('`overset(электролиз)(=)`', '=(электролиз)')|safe }}</h5>
+                        {% else %}
+                        <p class="text-center">{{ i|replace('`overset(t)(=)`', '<span style="position: relative;"><span style="position: absolute; top: -10px; left: 0;">t°</span>=</span>')|replace('`overset(электролиз)(=)`', '=(электролиз)')|safe }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <h5 class="text-center mt-3">Работает при помощи сайта <a href="https://chemer.ru/services/reactions/chains" target="_blank"><font color="blue">chemer.ru</font></a></h5>
+            </form>
+        </div>
+    </div>
+</body>
+<div style="border: 1px solid #5d4fff; border-radius: 8px; padding: 12px; max-width: 400px; margin: 20px auto; background: white; font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(93, 79, 255, 0.1);">
+    <h3 style="color: #5d4fff; text-align: center; margin: 5px 0 10px; font-size: 18px;">🚀 Физика + ИИ = PhysicsPro!</h3>
+    <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">
+        <strong>Искусственный интеллект</strong> поможет разобрать задачи по:
+    </p>
+    <ul style="margin: 8px 0; padding-left: 20px; font-size: 13px; line-height: 1.4;">
+        <li>🔹 Механике и динамике</li>
+        <li>🔹 Электродинамике</li>
+        <li>🔹 Квантовой физике</li>
+    </ul>
+    <p style="margin: 8px 0 12px; font-size: 13px; font-style: italic; color: #666;">
+        Просто задай вопрос — получи объяснение!
+    </p>
+    <div style="text-align: center;">
+        <a href="https://physicspro.onrender.com" style="display: inline-block; padding: 8px 16px; background-color: #5d4fff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.3s;">Попробовать ИИ-физика →</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,231 @@
+<svg xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><svg x="0" y="0" height="18.49px" version="1.0" width="71.69px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use x="0" xlink:href="#CH3" y="0"></use>
+<use x="27.67" xlink:href="#bond1" y="0"></use>
+<use x="46.02" xlink:href="#CH3" y="0"></use>
+</svg><svg x="220" y="0" height="18.49px" version="1.0" width="117.71px" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<use x="0" xlink:href="#CH3" y="0"></use>
+<use x="27.67" xlink:href="#bond1" y="0"></use>
+<use x="46.02" xlink:href="#CH2" y="0"></use>
+<use x="73.69" xlink:href="#bond1" y="0"></use>
+<use x="92.04" xlink:href="#CH3" y="0"></use>
+</svg><svg x="440" y="0" height="0" version="1.0" width="0" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<symbol id="line1">
+<line x1="0" x2="16" y1="0.5" y2="0.5"></line>
+</symbol>
+<symbol id="bond1">
+<text transform="matrix(2 0 0 1 0 12)">−</text>
+</symbol>
+<symbol id="bond2">
+<text transform="matrix(2 0 0 1 0 12)">=</text>
+</symbol>
+<symbol id="bond3">
+<text transform="matrix(2 0 0 1 0 12)">≡</text>
+</symbol>
+<symbol id="bond1_90">
+<text transform="matrix(0 2 1 0 10 0)">−</text>
+</symbol>
+<symbol id="bond2_90">
+<text transform="matrix(0 2 1 0 10 0)">=</text>
+</symbol>
+<symbol id="bond3_90">
+<text transform="matrix(0 2 1 0 10 0)">≡</text>
+</symbol>
+<symbol id="CH">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+</symbol>
+<symbol id="CH2">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">2</text>
+</symbol>
+<symbol id="H2C">
+<text transform="matrix(1 0 0 1 0 12)">H</text>
+<text transform="matrix(0.6 0 0 0.6 11 16)">2</text>
+<text transform="matrix(1 0 0 1 16 12)">C</text>
+</symbol>
+<symbol id="CH3">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">3</text>
+</symbol>
+<symbol id="H3C">
+<text transform="matrix(1 0 0 1 0 12)">H</text>
+<text transform="matrix(0.6 0 0 0.6 11 16)">3</text>
+<text transform="matrix(1 0 0 1 16 12)">C</text>
+</symbol>
+<symbol id="C2H5_t">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">3</text>
+<text transform="matrix(0 2 1 0 10 14.7)">−</text>
+<text transform="matrix(1 0 0 1 0 43.8)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 47.8)">2</text>
+<text transform="matrix(0 2 1 0 10 46.4)">−</text>
+</symbol>
+<symbol id="C2H5_b">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">2</text>
+<text transform="matrix(0 2 1 0 10 14.7)">−</text>
+<text transform="matrix(1 0 0 1 0 43.8)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 47.8)">3</text>
+</symbol>
+<symbol id="C3H7_t">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">3</text>
+<text transform="matrix(0 2 1 0 10 14.7)">−</text>
+<text transform="matrix(1 0 0 1 0 43.8)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 47.8)">2</text>
+<text transform="matrix(0 2 1 0 10 46.4)">−</text>
+<text transform="matrix(1 0 0 1 0 75.4)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 79.4)">2</text>
+</symbol>
+<symbol id="C3H7_b">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">2</text>
+<text transform="matrix(0 2 1 0 10 14.7)">−</text>
+<text transform="matrix(1 0 0 1 0 43.8)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 47.8)">2</text>
+<text transform="matrix(0 2 1 0 10 46.4)">−</text>
+<text transform="matrix(1 0 0 1 0 75.4)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 79.4)">3</text>
+</symbol>
+<symbol id="izoC3H7_t">
+<use transform="rotate(60 28.58 21.35)" x="20.4" xlink:href="#bond1" y="14.3"></use>
+<use transform="rotate(120 41.58 21.35)" x="33.4" xlink:href="#bond1" y="14.3"></use>
+<text transform="matrix(1 0 0 1 1 12)">H</text>
+<text transform="matrix(0.6 0 0 0.6 11.5 16)">3</text>
+<text transform="matrix(1 0 0 1 16 12)">C</text>
+<text transform="matrix(1 0 0 1 43.8 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 64.8 16)">3</text>
+<text transform="matrix(1 0 0 1 29.8 40.6)">CH</text>
+</symbol>
+<symbol id="izoC3H7_b">
+<text transform="matrix(1 0 0 1 30.8 12)">CH</text>
+<use transform="rotate(120 29.58 21.35)" x="21.4" xlink:href="#bond1" y="14.3"></use>
+<text transform="matrix(1 0 0 1 1.5 40.6)">H</text>
+<text transform="matrix(0.6 0 0 0.6 12.5 44.6)">3</text>
+<text transform="matrix(1 0 0 1 17.5 40.6)">C</text>
+<use transform="rotate(60 42.58 21.35)" x="34.4" xlink:href="#bond1" y="14.3"></use>
+<text transform="matrix(1 0 0 1 44.8 40.6)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 65.8 44.6)">3</text>
+</symbol>
+<symbol id="C4H9_b">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">2</text>
+<text transform="matrix(0 2 1 0 10 14.7)">−</text>
+<text transform="matrix(1 0 0 1 0 43.8)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 47.8)">2</text>
+<text transform="matrix(0 2 1 0 10 46.4)">−</text>
+<text transform="matrix(1 0 0 1 0 75.4)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 79.4)">2</text>
+<text transform="matrix(0 2 1 0 10 80.8)">−</text>
+<text transform="matrix(1 0 0 1 0 109.8)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 113.8)">3</text>
+</symbol>
+<symbol id="izoC4H9_b">
+<text transform="matrix(1 0 0 1 30.8 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 51.8 16)">2</text>
+<text transform="matrix(0 2 1 0 40.8 14.7)">−</text>
+<text transform="matrix(1 0 0 1 30.8 43.8)">CH</text>
+<use transform="rotate(120 29.58 53.15)" x="21.4" xlink:href="#bond1" y="46.1"></use>
+<text transform="matrix(1 0 0 1 1.5 72.4)">H</text>
+<text transform="matrix(0.6 0 0 0.6 12.5 76.4)">3</text>
+<text transform="matrix(1 0 0 1 17.5 72.4)">C</text>
+<use transform="rotate(60 42.58 53.15)" x="34.4" xlink:href="#bond1" y="46.1"></use>
+<text transform="matrix(1 0 0 1 44.8 72.4)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 65.8 76.4)">3</text>
+</symbol>
+<symbol id="vtorC4H9_b">
+<text transform="matrix(1 0 0 1 30.8 12)">CH</text>
+<use transform="rotate(120 29.58 21.35)" x="21.4" xlink:href="#bond1" y="14.3"></use>
+<text transform="matrix(1 0 0 1 1.5 40.6)">H</text>
+<text transform="matrix(0.6 0 0 0.6 12.5 44.6)">3</text>
+<text transform="matrix(1 0 0 1 17.5 40.6)">C</text>
+<use transform="rotate(60 42.58 21.35)" x="34.4" xlink:href="#bond1" y="14.3"></use>
+<text transform="matrix(1 0 0 1 44.8 40.6)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 65.8 44.6)">2</text>
+<text transform="matrix(0 2 1 0 54.9 43.3)">−</text>
+<text transform="matrix(1 0 0 1 44.8 72.4)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 65.8 76.4)">3</text>
+</symbol>
+<symbol id="tretC4H9_b">
+<text transform="matrix(1 0 0 1 0 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">3</text>
+<text transform="matrix(2 0 0 1 27.67 12)">−</text>
+<text transform="matrix(1 0 0 1 46.02 12)">C</text>
+<text transform="matrix(0 2 1 0 56.02 14.7)">−</text>
+<text transform="matrix(1 0 0 1 46.02 43.75)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 67.02 47.75)">3</text>
+<text transform="matrix(2 0 0 1 58.13 12)">−</text>
+<text transform="matrix(1 0 0 1 76.48 12)">CH</text>
+<text transform="matrix(0.6 0 0 0.6 97.48 16)">3</text>
+</symbol>
+<symbol id="NH2">
+<text transform="matrix(1 0 0 1 0 12)">NH</text>
+<text transform="matrix(0.6 0 0 0.6 21 16)">2</text>
+</symbol>
+<symbol id="C">
+<text transform="matrix(1 0 0 1 0 12)">C</text>
+</symbol>
+<symbol id="H">
+<text transform="matrix(1 0 0 1 0 12)">H</text>
+</symbol>
+<symbol id="N">
+<text transform="matrix(1 0 0 1 0 12)">N</text>
+</symbol>
+<symbol id="O">
+<text transform="matrix(1 0 0 1 0 12)">O</text>
+</symbol>
+<symbol id="Cl">
+<text transform="matrix(1 0 0 1 0 12)">Cl</text>
+</symbol>
+<symbol id="Br">
+<text transform="matrix(1 0 0 1 0 12)">Br</text>
+</symbol>
+<symbol id="OH">
+<text transform="matrix(1 0 0 1 0 12)">OH</text>
+</symbol>
+<symbol id="CHO">
+<text transform="matrix(1 0 0 1 0 26.3)">C</text>
+<use transform="rotate(150 18.38 12.35)" x="10.2" xlink:href="#bond2" y="5"></use>
+<text transform="matrix(1 0 0 1 27.4 11)">O</text>
+<use transform="rotate(30 18.38 30.35)" x="10.2" xlink:href="#bond1" y="23"></use>
+<text transform="matrix(1 0 0 1 27.4 41.3)">H</text>
+</symbol>
+<symbol id="OHC">
+<text transform="matrix(1 0 0 1 0 11)">O</text>
+<use transform="rotate(30 19.68 12.35)" x="11.5" xlink:href="#bond2" y="5"></use>
+<text transform="matrix(1 0 0 1 27.7 26.3)">C</text>
+<use transform="rotate(150 19.68 30.35)" x="11.5" xlink:href="#bond1" y="23"></use>
+<text transform="matrix(1 0 0 1 0 41.3)">H</text>
+</symbol>
+<symbol id="COOH">
+<text transform="matrix(1 0 0 1 0 26.3)">C</text>
+<use transform="rotate(150 18.38 12.35)" x="10.2" xlink:href="#bond2" y="5"></use>
+<text transform="matrix(1 0 0 1 27.4 11)">O</text>
+<use transform="rotate(30 18.38 30.35)" x="10.2" xlink:href="#bond1" y="23"></use>
+<text transform="matrix(1 0 0 1 27.4 41.3)">OH</text>
+</symbol>
+<symbol id="HOOC">
+<text transform="matrix(1 0 0 1 10.2 11)">O</text>
+<use transform="rotate(30 29.88 12.35)" x="21.7" xlink:href="#bond2" y="5"></use>
+<text transform="matrix(1 0 0 1 37.9 26.3)">C</text>
+<use transform="rotate(150 29.88 30.35)" x="21.7" xlink:href="#bond1" y="23"></use>
+<text transform="matrix(1 0 0 1 0 41.3)">HO</text>
+</symbol>
+<symbol id="cycloC3H6">
+<path d="M 9.5,1.5 L 17.5,15.4 L 1.5,15.4 z"></path>
+</symbol>
+<symbol id="cycloC4H8">
+<path d="M 17.5,1.5 L 17.5,17.5 L 1.5,17.5 L 1.5,1.5 z"></path>
+</symbol>
+<symbol id="cycloC5H10">
+<path d="M 14.4,1.5 L 27.4,10.9 L 22.4,26.1 L 6.4,26.1 L 1.5,10.9 z"></path>
+</symbol>
+<symbol id="cycloC6H12">
+<path d="M 17.5,1.5 L 33.1,10.5 L 33.1,28.5 L 17.5,37.5 L 1.9,28.5 L 1.9,10.5 z"></path>
+</symbol>
+<symbol id="cycloC7H14">
+<path d="M 19.5,1.5 L 33.9,8.4 L 37.5,23.5 L 27.5,35.1 L 11.5,35.1 L 1.5,23.5 L 5.1,8.4 z"></path>
+</symbol>
+<symbol id="cycloC8H16">
+<path d="M 12.8,1.5 L 28.8,1.5 L 40.1,12.8 L 40.1,28.8 L 28.8,40.1 L 12.8,40.1 L 1.5,28.8 L 1.5,12.8 z"></path>
+</symbol>
+</svg></svg>
