@@ -17,10 +17,7 @@
         color: white; /* Цвет ссылок в боковой панели */
     }</style>
 <div class="row">
-    <map name="clickable">
-        <area shape="poly" coords="0, 0" title="" href="/">
-	</map>
-	<img usemap="#clickable" src="{{ url_for('static', filename='tabl.jpg') }}" class="img-fluid mx-auto d-block" style="max-width: 100%; height: auto;">
+	<img src="{{ url_for('static', filename='tabl.jpg') }}" class="img-fluid mx-auto d-block" style="max-width: 100%; height: auto;">
 </div>
     <table class="table table-hover table-sm">
       <thead>
@@ -152,15 +149,15 @@
             color: #fff;
         }
         /* Адаптация для маленьких экранов */
-        @media (max-width: 1200px) {
+        @media (max-width: 1330px) {
             .periodic-table {
-                grid-template-columns: repeat(10, 50px); /* 10 колонок на экранах меньше 1200px */
+                grid-template-columns: repeat(15, 60px);
             }
         }
 
         @media (max-width: 768px) {
             .periodic-table {
-                grid-template-columns: repeat(8, 40px); /* 8 колонок на экранах меньше 768px */
+                grid-template-columns: repeat(14, 40px);
             }
 
             .element {
@@ -178,7 +175,7 @@
 
         @media (max-width: 480px) {
             .periodic-table {
-                grid-template-columns: repeat(5, 35px); /* 5 колонок на экранах меньше 480px */
+                grid-template-columns: repeat(6, 35px);
             }
 
             .element {

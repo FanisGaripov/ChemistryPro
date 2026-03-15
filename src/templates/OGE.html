@@ -3,8 +3,7 @@
 {% block title %}ChemistryPRO - {{ category }}{% endblock %}
 {% block description %}ChemistryPRO - Задания ОГЭ по теме {{ category }}{% endblock %}
 {% block content %}
-<main class="main-content">
-<div class="container">
+<div style="margin: 1rem auto;" class="container">
     <h1>Задания ОГЭ по теме: {{ pretty_category }}</h1>
     <div class="tasks-container">
         {% for task in tasks %}
@@ -38,5 +37,4 @@
         line-height: 1.6; /* Высота строки для лучшей читаемости */
     }
 </style>
-</main>
 {% endblock %}
