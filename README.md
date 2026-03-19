@@ -13,7 +13,7 @@
 - [Запуск](#запуск)
 - [Структура проекта](#структура-проекта)
 - [API Endpoints](#-api-endpoints)
-- [Автор и благодарности](#-автор)
+- [Автор](#-автор)
 
 
 ## О проекте
@@ -169,7 +169,7 @@ curl https://chemistrypro.onrender.com/api/get_reaction_chain/Al=Al2O3
 ```
 
 Ответ:
-```bash
+```json
 {
   "answer": "Как из Al → Al2O3: \n2Al + Cr2O3 = Al2O3 + 2Cr \nFe2O3 + 2Al = Al2O3 + 2Fe \n3Li2O + 2Al `overset(t)(=)` 6Li + Al2O3 \n3V2O5 + 10Al = 5Al2O3 + 6V \n3CuO + 2Al = Al2O3 + 3Cu \n2Al + WO3 = Al2O3 + W \n2Al + 3PbO = 3Pb + Al2O3 \n4Al + 3O2 = 2Al2O3 \n3MnO + 2Al = 3Mn + Al2O3"
 }
