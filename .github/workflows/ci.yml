@@ -2,7 +2,7 @@ name: CI - Linting
 
 on:
   push:
-    branches: [ "refactoring" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
