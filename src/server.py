@@ -28,10 +28,10 @@ from deep_translator import MyMemoryTranslator
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
-from mod import User, UserGameState, db
+from src.mod import User, UserGameState, db
 from api.api import api
-from qualitative_reactions import qualitative_reactions_notorganic
-from utils import (
+from src.qualitative_reactions import qualitative_reactions_notorganic
+from src.utils import (
     electronic_configuration,
     get_chemical_equation_solution,
     get_reaction_chain,
