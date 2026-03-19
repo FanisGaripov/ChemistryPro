@@ -1,0 +1,373 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Ваш ресурс для изучения химии и химических реакций{% endblock %}
+{% block description %}ChemistryPRO - ваш ресурс для изучения химии и химических реакций. Здесь вы найдете таблицы, калькуляторы и много функций для успешного изучения химии.{% endblock %}
+
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>ChemistryPRO - Главная страница</title>
+    <style>
+        .hero-section {
+            background: linear-gradient(#b3a5ed, #a5a8f2);
+            margin: 1.5rem 0.75rem 0;
+            padding: 4rem 2rem;
+            border-radius: 48px;
+            text-align: center;
+            box-shadow: 0 8px 35px rgba(0,0,0,0.02);
+        }
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #fff;
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        .hero-section .lead { color: #fff; font-size: 1.4rem; }
+        .btn-soft {
+            background: #e9ebf5;
+            border: none;
+            color: #1e2f4b;
+            border-radius: 40px;
+            padding: 0.8rem 2rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-soft:hover {
+            background: #5d4fff;
+            color: white;
+            transform: translateY(-3px);
+        }
+        .features {
+            margin: 50px 0;
+        }
+        @media (max-width: 550px) {
+            .hero-section h1 {
+                font-size: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero-section">
+        <img src="/static/image.webp" alt="" width="70" height="70">
+        <h1>ChemistryPRO</h1>
+        <p class="lead">Ваш ресурс для изучения химии и химических реакций</p>
+        <a href="/instruction" class="btn btn-soft btn-lg mt-3"><i class="fa-regular fa-compass me-2"></i> Узнать больше</a>
+    </div>
+
+    <div class="my-5 text-center" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+        <p style="font-size: 1.2rem; color: #2b3a5a;">ChemistryPRO — ученический проект и химический портал. Множество инструментов: от молярной массы до структурных формул. Всё для учёбы и подготовки.</p>
+    </div>
+
+    <h2 class="section-title">Ключевые возможности</h2>
+    <div class="row g-4">
+        <!-- Цепочки превращений -->
+        {% with
+            icon="fa fa-terminal",
+            title="Цепочки превращений",
+            text="Создайте цепочки превращений химических реакций с помощью нашего онлайн-инструмента.",
+            link="/get_reaction_chain",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Органические реакции -->
+        {% with
+            icon="fa fa-list-ol",
+            title="Органические реакции",
+            text="Попробуйте новую функцию - решение органических реакций (особенно полезно 10-11 классам).",
+            link="/organic_reactions",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Уравнивание реакций -->
+        {% with
+            icon="fas fa-flask",
+            title="Уравнивание реакций",
+            text="Уравнивайте химические реакции разной сложности с помощью нашего онлайн-инструмента.",
+            link="/uravnivanie",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Дописывание хим.реакций -->
+        {% with
+            icon="fa fa-magic",
+            title="Дописывание хим.реакций",
+            text="Функция дописывания продуктов реакции, работает при помощи API.",
+            link="/complete_reaction",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Молярные массы -->
+        {% with
+            icon="fa-solid fa-weight-hanging",
+            title="Молярные массы",
+            text="Попробуйте наш новый калькулятор молярных масс веществ и химических реакций.",
+            link="/molyarnaya_massa",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Электронная конфигурация -->
+        {% with
+            icon="fas fa-plus-circle",
+            title="Электронная конфигурация",
+            text="Справочник электронных конфигураций хим.элементов.",
+            link="/electronic_configuration",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Структура органических веществ -->
+        {% with
+            icon="fa fa-list-ol",
+            title="Структура органических веществ",
+            text="Узнаем структуру органических веществ при помощи названия.",
+            link="/orghim",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Графический ввод органических веществ -->
+        {% with
+            icon="fa fa-list-ol",
+            title="Графический ввод органических веществ",
+            text="Узнаем структуру органических веществ при помощи графического ввода.",
+            link="/organic_substance",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- ChemistryPRO AI Assistant -->
+        {% with
+            icon="fas fa-brain",
+            title="ChemistryPRO AI Assistant",
+            text="Введите свой запрос, а искусственный интеллект даст Вам ответ.",
+            link="/chat-gpt",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        <!-- Просмотр 3D-молекул -->
+        {% with
+            icon="fa fa-search",
+            title="Просмотр 3D-молекул",
+            text="Введите вещество и получите его объемное представление в виде молекул.",
+            link="/get_molecule",
+            button_text="Перейти"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+    </div>
+    <!-- Yandex.RTB R-A-13796850-11 -->
+    <div id="yandex_rtb_R-A-13796850-11"></div>
+    <script>
+    window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+            "blockId": "R-A-13796850-11",
+            "renderTo": "yandex_rtb_R-A-13796850-11"
+        })
+    })
+    </script>
+    <h2 class="section-title">Подготовка к ОГЭ и ЕГЭ</h2>
+    <br>
+    <div class="row">
+        {% with
+            icon="fa-solid fa-9",
+            title="Задания ОГЭ - 9 класс (ФИПИ)",
+            text="Актуальные задания ОГЭ по химии из ФИПИ 2026. Готовьтесь к ОГЭ на нашем сайте.",
+            link="/oge",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fa fa-book",
+            title="Задания ЕГЭ - 11 класс (ФИПИ)",
+            text="Актуальные задания ЕГЭ по химии из ФИПИ 2025. Готовьтесь к ЕГЭ на нашем сайте.",
+            link="/ege",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fas fa-atom",
+            title="Онлайн лаборатория",
+            text="Здесь собраны известные симуляции разных химических процессов, которые можно посмотреть в своём браузере.",
+            link="/experiments",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="far fa-bookmark",
+            title="Глоссарий терминов",
+            text="Здесь собраны все термины (Wikipedia) по химии, которые могут пригодиться на уроках или экзамене.",
+            link="/glossary_of_chemistry_terms",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+    </div>
+
+    <h2 class="section-title">Таблицы и справочники</h2>
+    <br>
+    <div class="row">
+        {% with
+            icon="fa fa-table",
+            title="Интерактивная Таблица Менделеева",
+            text="Попробуйте новую интерактивную Таблицу Менделеева (Pubchem).",
+            link="/tablica",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fas fa-paperclip",
+            title="Таблица Менделеева",
+            text="Здесь Вы увидите старую версию раздела, также качественные реакции и т.д.",
+            link="/tablica_old",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fa fa-table",
+            title="Таблица растворимостей",
+            text="Помощь при составлении уравнений разной сложности.",
+            link="/tablica_rastvorimosti",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fa fa-th-list",
+            title="Таблица кислот",
+            text="В таблице указаны наиболее известные кислоты и их остатки.",
+            link="/tablica_kislotnosti",
+            button_text="Ознакомиться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+    </div>
+    <!-- Yandex.RTB R-A-13796850-12 -->
+    <div id="yandex_rtb_R-A-13796850-12"></div>
+    <script>
+    window.yaContextCb.push(() => {
+        Ya.Context.AdvManager.render({
+            "blockId": "R-A-13796850-12",
+            "renderTo": "yandex_rtb_R-A-13796850-12"
+        })
+    })
+    </script>
+    <h2 class="section-title">Калькуляторы</h2>
+    <br>
+    <div class="row">
+        {% with
+            icon="fa-solid fa-weight-hanging",
+            title="Молярные массы",
+            text="Попробуйте наш новый калькулятор молярных масс веществ и химических реакций.",
+            link="/molyarnaya_massa",
+            button_text="Попробовать"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fa-solid fa-droplet",
+            title="Калькулятор Растворимостей",
+            text="Калькулятор, который позволяет узнать массу и доли растворенных веществ.",
+            link="/rastvory",
+            button_text="Попробовать"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fas fa-calculator",
+            title="Калькулятор Процентного Выхода",
+            text="Калькулятор, который позволяет узнать теоретический и фактический выход веществ.",
+            link="/reaction-output-calculator",
+            button_text="Попробовать"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+    </div>
+
+
+    <h2 class="section-title">Может быть интересно</h2>
+    <br>
+    <div class="row">
+        {% with
+            icon="fa fa-gamepad",
+            title="Мини-игра",
+            text="Запоминайте химические элементы из Периодической системы химических элементов с помощью игры",
+            link="/minigame",
+            button_text="Играть"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+
+        {% with
+            icon="fa fa-comment",
+            title="Общий чат",
+            text="Общайтесь с другими пользователями сайта: шутите, развлекайтесь, решайте проблемы.",
+            link="/chat",
+            button_text="Общаться"
+        %}
+            {% include 'includes/card.html' %}
+        {% endwith %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div style="max-width: 400px; margin: 20px auto; background: white; font-family: Arial, sans-serif; box-shadow: 0 2px 6px rgba(93, 79, 255, 0.1);">
+                    <h3 style="color: #5d4fff; text-align: center; margin: 5px 0 10px; font-size: 18px;">🚀 Физика + ИИ = PhysicsPro!</h3>
+                    <p style="margin: 8px 0; font-size: 14px; line-height: 1.4;">
+                        <strong>Искусственный интеллект</strong> поможет разобрать задачи по:
+                    </p>
+                    <ul style="margin: 8px 0; padding-left: 20px; font-size: 13px; line-height: 1.4;">
+                        <li>🔹 Механике и динамике</li>
+                        <li>🔹 Электродинамике</li>
+                        <li>🔹 Квантовой физике</li>
+                    </ul>
+                    <p style="margin: 8px 0 12px; font-size: 13px; font-style: italic; color: #666;">
+                        Просто задай вопрос — получи объяснение!
+                    </p>
+                    <div style="text-align: center;">
+                        <a href="https://physicspro.onrender.com" style="display: inline-block; padding: 8px 16px; background-color: #5d4fff; color: white; text-decoration: none; border-radius: 4px; font-size: 14px; font-weight: bold; transition: all 0.3s;">Попробовать PhysicsPRO →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Контактная информация -->
+    <div class="container">
+        <h2 class="text-center">Свяжитесь с нами</h2>
+        <p class="text-center">Если у вас есть вопросы или предложения, не стесняйтесь обращаться!</p>
+        <p class="text-center"><strong>Email:</strong> garipovfanis1@yandex.ru</p>
+        <p class="text-center"><strong>Telegram-канал:</strong> @chemistrypro_off</p>
+    </div>
+</body>
+</html>
+{% endblock %}

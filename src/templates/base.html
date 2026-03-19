@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="icon" type="image/svg+xml" href="static/favicon.svg">
+    <!-- Yandex.RTB -->
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript" >
+       (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+       m[i].l=1*new Date();
+       for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+       k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+       (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+       ym(99820869, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true
+       });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/99820869" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-70PTT88TKM"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-70PTT88TKM');
+    </script>
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="{% block description %}{% endblock %}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+
+    <style>
+        body {
+            font-family: Montserrat !important;
+            background-color: #f9fafc !important;
+        }
+
+        .container.my-3 {
+            margin-bottom: 60px;
+        }
+
+        .navbar-dark.bg-dark {
+            height: auto;
+            min-height: 10px;
+        }
+
+        .btn-primary {
+            background-color: transparent;
+            border-color: gray;
+            color: gray;
+        }
+
+        /* Заголовки секций */
+        .section-title {
+            font-weight: 700;
+            margin: 3rem 0 1.5rem;
+            padding-left: 1rem;
+            border-left: 8px solid #5d4fff;
+        }
+
+        A:active {
+        color: gray;
+        }
+
+        .profile-avatar {
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Навбар -->
+{% include "includes/header.html" %}
+<!--Сайдбар-->
+{% include "includes/sidebar.html" %}
+<main class="container px-3 px-lg-4" style="max-width: 1400px;">
+<!-- контент дочерних шаблонов -->
+    {% block content %}
+    {% endblock %}
+    <!--Реклама -->
+    <body>
+        <!-- Yandex.RTB R-A-13796850-10 -->
+        <div id="yandex_rtb_R-A-13796850-10"></div>
+        <script>
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-13796850-10",
+                "renderTo": "yandex_rtb_R-A-13796850-10"
+            })
+        })
+        </script>
+
+        <!-- Рекламный блок с floor ad мобильный -->
+        <div id="yandex_rtb_R-A-13796850-8"></div>
+        <script>
+          window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+              "blockId": "R-A-13796850-8",
+              "type": "floorAd",
+              "platform": "touch"
+            })
+          })
+        </script>
+
+        <!-- Рекламный блок с floor ad десктопный -->
+        <div id="yandex_rtb_R-A-13796850-9"></div>
+        <script>
+        window.yaContextCb.push(() => {
+            Ya.Context.AdvManager.render({
+                "blockId": "R-A-13796850-9",
+                "type": "floorAd",
+                "platform": "desktop"
+            })
+        })
+        </script>
+    </body>
+</main>
+
+<!-- Футер -->
+{% include "includes/footer.html" %}
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

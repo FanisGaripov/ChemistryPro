@@ -1,0 +1,11 @@
+flask
+flask_login
+flask_sqlalchemy
+chempy
+gunicorn
+werkzeug
+psycopg2
+python-dotenv
+APScheduler
+g4f[all]
+deep_translator

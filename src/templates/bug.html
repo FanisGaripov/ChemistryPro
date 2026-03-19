@@ -1,0 +1,204 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Ошибка{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm mt-5">
+                <div class="card-header bg-danger text-white">
+                    <h4 class="mb-0">
+                        <i class="fas fa-exclamation-triangle"></i> Произошла ошибка
+                    </h4>
+                </div>
+                <div class="card-body">
+                    {% if bugcode == 1 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-user-slash fa-4x text-danger mb-4"></i>
+                        <h3>Пользователь не найден</h3>
+                        <p class="text-muted">Такого пользователя не существует. Проверьте введенные данные или зарегистрируйтесь.</p>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="/register" class="btn btn-outline-primary">
+                                <i class="fas fa-user-plus"></i> Зарегистрироваться
+                            </a>
+                            <a href="/login" class="btn btn-outline-secondary">
+                                <i class="fas fa-sign-in-alt"></i> Попробовать снова
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 1</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 2 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-lock fa-4x text-danger mb-4"></i>
+                        <h3>Неверный пароль</h3>
+                        <p class="text-muted">Введен неправильный пароль. Пожалуйста, попробуйте еще раз.</p>
+                        <div class="mt-4">
+                            <a href="/login" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-circle-left"></i> Вернуться к авторизации
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 2</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 3 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-user-times fa-4x text-danger mb-4"></i>
+                        <h3>Пользователь уже существует</h3>
+                        <p class="text-muted">Пользователь с таким именем уже зарегистрирован. Попробуйте авторизоваться или использовать другое имя.</p>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="/login" class="btn btn-outline-primary">
+                                <i class="fas fa-sign-in-alt"></i> Войти
+                            </a>
+                            <a href="/register" class="btn btn-outline-secondary">
+                                <i class="fas fa-edit"></i> Изменить данные
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 3</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 4 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-envelope fa-4x text-danger mb-4"></i>
+                        <h3>Почта уже используется</h3>
+                        <p class="text-muted">Пользователь с такой электронной почтой уже существует. Пожалуйста, используйте другую почту.</p>
+                        <div class="mt-4">
+                            <a href="/register" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-circle-left"></i> Вернуться к регистрации
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 4</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 5 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-key fa-4x text-danger mb-4"></i>
+                        <h3>Пароли не совпадают</h3>
+                        <p class="text-muted">Введенные пароли не совпадают. Пожалуйста, проверьте и повторите ввод.</p>
+                        <div class="mt-4">
+                            <a href="/register" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-circle-left"></i> Вернуться к регистрации
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 5</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 6 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-map-marked-alt fa-4x text-danger mb-4"></i>
+                        <h3>Страница не найдена</h3>
+                        <p class="text-muted">Запрошенная страница не существует или была перемещена.</p>
+                        <div class="mt-4">
+                            <a href="/" class="btn btn-outline-primary">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 6</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 7 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-search fa-4x text-danger mb-4"></i>
+                        <h3>Пользователь не найден</h3>
+                        <p class="text-muted">Пользователя с таким логином не существует.</p>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 7</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 8 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-trash-alt fa-4x text-danger mb-4"></i>
+                        <h3>Ошибка удаления</h3>
+                        <p class="text-muted">Произошла ошибка при удалении профиля или такого пользователя никогда не существовало.</p>
+                        <div class="mt-4">
+                            <a href="/all_profiles" class="btn btn-outline-primary">
+                                <i class="fas fa-users"></i> Список профилей
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 8</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 9 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-gamepad fa-4x text-danger mb-4"></i>
+                        <h3>Ошибка в мини-игре</h3>
+                        <p class="text-muted">Ваша сессия была сброшена или вы не авторизованы.</p>
+                        <div class="d-flex justify-content-center gap-3 mt-4">
+                            <a href="/minigame" class="btn btn-outline-primary">
+                                <i class="fas fa-redo"></i> Вернуться в игру
+                            </a>
+                            <a href="/" class="btn btn-outline-secondary">
+                                <i class="fas fa-home"></i> На главную
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 9</span>
+                        </div>
+                    </div>
+
+                    {% elif bugcode == 10 %}
+                    <div class="error-content text-center">
+                        <i class="fas fa-atom fa-4x text-danger mb-4"></i>
+                        <h3>Элемент не найден</h3>
+                        <p class="text-muted">Химического элемента с таким атомным номером не существует.</p>
+                        <div class="mt-4">
+                            <a href="/element" class="btn btn-outline-primary">
+                                <i class="fas fa-arrow-left"></i> Вернуться назад
+                            </a>
+                        </div>
+                        <div class="mt-3">
+                            <span class="badge bg-dark">Код ошибки: 10</span>
+                        </div>
+                    </div>
+
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .error-content {
+        padding: 20px;
+    }
+    .error-content i {
+        opacity: 0.8;
+    }
+    .card {
+        border-radius: 10px;
+        border: none;
+    }
+    .card-header {
+        border-radius: 10px 10px 0 0 !important;
+    }
+    .btn-outline-primary {
+        border-color: #6c757d;
+        background-color: #5d4fff;
+        color: #6c757d;
+        white-space: normal;
+        text-align:center;
+    }
+    .btn-outline-primary:hover {
+        background-color: #6c757d;
+        white-space: normal;
+        color: white;
+    }
+</style>
+{% endblock %}

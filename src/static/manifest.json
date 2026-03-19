@@ -1,0 +1,27 @@
+{
+  "name": "ChemistryPRO",
+  "short_name": "ChemistryPRO",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "scope": "/",
+  "background": "#ffffff",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/static/android-launchericon-96-96.png",
+      "type": "image/png",
+      "sizes": "96x96"
+    },
+    {
+      "src": "/static/android-launchericon-144-144.png",
+      "type": "image/png",
+      "sizes": "144x144"
+    },
+    {
+      "src": "/static/android-launchericon-512-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

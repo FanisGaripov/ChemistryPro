@@ -1,0 +1,4 @@
+[flake8]
+inline-quotes = double
+max-line-length = 79
+import-order-style = google
