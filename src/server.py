@@ -138,9 +138,9 @@ def check_and_download_avatars():
 def load_tasks_from_files(number):
     catalog = {}
     if number == 1:
-        tasks_dir = "База заданий ОГЭ"
+        tasks_dir = "src/База заданий ОГЭ"
     else:
-        tasks_dir = "База заданий ЕГЭ"
+        tasks_dir = "src/База заданий ЕГЭ"
 
     for filename in os.listdir(tasks_dir):
         if filename.startswith("tasks_type_") and filename.endswith(".json"):
