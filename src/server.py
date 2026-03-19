@@ -29,7 +29,7 @@ from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
 from src.mod import User, UserGameState, db
-from api.api import api
+from src.api.api import api
 from src.qualitative_reactions import qualitative_reactions_notorganic
 from src.utils import (
     electronic_configuration,
