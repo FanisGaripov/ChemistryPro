@@ -1911,7 +1911,7 @@ def about_elements(id):
         "Og",
     ]
     if 0 < id <= 118:
-        with open("static/elements_normal.json", "r", encoding="utf-8") as f:
+        with open("src/static/elements_normal.json", "r", encoding="utf-8") as f:
             parsed_data = json.load(f)
         data = parsed_data[str(id)]
         period = 0
