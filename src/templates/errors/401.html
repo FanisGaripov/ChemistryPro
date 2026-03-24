@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block title %}ChemistryPRO - Упс... {{ error.description }}{% endblock %}
+
+{% block content %}
+<style>
+    .error-hero {
+        background: linear-gradient(135deg, #eef2ff 0%, #ffffff 100%);
+        border-radius: 48px;
+        margin: 2rem 0.75rem;
+        padding: 3rem 2rem;
+        box-shadow: 0 20px 35px rgba(0,0,0,0.02), inset 0 1px 0 rgba(255,255,255,0.8);
+        border: 1px solid rgba(93,79,255,0.1);
+    }
+
+    .reaction-flask {
+        position: relative;
+        display: inline-block;
+        filter: drop-shadow(0 8px 14px rgba(93,79,255,0.2));
+    }
+
+    .error-code-lab {
+        font-size: 8rem;
+        font-weight: 800;
+        font-family: 'Space Mono', monospace;
+        background: linear-gradient(145deg, #2d3a5e, #5d4fff);
+        background-clip: text;
+        -webkit-background-clip: text;
+        color: transparent;
+        letter-spacing: 6px;
+    }
+
+    .bubbles {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin: 20px 0;
+    }
+
+    .bubble {
+        width: 45px;
+        height: 45px;
+        background: radial-gradient(circle at 30% 30%, #b3c7ff, #5d4fff);
+        border-radius: 50%;
+        animation: bubbleFloat 1.8s infinite ease-in-out;
+        opacity: 0.6;
+    }
+
+    .bubble:nth-child(2) {
+        width: 28px;
+        height: 28px;
+        animation-delay: 0.4s;
+        background: #8f7eff;
+    }
+    .bubble:nth-child(3) {
+        width: 52px;
+        height: 52px;
+        animation-delay: 0.9s;
+        background: #3a5bc7;
+    }
+    .bubble:nth-child(4) {
+        width: 35px;
+        height: 35px;
+        animation-delay: 0.2s;
+        background: #7c6bff;
+    }
+
+    @keyframes bubbleFloat {
+        0% { transform: translateY(0px) scale(1); opacity: 0.5; }
+        50% { transform: translateY(-18px) scale(1.1); opacity: 0.9; }
+        100% { transform: translateY(0px) scale(1); opacity: 0.5; }
+    }
+
+    .reaction-missing {
+        background: #fff0e0;
+        border-left: 8px solid #ff914d;
+        padding: 1rem 1.5rem;
+        border-radius: 32px;
+        display: inline-block;
+        font-family: 'Space Mono', monospace;
+        font-size: 1.1rem;
+        margin-top: 20px;
+    }
+
+    .reaction-missing i {
+        color: #ff914d;
+        margin-right: 10px;
+    }
+
+    .btn-lab {
+        background: #5d4fff;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 60px;
+        font-weight: 600;
+        color: white;
+        transition: all 0.2s;
+        box-shadow: 0 6px 14px rgba(93,79,255,0.3);
+        margin: 5px;
+    }
+
+    .btn-lab:hover {
+        background: #3f2fcc;
+        transform: translateY(-2px);
+        color: white;
+        box-shadow: 0 12px 22px rgba(93,79,255,0.4);
+    }
+
+    .btn-outline-lab {
+        background: transparent;
+        border: 2px solid #5d4fff;
+        color: #2d3a5e;
+        border-radius: 60px;
+        padding: 0.8rem 2rem;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+
+    .btn-outline-lab:hover {
+        background: #5d4fff;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .suggestion-card {
+        background: white;
+        border-radius: 32px;
+        padding: 1.2rem;
+        transition: 0.2s;
+        border: 1px solid #eef2ff;
+        height: 100%;
+    }
+
+    .suggestion-card:hover {
+        border-color: #5d4fff40;
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+</style>
+<div class="error-hero text-center">
+    <div class="reaction-flask">
+        <img src="/static/lab.svg" alt="" width="70" height="70">
+    </div>
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
+    <div class="error-code-lab">401</div>
+    <h1 style="font-weight: 800; color: #2d3a5e; margin-top: 10px;">Не авторизован</h1>
+    <p style="font-size: 1.2rem; color: #4a5b7a; max-width: 600px; margin: 20px auto;">
+        {{ error.description }}
+    </p>
+    <div class="mt-4 d-flex flex-wrap gap-3 justify-content-center">
+        <a href="/" class="btn btn-lab"><i class="fas fa-home me-2"></i> На главную</a>
+        {% if error.description == 'Такой пользователь не существует!' %}
+        <a href="/register" class="btn btn-lab"><i class="fas fa-user-plus"></i> Зарегистрироваться</a>
+        {% else %}
+        <a href="/login" class="btn btn-lab"><i class="fas fa-sign-in-alt"></i> Попробовать снова</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

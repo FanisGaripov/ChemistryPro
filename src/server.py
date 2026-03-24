@@ -1,13 +1,16 @@
+import http
 import json
 import os
 import random
 import re
+import sys
 from datetime import datetime
 from string import ascii_letters, digits
 
 from flask import (
     Flask,
     Response,
+    abort,
     jsonify,
     redirect,
     render_template,
@@ -28,6 +31,11 @@ from deep_translator import MyMemoryTranslator
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
+DEBUG = os.getenv("DEBUG") in ['1', 'True', 'TRUE', 'Yes', 'yes', 'y']
+if DEBUG:
+    ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    sys.path.insert(0, ROOT_DIR)
+
 from src.mod import User, UserGameState, db
 from src.api.api import api
 from src.qualitative_reactions import qualitative_reactions_notorganic
@@ -39,18 +47,20 @@ from src.utils import (
     organic_reactions,
     uravnivanie,
 )
+from src.errors.handlers import register_error_handlers
 
 # импортируем все библиотеки
 
 app = Flask(__name__)
 load_dotenv()
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///products.db"
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = "static/upload"
 app.secret_key = "supersecretkey"
 app.register_blueprint(api, url_prefix="/api")
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
+register_error_handlers(app)
 db.init_app(app)
 
 
@@ -1327,24 +1337,6 @@ scheduler.add_job(scheduled_task, "interval", hours=1)
 scheduler.start()
 
 
-@app.route("/download-db")
-def download_db():
-    # ф-ция уже не нужна, т.к база данных переехала на postgresql, но все равно оставлю для локальных тестов :)
-    user = flask_login.current_user
-    if user.is_authenticated and user.admin == 1:
-        try:
-            return send_from_directory(
-                directory="instance",  # Папка, где хранится база данных
-                path="products.db",  # Имя файла базы данных
-                as_attachment=True,  # Это указывает, что файл должен быть скачан
-            )
-        except Exception as e:
-            return str(e), 404
-    else:
-        bugcode = 6
-        return render_template("bug.html", bugcode=bugcode, user=user)
-
-
 @app.route("/tablica", methods=["GET", "POST"])
 def tablica():
     if "page" not in session:
@@ -2088,8 +2080,7 @@ def about_elements(id):
                 current_element=symbol if symbol else None,
             )
     else:
-        bugcode = 10
-        return render_template("bug.html", user=user, bugcode=bugcode)
+        abort(http.HTTPStatus.INTERNAL_SERVER_ERROR, description="Элемент не найден! Химического элемента с таким атомным номером не существует.")
 
 
 def minigamefunc():
@@ -2362,8 +2353,7 @@ def reset_minigame():
         db.session.commit()
         return redirect(url_for("minigame"))
     else:
-        bugcode = 9
-        return render_template("bug.html", user=user, bugcode=bugcode)
+        abort(http.HTTPStatus.INTERNAL_SERVER_ERROR, description="Ошибка в мини-игре! Ваша сессия была сброшена или вы не авторизованы.")
 
 
 def get_substance_html(substance_name):
@@ -2561,17 +2551,6 @@ def orghim():
         )
 
 
-@app.errorhandler(404)
-def page_not_found(e):
-    # просто обработчик ошибок, нужен, чтобы говорить пользователю, что такой страницы нет
-    user = flask_login.current_user
-    bugcode = 6
-    return render_template("bug.html", user=user, bugcode=bugcode), 404
-
-
-bugcode = 0
-
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if "page" not in session:
@@ -2582,7 +2561,6 @@ def login():
     if "language" not in session:
         session["language"] = "Ru"
         session.modified = True
-    bugcode = 0
     # вход пользователя в аккаунт. берутся данные из базы данных
     user = flask_login.current_user
     if request.method == "POST":
@@ -2593,12 +2571,9 @@ def login():
             flask_login.login_user(user)
             return redirect("/")
         elif not User.query.filter_by(username=username).first():
-            bugcode = 1
-            return render_template("bug.html", bugcode=bugcode, user=user)
+            abort(http.HTTPStatus.UNAUTHORIZED, description="Такой пользователь не существует!")
         else:
-            bugcode = 2
-            user = ""
-            return render_template("bug.html", bugcode=bugcode, user=user)
+            abort(http.HTTPStatus.UNAUTHORIZED, description="Неверный пароль!")
     if user.is_authenticated:
         return redirect(url_for("profile"))
     else:
@@ -2631,7 +2606,6 @@ def register():
     if "language" not in session:
         session["language"] = "Ru"
         session.modified = True
-    bugcode = 0
     # регистрация, идет работа с бд
     user = flask_login.current_user
     if request.method == "POST":
@@ -2652,19 +2626,13 @@ def register():
                     db.session.commit()
                     return redirect(url_for("login"))
                 except:
-                    bugcode = 4
-                    return render_template(
-                        "bug.html", bugcode=bugcode, user=user
-                    )
+                    abort(http.HTTPStatus.CONFLICT, description="Почта уже используется!")
             else:
-                bugcode = 5
-                return render_template("bug.html", bugcode=bugcode, user=user)
+                abort(http.HTTPStatus.BAD_REQUEST, description="Пароли не совпадают!")
         elif User.query.filter_by(username=username).first():
-            bugcode = 3
-            return render_template("bug.html", bugcode=bugcode, user=user)
+            abort(http.HTTPStatus.CONFLICT, description="Пользователь уже существует!")
         else:
-            bugcode = 4
-            return render_template("bug.html", bugcode=bugcode, user=user)
+            abort(http.HTTPStatus.CONFLICT, description="Почта уже используется!")
     if session["language"] == "Ru":
         return render_template("register.html", user=user)
     else:
@@ -2696,7 +2664,6 @@ def profile():
 def delete_profile(username):
     # удаление профилей пользователей
     user = flask_login.current_user
-    bugcode = 0
     polzovatel = User.query.filter_by(username=username).first()
     if user.is_authenticated:
         if user.admin == 1 or user.username == polzovatel.username:
@@ -2711,8 +2678,7 @@ def delete_profile(username):
                     if os.path.exists(avatar_path):
                         os.remove(avatar_path)
             except:
-                bugcode = 8
-                return render_template("bug.html", user=user, bugcode=bugcode)
+                abort(http.HTTPStatus.INTERNAL_SERVER_ERROR, description="Произошла ошибка при удалении профиля или такого пользователя никогда не существовало.")
             if user.admin == 1:
                 return redirect(url_for("all_profiles"))
             else:
@@ -2758,8 +2724,7 @@ def other_profiles(username):
             else:
                 return render_template("profile_tat.html", user=user)
     else:
-        bugcode = 7
-        return render_template("bug.html", user=user, bugcode=bugcode)
+        abort(http.HTTPStatus.UNAUTHORIZED, description="Такой пользователь не существует!")
 
 
 @app.route("/profile/<username>/make_admin", methods=["GET", "POST"])
@@ -2775,8 +2740,7 @@ def make_admin(username):
             "otherprofile.html", user=user, polzovatel=polzovatel, admin=admin
         )
     else:
-        bugcode = 6
-        return render_template("bug.html", user=user, bugcode=bugcode)
+        abort(http.HTTPStatus.NOT_FOUND)
 
 
 @app.route("/all_profiles/", methods=["GET", "POST"])
@@ -2842,8 +2806,7 @@ def edit_profile():
         checking = User.query.filter_by(username=username).first()
 
         if checking and checking.id != user.id:
-            bugcode = 4
-            return render_template("bug.html", user=user, bugcode=bugcode)
+            abort(http.HTTPStatus.CONFLICT, description="Почта уже используется, измените на другую!")
 
         user.username = username
         user.name = name
@@ -2889,6 +2852,6 @@ def logout():
 
 if __name__ == "__main__":
     try:
-        app.run(debug=True, host="0.0.0.0", port=5000)
+        app.run(debug=DEBUG, host="0.0.0.0", port=5000)
     finally:
         scheduler.shutdown()
