@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 import g4f
-from src.qualitative_reactions import qualitative_reactions_notorganic
-from src.utils import (
+from src.core.qualitative_reactions import qualitative_reactions_notorganic
+from src.core.utils import (
     electronic_configuration,
     get_chemical_equation_solution,
     get_reaction_chain,

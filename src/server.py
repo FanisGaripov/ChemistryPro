@@ -31,15 +31,17 @@ from deep_translator import MyMemoryTranslator
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
-DEBUG = os.getenv("DEBUG") in ['1', 'True', 'TRUE', 'Yes', 'yes', 'y']
+load_dotenv()
+
+DEBUG = os.getenv("DEBUG")
 if DEBUG:
     ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     sys.path.insert(0, ROOT_DIR)
 
-from src.mod import User, UserGameState, db
+from src.database.models import User, UserGameState, db
 from src.api.api import api
-from src.qualitative_reactions import qualitative_reactions_notorganic
-from src.utils import (
+from src.core.qualitative_reactions import qualitative_reactions_notorganic
+from src.core.utils import (
     electronic_configuration,
     get_chemical_equation_solution,
     get_reaction_chain,
@@ -52,7 +54,6 @@ from src.errors.handlers import register_error_handlers
 # импортируем все библиотеки
 
 app = Flask(__name__)
-load_dotenv()
 app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = "static/upload"
@@ -148,9 +149,9 @@ def check_and_download_avatars():
 def load_tasks_from_files(number):
     catalog = {}
     if number == 1:
-        tasks_dir = "src/База заданий ОГЭ"
+        tasks_dir = "src/database/База заданий ОГЭ"
     else:
-        tasks_dir = "src/База заданий ЕГЭ"
+        tasks_dir = "src/database/База заданий ЕГЭ"
 
     for filename in os.listdir(tasks_dir):
         if filename.startswith("tasks_type_") and filename.endswith(".json"):
@@ -1213,7 +1214,7 @@ def reaction_output_calculator():
         return render_template("output_calculator_tat.html", user=user)
 
 
-chat_history_file = "../chat_history.json"
+chat_history_file = "database/chat_history.json"
 
 
 @app.route("/get_messages", methods=["GET"])
@@ -1313,7 +1314,7 @@ def chat_messages():
 @app.route("/chat/saving")
 def chat_saving():
     # Загрузка истории чата
-    with open("../chat_history.json", "r", encoding="utf-8") as f:
+    with open("database/chat_history.json", "r", encoding="utf-8") as f:
         chat_history = json.load(f)
     if chat_history != "[]":
         file_path = "chat_history.txt"
@@ -1328,7 +1329,7 @@ def chat_saving():
 
 
 def scheduled_task():
-    chat_file_path = "../chat_history.json"
+    chat_file_path = "database/chat_history.json"
     upload_to_yandex_disk(chat_file_path, os.path.basename(chat_file_path))
 
 
