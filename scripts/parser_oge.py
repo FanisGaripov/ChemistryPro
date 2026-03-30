@@ -1,9 +1,9 @@
-import requests
-from bs4 import BeautifulSoup
-import time
 import json
-import os
 import re
+import time
+
+from bs4 import BeautifulSoup
+import requests
 
 BASE_URL = "https://oge.fipi.ru/bank/"
 QUESTIONS_URL = BASE_URL + "questions.php"

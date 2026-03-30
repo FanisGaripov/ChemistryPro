@@ -1,6 +1,6 @@
-import re
 import json
 import os
+import re
 
 
 def clean_filename(text):

@@ -1904,7 +1904,9 @@ def about_elements(id):
         "Og",
     ]
     if 0 < id <= 118:
-        with open("src/static/elements_normal.json", "r", encoding="utf-8") as f:
+        with open(
+            "src/static/elements_normal.json", "r", encoding="utf-8"
+        ) as f:
             parsed_data = json.load(f)
         data = parsed_data[str(id)]
         period = 0
@@ -2081,7 +2083,10 @@ def about_elements(id):
                 current_element=symbol if symbol else None,
             )
     else:
-        abort(http.HTTPStatus.INTERNAL_SERVER_ERROR, description="Элемент не найден! Химического элемента с таким атомным номером не существует.")
+        abort(
+            http.HTTPStatus.INTERNAL_SERVER_ERROR,
+            description="Элемент не найден! Химического элемента с таким атомным номером не существует.",
+        )
 
 
 def minigamefunc():
@@ -2354,7 +2359,10 @@ def reset_minigame():
         db.session.commit()
         return redirect(url_for("minigame"))
     else:
-        abort(http.HTTPStatus.INTERNAL_SERVER_ERROR, description="Ошибка в мини-игре! Ваша сессия была сброшена или вы не авторизованы.")
+        abort(
+            http.HTTPStatus.INTERNAL_SERVER_ERROR,
+            description="Ошибка в мини-игре! Ваша сессия была сброшена или вы не авторизованы.",
+        )
 
 
 def get_substance_html(substance_name):
@@ -2572,7 +2580,10 @@ def login():
             flask_login.login_user(user)
             return redirect("/")
         elif not User.query.filter_by(username=username).first():
-            abort(http.HTTPStatus.UNAUTHORIZED, description="Такой пользователь не существует!")
+            abort(
+                http.HTTPStatus.UNAUTHORIZED,
+                description="Такой пользователь не существует!",
+            )
         else:
             abort(http.HTTPStatus.UNAUTHORIZED, description="Неверный пароль!")
     if user.is_authenticated:
@@ -2627,13 +2638,24 @@ def register():
                     db.session.commit()
                     return redirect(url_for("login"))
                 except:
-                    abort(http.HTTPStatus.CONFLICT, description="Почта уже используется!")
+                    abort(
+                        http.HTTPStatus.CONFLICT,
+                        description="Почта уже используется!",
+                    )
             else:
-                abort(http.HTTPStatus.BAD_REQUEST, description="Пароли не совпадают!")
+                abort(
+                    http.HTTPStatus.BAD_REQUEST,
+                    description="Пароли не совпадают!",
+                )
         elif User.query.filter_by(username=username).first():
-            abort(http.HTTPStatus.CONFLICT, description="Пользователь уже существует!")
+            abort(
+                http.HTTPStatus.CONFLICT,
+                description="Пользователь уже существует!",
+            )
         else:
-            abort(http.HTTPStatus.CONFLICT, description="Почта уже используется!")
+            abort(
+                http.HTTPStatus.CONFLICT, description="Почта уже используется!"
+            )
     if session["language"] == "Ru":
         return render_template("register.html", user=user)
     else:
@@ -2679,7 +2701,10 @@ def delete_profile(username):
                     if os.path.exists(avatar_path):
                         os.remove(avatar_path)
             except:
-                abort(http.HTTPStatus.INTERNAL_SERVER_ERROR, description="Произошла ошибка при удалении профиля или такого пользователя никогда не существовало.")
+                abort(
+                    http.HTTPStatus.INTERNAL_SERVER_ERROR,
+                    description="Произошла ошибка при удалении профиля или такого пользователя никогда не существовало.",
+                )
             if user.admin == 1:
                 return redirect(url_for("all_profiles"))
             else:
@@ -2725,7 +2750,10 @@ def other_profiles(username):
             else:
                 return render_template("profile_tat.html", user=user)
     else:
-        abort(http.HTTPStatus.UNAUTHORIZED, description="Такой пользователь не существует!")
+        abort(
+            http.HTTPStatus.UNAUTHORIZED,
+            description="Такой пользователь не существует!",
+        )
 
 
 @app.route("/profile/<username>/make_admin", methods=["GET", "POST"])
@@ -2807,7 +2835,10 @@ def edit_profile():
         checking = User.query.filter_by(username=username).first()
 
         if checking and checking.id != user.id:
-            abort(http.HTTPStatus.CONFLICT, description="Почта уже используется, измените на другую!")
+            abort(
+                http.HTTPStatus.CONFLICT,
+                description="Почта уже используется, измените на другую!",
+            )
 
         user.username = username
         user.name = name

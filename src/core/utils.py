@@ -3,8 +3,9 @@ import re
 
 from bs4 import BeautifulSoup
 from chempy import balance_stoichiometry
-import requests
 from urllib.parse import quote
+
+import requests
 
 
 def get_reaction_chain(reaction):
