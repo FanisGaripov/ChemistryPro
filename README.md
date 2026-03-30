@@ -1,9 +1,13 @@
 # ChemistryPRO - веб-приложение для изучения школьного курса Химии
 
+<div align="center">
+
 [![Python](https://img.shields.io/badge/python-3.13%2B-blue)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/flask-3.1%2B-green)](https://flask.palletsprojects.com/)
 [![Render](https://img.shields.io/badge/deployed%20on-Render-purple)](https://render.com/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-red)](LICENSE)
+
+</div>
 
 ## 📋 Содержание
 - [О проекте](#о-проекте)
@@ -108,12 +112,19 @@ DEBUG=True
 ```
 
 ## Запуск:
+
+### Production (только на Linux)
+```bash
+gunicorn -b 0.0.0.0:5000 src.server:app
 ```
+
+### DEV-режим
+```bash
 cd src
 python3 server.py
 ```
 
-Таким образом сервер будет запущен и доступен по ссылке: http://127.0.0.1:5000
+Таким образом, сервер будет запущен и доступен по ссылке: http://127.0.0.1:5000
 
 
 ## Структура проекта:
@@ -127,7 +138,7 @@ ChemistryPro/
 ├── src                     # Исходный код
 │   ├── api                        # blueprint API
 │   ├── instance                   # SQLite база данных
-│   ├── static/                    # Статические файлы, такие как CSS и изображения
+│   ├── static/                    # Статические файлы, такие как CSS, JS и изображения
 │   │   ├── /upload
 │   │   └── fon.jpg...
 │   ├── templates/                 # Шаблоны HTML
@@ -153,15 +164,15 @@ ChemistryPro/
 
 ## 🔌 API Endpoints
 
-| Метод | Endpoint | Описание |
-|--------|----------|----------|
-| GET | `/api/get_reaction_chain/<q>` | Цепочка превращений |
-| GET | `/api/organic_reactions/<q>` | Органические реакции |
-| GET | `/api/balancing_reactions/<q>` | Уравнивание реакций |
-| GET | `/api/molyar_mass/<q>` | Посчитать молярную массу |
-| GET | `/api/complete_reactions/<q>` | Дописывание реакций |
-| GET | `/api/electronic_confuguration/<q>` | Электронная конфигурация элемента |
-| GET | `/api/chatgpt/<q>` | ChatGPT (gpt-4) |
+| Метод | Endpoint                            | Описание |
+|--------|-------------------------------------|----------|
+| GET | `/api/get_reaction_chain/<q>`       | Цепочка превращений |
+| GET | `/api/organic_reactions/<q>`        | Органические реакции |
+| GET | `/api/balancing_reactions/<q>`      | Уравнивание реакций |
+| GET | `/api/molyar_mass/<q>`              | Посчитать молярную массу |
+| GET | `/api/complete_reactions/<q>`       | Дописывание реакций |
+| GET | `/api/electronic_configuration/<q>` | Электронная конфигурация элемента |
+| GET | `/api/chatgpt/<q>`                  | ChatGPT (gpt-4) |
 
 Пример запроса:
 ```bash
@@ -183,3 +194,20 @@ curl https://chemistrypro.onrender.com/api/get_reaction_chain/Al=Al2O3
 ## 🙏 Благодарности
 
 - Всем, кто тестировал приложение и давал обратную связь
+
+## ⭐ Поддержка проекта
+
+Если проект оказался полезным:
+1. **Поставьте звезду** на GitHub
+2. **Расскажите друзьям/одноклассникам**
+3. **Внесите вклад** в развитие
+
+---
+
+<div align="center">
+
+*Сделаем химию увлекательной вместе!*
+
+[⬆️ Наверх](#ChemistryPRO-веб-приложение-для-изучения-школьного-курса-Химии)
+
+</div>
