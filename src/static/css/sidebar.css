@@ -1,0 +1,33 @@
+/* Стили для сайдбара */
+.sidebar {
+    position: fixed;
+    background: white;
+    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
+    top: 0;
+    z-index: 1050;
+    left: -300px;
+    width: 250px;
+    height: 100%;
+    transition: left 0.3s;
+    z-index: 1000;
+    overflow-y: auto;
+    max-height: 100vh;
+    padding: 1.2rem;
+    border-radius: 32px;
+    box-shadow: 0 30px 60px rgba(0, 10, 30, 0.2);
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    padding: 6px;
+}
+.sidebar .nav-link { color: #1a2639 !important; padding: 0.8rem !important; border-radius: 18px; }
+.sidebar .nav-link i { width: 1.8rem; color: #5d4fff; }

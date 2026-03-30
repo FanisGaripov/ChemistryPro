@@ -1,0 +1,21 @@
+/* Стили для подвала сайта */
+.footer {
+    background: #141f33;
+    color: #cdd9f0;
+    border-radius: 14px 14px 0 0;
+    padding: 2.5rem 2rem 1.5rem;
+    margin-top: 4rem;
+}
+.footer a { color: #ffffff; text-decoration: none; border-bottom: 1px solid #4f6a9e; }
+.social-links a {
+    background: #253450;
+    display: inline-block;
+    width: 42px; height: 42px;
+    border-radius: 30px;
+    text-align: center;
+    line-height: 42px;
+    margin-right: 10px;
+    color: white;
+    transition: 0.2s;
+}
+.social-links a:hover { background: #5d4fff; }

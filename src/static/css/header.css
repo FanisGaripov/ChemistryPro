@@ -1,0 +1,86 @@
+/* Стили для навигационной панели */
+.custom-navbar {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(93, 79, 255, 0.1);
+    margin: 1rem 0.75rem 0;
+    padding: 0.6rem 1.2rem;
+    border-radius: 50px;
+    z-index: 1000;
+    display: flex;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+.navbar-brand {
+    font-weight: 700;
+    color: #2d3a5e !important;
+    font-size: 1.4rem !important;
+    margin-left: 0.5rem;
+}
+.nav-link {
+    color: #2d3a5e !important;
+    font-weight: 500;
+    margin: 0 0.3rem;
+    border-radius: 40px;
+    padding: 0.5rem 1rem !important;
+    transition: all 0.15s;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+.nav-link:hover {
+    background: rgba(93, 79, 255, 0.08);
+    color: #5d4fff !important;
+}
+.nav-link i { margin-right: 6px; color: #5d4fff; opacity: 0.8; }
+
+.dropdown {
+    position: relative;
+}
+
+.dropdown-menu, .nav-link.dropdown-menu { {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    padding: 0.8rem;
+    z-index: 9999;
+    margin-top: 10px;
+}
+
+/* Для последнего дропдауна */
+.nav-item:last-child .dropdown-menu {
+    left: auto;
+    right: 0;
+}
+
+/* Стили для элементов внутри дропдауна */
+.dropdown-menu .nav-link {
+    color: #2d3a5e !important;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 16px;
+    margin: 0;
+    white-space: nowrap;
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dropdown-menu .nav-link:hover {
+    background: rgba(93, 79, 255, 0.08) !important;
+    color: #5d4fff !important;
+}
+@media (max-width: 1200px) {
+    .navbar-toggler {
+        display: block !important;
+    }
+
+    .collapse.navbar-collapse {
+        display: none !important;
+    }

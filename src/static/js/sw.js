@@ -41,7 +41,6 @@ const staticFilesToCache = [
   '/rastvory',
   '/uchebnik',
   '/orghim'
-  // Добавьте все файлы из директории static, которые вы хотите кэшировать
 ];
 
 self.addEventListener("message", (event) => {

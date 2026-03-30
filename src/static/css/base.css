@@ -1,0 +1,38 @@
+/* Основные стили для всех страниц */
+body {
+    font-family: Montserrat !important;
+    background-color: #f9fafc !important;
+}
+
+.container.my-3 {
+    margin-bottom: 60px;
+}
+
+.navbar-dark.bg-dark {
+    height: auto;
+    min-height: 10px;
+}
+
+.btn-primary {
+    background-color: transparent;
+    border-color: gray;
+    color: gray;
+}
+
+/* Заголовки секций */
+.section-title {
+    font-weight: 700;
+    margin: 3rem 0 1.5rem;
+    padding-left: 1rem;
+    border-left: 8px solid #5d4fff;
+}
+
+A:active {
+    color: gray;
+}
+
+.profile-avatar {
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+}

@@ -1,37 +1,5 @@
-<style>
-    .sidebar {
-        position: fixed;
-        background: white;
-        transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1);
-        top: 0;
-        z-index: 1050;
-        left: -300px;
-        width: 250px;
-        height: 100%;
-        transition: left 0.3s;
-        z-index: 1000;
-        overflow-y: auto;
-        max-height: 100vh;
-        padding: 1.2rem;
-        border-radius: 32px;
-        box-shadow: 0 30px 60px rgba(0, 10, 30, 0.2);
-    }
-
-    .sidebar.active {
-        left: 0;
-    }
-
-    .sidebar ul {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .sidebar ul li {
-        padding: 6px;
-    }
-    .sidebar .nav-link { color: #1a2639 !important; padding: 0.8rem !important; border-radius: 18px; }
-    .sidebar .nav-link i { width: 1.8rem; color: #5d4fff; }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/sidebar.css') }}">
+<script src="{{ url_for('static', filename='js/sidebar.js') }}"></script>
 <div class="sidebar" id="sidebar">
     <ul class="navbar-nav">
         <li class="nav-item">
@@ -120,21 +88,3 @@
         {% endif %}
     </ul>
 </div>
-
-<script>
-    function toggleSidebar() {
-        var sidebar = document.getElementById('sidebar');
-        sidebar.classList.toggle('active');
-    }
-
-    // Закрытие сайдбара при клике вне его области
-    document.addEventListener('click', function(event) {
-        var sidebar = document.getElementById('sidebar');
-        var toggler = document.querySelector('.navbar-toggler');
-
-        // Проверяем, был ли клик вне сайдбара и кнопки для его открытия
-        if (!sidebar.contains(event.target) && !toggler.contains(event.target)) {
-            sidebar.classList.remove('active'); // Закрываем сайдбар
-        }
-    });
-</script>
