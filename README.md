@@ -62,35 +62,35 @@ cd ChemistryPRO
 ### Как создать виртуальное окружение:
 Windows/Linux/macOS:
 
-```
+```bash
 python3 -m venv venv
 ```
 
 Linux/macOS:
 
-```
+```bash
 source venv/bin/activate
 ```
 
 Windows:
 
-```
+```bash
 venv\Scripts\activate
 ```
 
 
 ### Установка нужных библиотек для прода:
-```
+```bash
 pip install -r requirements/prod.txt
 ```
 
 ### Установка нужных библиотек для dev(разработки):
-```
+```bash
 pip install -r requirements/dev.txt
 ```
 
 ### Создайте .env-файл или переименуйте template.env(шаблон) в .env
-```
+```bash
 cp template.env .env
 ```
 
